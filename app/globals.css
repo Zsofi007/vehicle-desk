@@ -1,0 +1,70 @@
+@import "tailwindcss";
+
+:root {
+  --background: #fafaf9;
+  --foreground: #1c1917;
+  --muted: #78716c;
+  --border: #e7e5e4;
+  --danger: #b91c1c;
+  --warning: #a16207;
+  --ok: #15803d;
+  /* Accent tokens */
+  --accent-soft: #dbeafe; /* light blue, works with black icons */
+  --accent-strong: #1e293b; /* slate, bold/dark accent */
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-strong: var(--accent-strong);
+  --font-sans: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+}
+
+:focus-visible {
+  outline: 2px solid #57534e;
+  outline-offset: 2px;
+}
+
+/* Ensure all interactive controls show a pointer cursor. */
+a[href],
+button,
+[role="button"],
+[role="menuitem"],
+[role="menuitemradio"],
+[role="option"] {
+  cursor: pointer;
+}
+
+button:disabled,
+[aria-disabled="true"] {
+  cursor: not-allowed;
+}
+
+@keyframes vehicle-drawer-in {
+  from {
+    transform: translateY(16px);
+    opacity: 0.7;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes vehicle-drawer-out {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(16px);
+    opacity: 0.7;
+  }
+}
