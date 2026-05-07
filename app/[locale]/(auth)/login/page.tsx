@@ -23,7 +23,7 @@ export default async function LoginPage({ params }: Props) {
           </h1>
           <p className="mt-2 text-sm text-stone-600">{t("loginSubtitle")}</p>
         </div>
-        <LanguageSwitcher ariaLabel={tNav("language")} />
+        <LanguageSwitcher ariaLabel={tNav("language")} persistPreference={false} />
       </div>
       <LoginForm locale={locale} />
     </div>

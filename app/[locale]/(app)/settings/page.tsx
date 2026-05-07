@@ -4,6 +4,7 @@ import type { AppLocale } from "@/lib/i18n";
 import { requireAuth } from "@/lib/auth";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
+import { CompanyNameField } from "@/components/CompanyNameField";
 import { LanguageSelector } from "@/components/LanguageSelector";
 import { NotificationToggle } from "@/components/NotificationToggle";
 
@@ -21,13 +22,14 @@ export default async function SettingsPage({ params }: Props) {
   const supabase = await createSupabaseServerClient();
   const { data: profile } = await supabase
     .from("profiles")
-    .select("preferred_language,email_notifications")
+    .select("preferred_language,email_notifications,company_name")
     .eq("id", user.id)
     .maybeSingle();
 
   const preferred_language =
     (profile?.preferred_language as "en" | "hu" | "ro" | undefined) ?? "en";
   const email_notifications = Boolean(profile?.email_notifications ?? true);
+  const company_name = String(profile?.company_name ?? "");
 
   return (
     <div className="space-y-6">
@@ -37,6 +39,19 @@ export default async function SettingsPage({ params }: Props) {
         </h1>
         <p className="mt-1 text-sm text-stone-600">{t("subtitle")}</p>
       </header>
+
+      <section className="rounded-xl border border-stone-200 bg-white p-4 shadow-sm">
+        <h2 className="text-sm font-semibold text-stone-900">{t("companyTitle")}</h2>
+        <div className="mt-3">
+          <CompanyNameField
+            value={company_name}
+            label={t("companyLabel")}
+            placeholder={t("companyPlaceholder")}
+            saveLabel={t("companySave")}
+            savedLabel={t("companySaved")}
+          />
+        </div>
+      </section>
 
       <section className="rounded-xl border border-stone-200 bg-white p-4 shadow-sm">
         <h2 className="text-sm font-semibold text-stone-900">{t("languageTitle")}</h2>

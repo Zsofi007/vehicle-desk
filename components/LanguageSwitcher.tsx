@@ -6,9 +6,12 @@ import { useMemo, useState } from "react";
 
 import { locales, localeLabel, type AppLocale } from "@/lib/i18n";
 import { usePathname, useRouter } from "@/lib/navigation";
+import { updatePreferredLanguage } from "@/lib/actions/profile";
 
 type Props = {
   ariaLabel: string;
+  /** When true, also updates the signed-in user's preferred language. */
+  persistPreference?: boolean;
 };
 
 const localeFlag: Record<AppLocale, React.ComponentType<{ className?: string }>> =
@@ -18,7 +21,10 @@ const localeFlag: Record<AppLocale, React.ComponentType<{ className?: string }>>
     ro: RO,
   };
 
-export function LanguageSwitcher({ ariaLabel }: Props) {
+export function LanguageSwitcher({
+  ariaLabel,
+  persistPreference = true,
+}: Props) {
   const router = useRouter();
   const pathname = usePathname();
   const active = useLocale() as AppLocale;
@@ -70,6 +76,11 @@ export function LanguageSwitcher({ ariaLabel }: Props) {
                 aria-checked={isActive}
                 onClick={() => {
                   setOpen(false);
+                  // If user is signed out, the action returns unauthorized; ignore it.
+                  // Do this before navigation so the next request can pick it up immediately.
+                  if (persistPreference) {
+                    void updatePreferredLanguage(loc).catch(() => null);
+                  }
                   router.replace(pathname, { locale: loc });
                 }}
                 className={[

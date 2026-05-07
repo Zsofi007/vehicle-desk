@@ -24,6 +24,21 @@ export async function requireAuth(locale: AppLocale): Promise<User> {
   return user!;
 }
 
+export async function getPreferredLocaleForUser(
+  userId: string,
+): Promise<AppLocale | null> {
+  const supabase = await createSupabaseServerClient();
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("preferred_language")
+    .eq("id", userId)
+    .maybeSingle();
+
+  const raw = String(profile?.preferred_language ?? "").toLowerCase();
+  if (raw === "hu" || raw === "ro" || raw === "en") return raw;
+  return null;
+}
+
 export async function getCurrentUserWithRole(): Promise<{
   user: User;
   role: UserRole;

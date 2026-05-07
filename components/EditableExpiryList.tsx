@@ -109,6 +109,8 @@ function ExpiryRow({
   const tStatus = useTranslations("status");
   const tAria = useTranslations("aria");
 
+  const isActive = row.is_active !== false;
+
   const today = utcTodayString();
   const soonEnd = formatUtcDateString(addUtcDays(new Date(), 7));
   const status = getExpiryStatus(row.expiry_date, today, soonEnd);
@@ -123,7 +125,7 @@ function ExpiryRow({
       ? "border-red-200 bg-red-50 text-red-900"
       : status === "expiring_soon"
         ? "border-amber-200 bg-amber-50 text-amber-950"
-        : "border-stone-200 bg-stone-50 text-stone-800";
+        : "border-emerald-200 bg-emerald-50 text-emerald-950";
 
   const [editing, setEditing] = useState(false);
   const [open, setOpen] = useState(false);
@@ -198,7 +200,9 @@ function ExpiryRow({
               size="icon"
               variant="secondary"
               aria-label={tVeh("edit")}
+              disabled={!isActive}
               onClick={() => {
+                if (!isActive) return;
                 setEditing(true);
                 setExpiryDate(row.expiry_date);
                 setCost(row.cost === null || row.cost === undefined ? "" : String(row.cost));
@@ -232,10 +236,16 @@ function ExpiryRow({
           </div>
         </div>
         <div className="mt-2">
-            <p className={`inline-flex max-w-full rounded-md border px-2 py-0.5 text-xs font-medium ${tone}`}>
-              <span className="sr-only">{tAria("expiryStatus")}: </span>
-              {statusLabel}
-            </p>
+            {isActive ? (
+              <p className={`inline-flex max-w-full rounded-md border px-2 py-0.5 text-xs font-medium ${tone}`}>
+                <span className="sr-only">{tAria("expiryStatus")}: </span>
+                {statusLabel}
+              </p>
+            ) : (
+              <p className="inline-flex max-w-full rounded-md border border-stone-200 bg-stone-50 px-2 py-0.5 text-xs font-medium text-stone-700">
+                {t("inactive")}
+              </p>
+            )}
         </div>
       </li>
     );

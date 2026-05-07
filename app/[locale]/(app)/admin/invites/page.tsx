@@ -41,6 +41,7 @@ export default async function AdminInvitesPage({ params }: Props) {
         <InviteForm
           buttonLabel="Create invite"
           emailLabel="Email"
+          languageLabel="Language"
           tokenLabel="Invite token"
           copiedLabel="Copied."
         />

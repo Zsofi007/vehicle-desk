@@ -3,6 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { requireAuth } from "@/lib/auth";
 import type { AppLocale } from "@/lib/i18n";
 import { getAlertsForUser, getVehiclesForUser } from "@/lib/queries";
+import { AddVehicleModal } from "@/components/AddVehicleModal";
 import { VehiclesBrowser, type VehicleTileRow } from "@/components/VehiclesBrowser";
 
 type Props = {
@@ -102,8 +103,19 @@ export default async function VehiclesPage({ params }: Props) {
       </section>
 
       {vehicles.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-slate-300 bg-white px-4 py-10 text-sm text-slate-600">
-          {t("empty")}
+        <div className="rounded-xl border border-dashed border-slate-300 bg-white px-4 py-10">
+          <div className="mx-auto max-w-xl text-center">
+            <p className="text-sm text-slate-700">{t("empty")}</p>
+            <div className="mt-6 hidden justify-center md:flex">
+              <AddVehicleModal
+                locale={locale}
+                triggerLabel={t("addVehicle")}
+                title={t("addVehicle")}
+                description={t("subtitle")}
+                triggerVariant="accent"
+              />
+            </div>
+          </div>
         </div>
       ) : (
         <VehiclesBrowser

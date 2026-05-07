@@ -34,6 +34,11 @@
   "settings": {
     "title": "Beállítások",
     "subtitle": "Nyelv és értesítések kezelése.",
+    "companyTitle": "Cég",
+    "companyLabel": "Cég neve",
+    "companyPlaceholder": "pl. Acme Logistics Kft.",
+    "companySave": "Mentés",
+    "companySaved": "Mentve",
     "languageTitle": "Nyelv",
     "languageLabel": "Preferált nyelv",
     "notificationsTitle": "Értesítések",
@@ -44,6 +49,8 @@
   },
   "auth": {
     "email": "E-mail",
+    "companyName": "Cég neve",
+    "companyNamePlaceholder": "Opcionális",
     "inviteToken": "Meghívó token",
     "password": "Jelszó",
     "confirmPassword": "Jelszó megerősítése",
@@ -140,6 +147,7 @@
   "expiry": {
     "title": "Lejárat és megújítások",
     "empty": "Még nincs megújítási tétel.",
+    "inactive": "Inaktív",
     "type": "Típus",
     "type_itp": "ITP",
     "type_rca": "RCA",

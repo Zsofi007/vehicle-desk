@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed": "#dfe2ed",
+                        "surface-container-low": "#f5f3f4",
+                        "secondary": "#5b5e67",
+                        "on-tertiary-container": "#a38c6a",
+                        "on-secondary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "on-primary-fixed-variant": "#3c475a",
+                        "primary-fixed-dim": "#bcc7de",
+                        "on-tertiary-fixed": "#271902",
+                        "background": "#fbf8fa",
+                        "surface-container-lowest": "#ffffff",
+                        "on-surface-variant": "#45474c",
+                        "on-primary-fixed": "#111c2d",
+                        "on-background": "#1b1b1d",
+                        "surface-tint": "#545f73",
+                        "on-secondary-fixed": "#181c23",
+                        "surface-container-high": "#eae7e9",
+                        "tertiary-fixed-dim": "#ddc39d",
+                        "on-error": "#ffffff",
+                        "tertiary-fixed": "#fadfb8",
+                        "surface-variant": "#e4e2e3",
+                        "on-secondary-fixed-variant": "#43474f",
+                        "surface-dim": "#dcd9db",
+                        "surface-container-highest": "#e4e2e3",
+                        "error-container": "#ffdad6",
+                        "secondary-fixed-dim": "#c3c6d1",
+                        "primary": "#091426",
+                        "secondary-container": "#dfe2ed",
+                        "on-tertiary": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "outline-variant": "#c5c6cd",
+                        "surface-container": "#f0edef",
+                        "surface-bright": "#fbf8fa",
+                        "inverse-on-surface": "#f3f0f2",
+                        "on-tertiary-fixed-variant": "#564427",
+                        "primary-fixed": "#d8e3fb",
+                        "tertiary-container": "#35260c",
+                        "on-error-container": "#93000a",
+                        "on-primary-container": "#8590a6",
+                        "outline": "#75777d",
+                        "tertiary": "#1e1200",
+                        "on-secondary-container": "#61646d",
+                        "inverse-primary": "#bcc7de",
+                        "primary-container": "#1e293b",
+                        "surface": "#fbf8fa",
+                        "inverse-surface": "#303032",
+                        "on-surface": "#1b1b1d"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "xxl": "48px",
+                        "sm": "8px",
+                        "xxxl": "64px",
+                        "lg": "24px",
+                        "xs": "4px",
+                        "md": "16px",
+                        "xl": "32px"
+                    },
+                    "fontSize": {
+                        "display": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "h3": ["20px", {"lineHeight": "28px", "letterSpacing": "0", "fontWeight": "600"}],
+                        "h2": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600"}],
+                        "h1": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "letterSpacing": "0", "fontWeight": "400"}],
+                        "body-sm": ["14px", {"lineHeight": "20px", "letterSpacing": "0", "fontWeight": "400"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "letterSpacing": "0", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background antialiased overflow-hidden">
+<!-- SideNavBar Shell -->
+<aside class="h-screen w-64 fixed left-0 top-0 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex flex-col py-6 z-50">
+<div class="px-6 mb-8">
+<h1 class="text-lg font-bold tracking-tight text-slate-900 dark:text-white">Fleet Manager</h1>
+<p class="text-xs text-slate-500 font-medium">SaaS Platform</p>
+</div>
+<nav class="flex-1 space-y-1">
+<div class="text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 px-4 py-3 flex items-center gap-3 cursor-pointer active:opacity-80 transition-colors duration-200">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md">Dashboard</span>
+</div>
+<div class="bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white border-r-2 border-slate-900 dark:border-slate-100 px-4 py-3 flex items-center gap-3 cursor-pointer active:opacity-80 transition-colors duration-200">
+<span class="material-symbols-outlined">directions_car</span>
+<span class="font-label-md">Vehicles</span>
+</div>
+<div class="text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 px-4 py-3 flex items-center gap-3 cursor-pointer active:opacity-80 transition-colors duration-200">
+<span class="material-symbols-outlined">build</span>
+<span class="font-label-md">Maintenance</span>
+</div>
+<div class="text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 px-4 py-3 flex items-center gap-3 cursor-pointer active:opacity-80 transition-colors duration-200">
+<span class="material-symbols-outlined">notifications_active</span>
+<span class="font-label-md">Alerts</span>
+</div>
+</nav>
+<div class="mt-auto border-t border-slate-100 dark:border-slate-800 pt-4 space-y-1">
+<div class="text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 px-4 py-3 flex items-center gap-3 cursor-pointer active:opacity-80 transition-colors duration-200">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-md">Settings</span>
+</div>
+<div class="text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 px-4 py-3 flex items-center gap-3 cursor-pointer active:opacity-80 transition-colors duration-200">
+<span class="material-symbols-outlined">logout</span>
+<span class="font-label-md">Logout</span>
+</div>
+</div>
+</aside>
+<!-- TopNavBar Shell -->
+<header class="sticky top-0 w-full z-40 border-b ml-64 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 shadow-sm dark:shadow-none flex items-center justify-between px-8 py-3 h-16">
+<div class="flex items-center gap-4 w-1/2">
+<div class="relative w-full max-w-md focus-within:ring-1 focus-within:ring-slate-400 rounded-lg">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-surface-container-low border-none rounded-lg text-body-sm focus:ring-0 focus:outline-none" placeholder="Search vehicles by VIN, plate or model..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-4 text-slate-500">
+<span class="material-symbols-outlined cursor-pointer hover:text-slate-900 transition-all">notifications</span>
+<span class="material-symbols-outlined cursor-pointer hover:text-slate-900 transition-all">help_outline</span>
+<span class="text-label-md font-medium cursor-pointer hover:text-slate-900 transition-all">Support</span>
+</div>
+<div class="h-8 w-8 rounded-full bg-slate-200 overflow-hidden border border-slate-300">
+<img class="h-full w-full object-cover" data-alt="Professional headshot of a fleet operations manager in a corporate office setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBuewOXEhRMWMH3OFuFYXpVuCwxkS7Oum4rsZB3MvGZ0oXWuev8p_nh1SlmugmeqmXALsPyjQzrmWgBYbKggvn32i6YdBt9CGTWZ6t3ZPqQZuATcdNG-ftc_vRoKeyArHAr0KJEWl_Z7Y6QItvJqf5JHknDdaIuKPK0zeiNx3o_VPMuFbn3L4s1eixaUKChXaLHAF7W2j5y9wRRhcTuClLaK7bUzZicHF7gCHvbvK5gF2ogpI-wbGseaDMFk4ge3MczPRrh8I50jyYF"/>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-64 h-[calc(100vh-64px)] overflow-y-auto bg-surface">
+<div class="max-w-[1280px] mx-auto p-xl">
+<!-- Header Section -->
+<div class="flex justify-between items-end mb-xl">
+<div>
+<h2 class="font-h1 text-h1 text-on-background">Vehicle Fleet</h2>
+<p class="text-body-md text-on-secondary-container mt-xs">Manage and monitor all company vehicles from a centralized hub.</p>
+</div>
+<button class="bg-primary text-on-primary px-lg py-sm rounded-lg font-label-md flex items-center gap-2 hover:bg-slate-800 transition-colors shadow-sm">
+<span class="material-symbols-outlined text-md">add</span>
+                    Add Vehicle
+                </button>
+</div>
+<!-- Dashboard Overview Bento Grid (Simplified for Context) -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-md mb-xl">
+<div class="bg-white p-lg rounded-xl border border-slate-200 flex flex-col gap-xs">
+<span class="text-label-sm text-on-secondary-container">TOTAL VEHICLES</span>
+<span class="text-h2 font-h2">124</span>
+<div class="flex items-center gap-1 text-xs text-green-600 font-medium">
+<span class="material-symbols-outlined text-xs">trending_up</span> +4 this month
+                    </div>
+</div>
+<div class="bg-white p-lg rounded-xl border border-slate-200 flex flex-col gap-xs">
+<span class="text-label-sm text-on-secondary-container">ACTIVE ALERTS</span>
+<span class="text-h2 font-h2 text-error">12</span>
+<div class="flex items-center gap-1 text-xs text-on-secondary-container font-medium">
+                        3 critical maintenance
+                    </div>
+</div>
+<div class="bg-white p-lg rounded-xl border border-slate-200 flex flex-col gap-xs">
+<span class="text-label-sm text-on-secondary-container">IN SERVICE</span>
+<span class="text-h2 font-h2 text-tertiary-container">8</span>
+<div class="flex items-center gap-1 text-xs text-on-secondary-container font-medium">
+                        Estimated back: 2 days
+                    </div>
+</div>
+<div class="bg-white p-lg rounded-xl border border-slate-200 flex flex-col gap-xs">
+<span class="text-label-sm text-on-secondary-container">AVG. EFFICIENCY</span>
+<span class="text-h2 font-h2">22.4</span>
+<div class="flex items-center gap-1 text-xs text-on-secondary-container font-medium">
+                        MPG average fleet wide
+                    </div>
+</div>
+</div>
+<!-- Table Filters Shell -->
+<div class="bg-white border border-slate-200 rounded-xl overflow-hidden">
+<div class="px-lg py-md border-b border-slate-100 flex items-center justify-between">
+<div class="flex items-center gap-md">
+<button class="flex items-center gap-2 px-md py-xs rounded border border-slate-200 text-label-md text-on-secondary-container hover:bg-slate-50">
+<span class="material-symbols-outlined text-sm">filter_list</span>
+                            All Types
+                        </button>
+<button class="flex items-center gap-2 px-md py-xs rounded border border-slate-200 text-label-md text-on-secondary-container hover:bg-slate-50">
+<span class="material-symbols-outlined text-sm">event</span>
+                            Year
+                        </button>
+</div>
+<div class="flex items-center gap-sm text-label-sm text-on-secondary-container">
+                        Showing 1-10 of 124 vehicles
+                    </div>
+</div>
+<!-- Structured Table -->
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low">
+<th class="px-lg py-md font-label-sm text-on-secondary-container border-b border-slate-200">LICENSE PLATE</th>
+<th class="px-lg py-md font-label-sm text-on-secondary-container border-b border-slate-200">MAKE &amp; MODEL</th>
+<th class="px-lg py-md font-label-sm text-on-secondary-container border-b border-slate-200 text-center">YEAR</th>
+<th class="px-lg py-md font-label-sm text-on-secondary-container border-b border-slate-200">ODOMETER</th>
+<th class="px-lg py-md font-label-sm text-on-secondary-container border-b border-slate-200">STATUS</th>
+<th class="px-lg py-md border-b border-slate-200"></th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-100">
+<tr class="hover:bg-slate-50 transition-colors group">
+<td class="px-lg py-md font-label-md text-primary">KJL-9421</td>
+<td class="px-lg py-md flex items-center gap-3">
+<div class="w-10 h-10 rounded bg-slate-100 flex items-center justify-center overflow-hidden">
+<img class="object-cover h-full w-full" data-alt="Modern silver metallic electric SUV parked in a minimalist showroom environment" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA3_wqtlM-53idd3rbizLM8M3Imowxz2iuvgW11fr39eK-OPAWnZdQAPMoUJP7fk3XK_XRANpQzdG2ZYDw6BmNy3yXL7i_kOvVLbaCj9wUfX9nUBdTxCoxGHcVAbrO9YKHkPFAUg94p8tD1w--ooHapLT_04w3wv3BRL8OAW8tvLMzJuVhXE4U6FjUlPMRQ7i18JLjrl3g5x4XcLMzwqiMj2ZiLRcOx7gN0EEICdB8KlzQk2N6pogIXnmAXoy89XkpXJ5NiHV3uHSgw"/>
+</div>
+<div>
+<p class="font-label-md text-on-background">Tesla Model Y</p>
+<p class="text-xs text-on-secondary-container">Electric • Long Range</p>
+</div>
+</td>
+<td class="px-lg py-md text-body-sm text-center">2023</td>
+<td class="px-lg py-md text-body-sm">12,450 mi</td>
+<td class="px-lg py-md">
+<span class="bg-green-50 text-green-700 px-3 py-1 rounded-full text-xs font-semibold">Healthy</span>
+</td>
+<td class="px-lg py-md text-right">
+<button class="material-symbols-outlined text-slate-400 hover:text-primary transition-all">more_vert</button>
+</td>
+</tr>
+<tr class="hover:bg-slate-50 transition-colors group">
+<td class="px-lg py-md font-label-md text-primary">BBN-1022</td>
+<td class="px-lg py-md flex items-center gap-3">
+<div class="w-10 h-10 rounded bg-slate-100 flex items-center justify-center overflow-hidden">
+<img class="object-cover h-full w-full" data-alt="High-end white luxury sedan driving on a clean urban road with architectural buildings" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCIq4k2Wc4u3YAjqLkOiOnl2VhhXG7bmt0h4Ui__cLKCIMdpQsbiFFvgYBY_1B8g4A2JJnKPh4BcVw7NV_saSRYduFCzhREhMqaoJcbyLg_qO9_umAMvDjRqRdYRxfPAKaC685Jw39vb3ngOv0bLZTWqi79yNAT2r6hv55rAev8E750boqYlyH97QDVRxG33APwhrRZmOrETRKGXg5LFeV9Qlx98ANVnyUKfbUBDOFgNfryuVAwrvjo-OnKYryFdYpScavVo5Ehng8-"/>
+</div>
+<div>
+<p class="font-label-md text-on-background">Mercedes-Benz E-Class</p>
+<p class="text-xs text-on-secondary-container">Internal Combustion • Executive</p>
+</div>
+</td>
+<td class="px-lg py-md text-body-sm text-center">2022</td>
+<td class="px-lg py-md text-body-sm">34,120 mi</td>
+<td class="px-lg py-md">
+<span class="bg-amber-50 text-amber-700 px-3 py-1 rounded-full text-xs font-semibold">Due Soon</span>
+</td>
+<td class="px-lg py-md text-right">
+<button class="material-symbols-outlined text-slate-400 hover:text-primary transition-all">more_vert</button>
+</td>
+</tr>
+<tr class="hover:bg-slate-50 transition-colors group">
+<td class="px-lg py-md font-label-md text-primary">TRK-8809</td>
+<td class="px-lg py-md flex items-center gap-3">
+<div class="w-10 h-10 rounded bg-slate-100 flex items-center justify-center overflow-hidden">
+<img class="object-cover h-full w-full" data-alt="Rugged dark blue pickup truck parked on a gravel path near a construction site" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDKwx5LRbd90-JXUhOGqPSoDuDM5VH_kQHw7jUMeULeRD33CpJfO0aptbvjoMJeWUD1unFpkD6Zw8fKWTm34zVoddhh_9uAepiud9o4J-dPHMStf5nZL8etKmHX_Qgguwo5b9x0Y3Z2vcsTnbCmhMpXb3ZzDHG-GOTAUuA5dr1vNUQrMlaCVlC85W65T3jtsJojyKRfceL79aV8a-hJZFsDyHHv_z1QHWg9ujUJUbneCWmHVoMDRs94A_K5s4Vrp58U8pWH2xrscxui"/>
+</div>
+<div>
+<p class="font-label-md text-on-background">Ford F-150 Lightning</p>
+<p class="text-xs text-on-secondary-container">Electric • Utility</p>
+</div>
+</td>
+<td class="px-lg py-md text-body-sm text-center">2023</td>
+<td class="px-lg py-md text-body-sm">8,200 mi</td>
+<td class="px-lg py-md">
+<span class="bg-red-50 text-error px-3 py-1 rounded-full text-xs font-semibold">Critical</span>
+</td>
+<td class="px-lg py-md text-right">
+<button class="material-symbols-outlined text-slate-400 hover:text-primary transition-all">more_vert</button>
+</td>
+</tr>
+<tr class="hover:bg-slate-50 transition-colors group">
+<td class="px-lg py-md font-label-md text-primary">VAN-4421</td>
+<td class="px-lg py-md flex items-center gap-3">
+<div class="w-10 h-10 rounded bg-slate-100 flex items-center justify-center overflow-hidden">
+<img class="object-cover h-full w-full" data-alt="Clean white commercial delivery van in a logistics parking lot at midday" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAo7tBv52Y2sllldPvuLHV3tODAR1WL50mom5BPsBWgt0g2JOr4sH8lnM4MYGCSZhh6HLyWrHJ_rThp_FiH0vtqRfZNqw4tnVw0eyfwkcpsx0vnlxqDMi9BVMbAqq_661DfQnVUIQypYzuA0has_Fb_dfcdXFNBzwJc2B9M9UsCoy98dm1GiNrxrg825TT9zOftcBp4FyG3PNGi2uUMUZCEdpqiLSoky3QQp0SBW9HwB6oVzOmisEKePmOmU_x7B7sGR3v6WF7LmOeO"/>
+</div>
+<div>
+<p class="font-label-md text-on-background">Rivian EDV</p>
+<p class="text-xs text-on-secondary-container">Electric • Cargo</p>
+</div>
+</td>
+<td class="px-lg py-md text-body-sm text-center">2024</td>
+<td class="px-lg py-md text-body-sm">1,500 mi</td>
+<td class="px-lg py-md">
+<span class="bg-green-50 text-green-700 px-3 py-1 rounded-full text-xs font-semibold">Healthy</span>
+</td>
+<td class="px-lg py-md text-right">
+<button class="material-symbols-outlined text-slate-400 hover:text-primary transition-all">more_vert</button>
+</td>
+</tr>
+<tr class="hover:bg-slate-50 transition-colors group">
+<td class="px-lg py-md font-label-md text-primary">SUV-9981</td>
+<td class="px-lg py-md flex items-center gap-3">
+<div class="w-10 h-10 rounded bg-slate-100 flex items-center justify-center overflow-hidden">
+<img class="object-cover h-full w-full" data-alt="Professional gray mid-size SUV driving through a clean suburban neighborhood" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDAYw8cmrg_vjfEwh-wB-A6y4lC-gBi6_OvhgfYINdbbibrHOxv-Ws5uVUN0omgbpEluKpMll5OGQ9jOV81m--6x2QEn_3gHJ4AgCQRedHNDBJRQAq5O7-jwtVCNro0DvRIO9eRZ_yycp71MRz7-ZvANkZ2uvIwowD6lKj-j9lYThFPBGP-8OEAOh4Q-CyKbonCFII73D7_Fsa8Oc836KzpPB8oWFTlD2U2YsP6dqXEcglTuqOs6dJjOaV6KajLKKFHx1jY6oOG3hu1"/>
+</div>
+<div>
+<p class="font-label-md text-on-background">Toyota Highlander</p>
+<p class="text-xs text-on-secondary-container">Hybrid • Staff</p>
+</div>
+</td>
+<td class="px-lg py-md text-body-sm text-center">2021</td>
+<td class="px-lg py-md text-body-sm">56,900 mi</td>
+<td class="px-lg py-md">
+<span class="bg-slate-100 text-slate-600 px-3 py-1 rounded-full text-xs font-semibold">Inactive</span>
+</td>
+<td class="px-lg py-md text-right">
+<button class="material-symbols-outlined text-slate-400 hover:text-primary transition-all">more_vert</button>
+</td>
+</tr>
+</tbody>
+</table>
+<!-- Pagination Shell -->
+<div class="px-lg py-md border-t border-slate-100 flex items-center justify-between">
+<button class="text-label-md text-on-secondary-container hover:text-primary transition-colors flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">chevron_left</span>
+                        Previous
+                    </button>
+<div class="flex items-center gap-1">
+<button class="w-8 h-8 flex items-center justify-center rounded bg-primary text-on-primary text-label-sm">1</button>
+<button class="w-8 h-8 flex items-center justify-center rounded hover:bg-slate-50 text-label-sm">2</button>
+<button class="w-8 h-8 flex items-center justify-center rounded hover:bg-slate-50 text-label-sm">3</button>
+<span class="px-2 text-slate-400">...</span>
+<button class="w-8 h-8 flex items-center justify-center rounded hover:bg-slate-50 text-label-sm">12</button>
+</div>
+<button class="text-label-md text-on-secondary-container hover:text-primary transition-colors flex items-center gap-1">
+                        Next
+                        <span class="material-symbols-outlined text-sm">chevron_right</span>
+</button>
+</div>
+</div>
+<!-- Health Snapshot Section -->
+<div class="mt-xxl grid grid-cols-1 md:grid-cols-2 gap-xl">
+<div class="bg-white p-lg rounded-xl border border-slate-200">
+<div class="flex justify-between items-center mb-md">
+<h3 class="font-h3 text-h3">Upcoming Maintenance</h3>
+<a class="text-label-sm text-primary hover:underline" href="#">View all</a>
+</div>
+<div class="space-y-md">
+<div class="flex items-center justify-between p-md bg-surface-container-lowest border border-slate-100 rounded-lg">
+<div class="flex items-center gap-3">
+<div class="bg-amber-100 text-amber-700 p-2 rounded">
+<span class="material-symbols-outlined">oil_barrel</span>
+</div>
+<div>
+<p class="font-label-md">Oil Change</p>
+<p class="text-xs text-on-secondary-container">KJL-9421 • Due in 250 mi</p>
+</div>
+</div>
+<span class="text-label-sm text-on-secondary-container">Oct 14</span>
+</div>
+<div class="flex items-center justify-between p-md bg-surface-container-lowest border border-slate-100 rounded-lg">
+<div class="flex items-center gap-3">
+<div class="bg-blue-100 text-blue-700 p-2 rounded">
+<span class="material-symbols-outlined">tire_repair</span>
+</div>
+<div>
+<p class="font-label-md">Tire Rotation</p>
+<p class="text-xs text-on-secondary-container">BBN-1022 • Scheduled</p>
+</div>
+</div>
+<span class="text-label-sm text-on-secondary-container">Oct 18</span>
+</div>
+</div>
+</div>
+<div class="bg-white p-lg rounded-xl border border-slate-200">
+<div class="flex justify-between items-center mb-md">
+<h3 class="font-h3 text-h3">Fleet Health Index</h3>
+<span class="text-xs bg-green-50 text-green-700 px-2 py-1 rounded font-bold">OPTIMAL</span>
+</div>
+<div class="space-y-md">
+<div>
+<div class="flex justify-between text-label-sm mb-xs">
+<span>Engine Reliability</span>
+<span>94%</span>
+</div>
+<div class="w-full bg-slate-100 h-2">
+<div class="bg-primary h-full" style="width: 94%;"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between text-label-sm mb-xs">
+<span>Safety Inspections</span>
+<span>88%</span>
+</div>
+<div class="w-full bg-slate-100 h-2">
+<div class="bg-primary h-full" style="width: 88%;"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between text-label-sm mb-xs">
+<span>Emissions Compliance</span>
+<span>100%</span>
+</div>
+<div class="w-full bg-slate-100 h-2">
+<div class="bg-primary h-full" style="width: 100%;"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

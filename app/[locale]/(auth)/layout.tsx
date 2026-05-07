@@ -1,4 +1,4 @@
-import { getSessionUser } from "@/lib/auth";
+import { getPreferredLocaleForUser, getSessionUser } from "@/lib/auth";
 import type { AppLocale } from "@/lib/i18n";
 import { redirect } from "@/lib/navigation";
 
@@ -13,7 +13,8 @@ export default async function AuthLayout({ children, params }: Props) {
   const user = await getSessionUser();
 
   if (user) {
-    redirect({ href: "/dashboard", locale });
+    const preferred = await getPreferredLocaleForUser(user.id);
+    redirect({ href: "/dashboard", locale: preferred ?? locale });
   }
 
   return (

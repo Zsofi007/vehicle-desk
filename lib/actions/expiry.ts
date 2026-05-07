@@ -50,11 +50,35 @@ export async function createExpiryItem(
   }
 
   const supabase = await createSupabaseServerClient();
+  const normalizedType = parsed.data.type.trim().toLowerCase();
+  const shouldReplaceExisting =
+    normalizedType === "itp" ||
+    normalizedType === "rca" ||
+    normalizedType === "casco" ||
+    normalizedType === "rovinietă" ||
+    normalizedType === "rovinieta";
+
+  if (shouldReplaceExisting) {
+    // If the same expiry type already exists for this vehicle, keep it for history but negate it.
+    // This prevents multiple active items of the same type from producing duplicate alerts.
+    const { error: negateError } = await supabase
+      .from("expiry_items")
+      .update({ is_active: false, negated_at: new Date().toISOString() })
+      .eq("vehicle_id", vehicleId)
+      .eq("type", parsed.data.type)
+      .eq("is_active", true);
+
+    if (negateError) {
+      return { error: negateError.message };
+    }
+  }
+
   const { error } = await supabase.from("expiry_items").insert({
     vehicle_id: vehicleId,
     type: parsed.data.type,
     expiry_date: parsed.data.expiry_date,
     cost: costParsed.value,
+    is_active: true,
   });
 
   if (error) {
@@ -96,7 +120,8 @@ export async function updateExpiryItem(
       cost: costParsed.value,
     })
     .eq("id", itemId)
-    .eq("vehicle_id", vehicleId);
+    .eq("vehicle_id", vehicleId)
+    .eq("is_active", true);
 
   if (error) {
     return { error: error.message };

@@ -25,6 +25,8 @@ export type ExpiryItem = {
   type: string;
   expiry_date: string;
   cost: string | number | null;
+  is_active?: boolean;
+  negated_at?: string | null;
 };
 
 export type Invite = {

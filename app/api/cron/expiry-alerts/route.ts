@@ -33,12 +33,14 @@ export async function POST(req: Request) {
     .from("expiry_items")
     .select("id,vehicle_id,type,expiry_date,notified_14d")
     .eq("expiry_date", iso14)
+    .eq("is_active", true)
     .eq("notified_14d", false);
 
   const { data: exp1 } = await admin
     .from("expiry_items")
     .select("id,vehicle_id,type,expiry_date,notified_1d")
     .eq("expiry_date", iso1)
+    .eq("is_active", true)
     .eq("notified_1d", false);
 
   const candidates = [
@@ -67,8 +69,15 @@ export async function POST(req: Request) {
   const profileById = new Map((profiles ?? []).map((p) => [p.id, p]));
 
   let sent = 0;
+  const itemsByVehicleId = new Map<string, typeof candidates>();
   for (const item of candidates) {
-    const veh = vehicleById.get(item.vehicle_id);
+    const arr = itemsByVehicleId.get(item.vehicle_id) ?? [];
+    arr.push(item);
+    itemsByVehicleId.set(item.vehicle_id, arr);
+  }
+
+  for (const [vehicleId, items] of itemsByVehicleId.entries()) {
+    const veh = vehicleById.get(vehicleId);
     if (!veh) continue;
 
     const profile = profileById.get(veh.user_id);
@@ -76,11 +85,19 @@ export async function POST(req: Request) {
     if (profile.email_notifications === false) continue;
 
     const lang = (profile.preferred_language ?? "en") as "en" | "hu" | "ro";
-    const date = formatIsoDateForLocale(String(item.expiry_date), lang);
+    const origin = getRequestOrigin(req);
+    const vehicleUrl = `${origin}/${lang}/vehicles/${vehicleId}`;
+    const templateItems = items
+      .map((it) => ({
+        type: String(it.type),
+        date: formatIsoDateForLocale(String(it.expiry_date), lang),
+      }))
+      .sort((a, b) => a.date.localeCompare(b.date));
+
     const tpl = expiryEmailTemplate(lang, {
       license_plate: String(veh.license_plate),
-      type: String(item.type),
-      date,
+      items: templateItems,
+      vehicleUrl,
     });
 
     const result = await resend.emails.send({
@@ -88,19 +105,30 @@ export async function POST(req: Request) {
       to: profile.email,
       subject: tpl.subject,
       text: tpl.text,
+      html: tpl.html,
     });
 
     if (result.error) continue;
 
-    if (item.kind === "14d") {
-      await admin.from("expiry_items").update({ notified_14d: true }).eq("id", item.id);
-    } else {
-      await admin.from("expiry_items").update({ notified_1d: true }).eq("id", item.id);
+    const ids14 = items.filter((x) => x.kind === "14d").map((x) => x.id);
+    const ids1 = items.filter((x) => x.kind === "1d").map((x) => x.id);
+    if (ids14.length > 0) {
+      await admin.from("expiry_items").update({ notified_14d: true }).in("id", ids14);
+    }
+    if (ids1.length > 0) {
+      await admin.from("expiry_items").update({ notified_1d: true }).in("id", ids1);
     }
 
     sent += 1;
   }
 
   return NextResponse.json({ ok: true, sent });
+}
+
+function getRequestOrigin(req: Request) {
+  const url = new URL(req.url);
+  const proto = req.headers.get("x-forwarded-proto") ?? url.protocol.replace(":", "") ?? "https";
+  const host = req.headers.get("x-forwarded-host") ?? req.headers.get("host") ?? url.host;
+  return `${proto}://${host}`;
 }
 

@@ -2,46 +2,309 @@ type Lang = "en" | "hu" | "ro";
 
 type TemplateVars = {
   license_plate: string;
-  type: string;
-  date: string;
+  items: Array<{
+    type: string;
+    date: string;
+  }>;
+  vehicleUrl?: string;
 };
 
-function interpolate(text: string, vars: TemplateVars) {
+function interpolate(
+  text: string,
+  vars: { license_plate: string; type: string; date: string },
+) {
   return text
     .replaceAll("{{license_plate}}", vars.license_plate)
     .replaceAll("{{type}}", vars.type)
     .replaceAll("{{date}}", vars.date);
 }
 
-export function expiryEmailTemplate(lang: Lang, vars: TemplateVars) {
+function escapeHtml(input: string) {
+  return input
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
+type EmailTemplate = {
+  subject: string;
+  text: string;
+  html: string;
+};
+
+function expiryEmailHtml(opts: {
+  subject: string;
+  intro: string;
+  labels: { vehicle: string; items: string; item: string; date: string };
+  vars: { license_plate: string; items: Array<{ type: string; date: string }> };
+  vehicleUrl?: string;
+  vehicleCtaLabel?: string;
+  footer: string;
+}) {
+  const licensePlate = escapeHtml(opts.vars.license_plate);
+  const safeItems = opts.vars.items.map((it) => ({
+    type: escapeHtml(it.type),
+    date: escapeHtml(it.date),
+  }));
+
+  const preheader = escapeHtml(opts.intro);
+  const vehicleUrl = opts.vehicleUrl ? escapeHtml(opts.vehicleUrl) : null;
+  const vehicleCtaLabel = escapeHtml(opts.vehicleCtaLabel ?? "Open vehicle");
+  const rows = safeItems
+    .map(
+      (it) => `
+                        <tr>
+                          <td style="padding:6px 0;font-size:13px;line-height:18px;color:#1c1917;font-weight:600;">${it.type}</td>
+                          <td align="right" style="padding:6px 0;font-size:13px;line-height:18px;color:#1c1917;font-weight:600;">${it.date}</td>
+                        </tr>`,
+    )
+    .join("");
+
+  return `<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="x-apple-disable-message-reformatting" />
+    <title>${escapeHtml(opts.subject)}</title>
+  </head>
+  <body style="margin:0;padding:0;background:#f7f7f6;color:#1c1917;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,'Apple Color Emoji','Segoe UI Emoji';">
+    <div style="display:none;max-height:0;overflow:hidden;opacity:0;color:transparent;">
+      ${preheader}
+    </div>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
+      <tr>
+        <td align="center" style="padding:24px 12px;">
+          <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="border-collapse:collapse;max-width:600px;width:100%;">
+            <tr>
+              <td style="padding:0 0 12px 0;">
+                <div style="font-size:14px;line-height:20px;color:#57534e;font-weight:600;letter-spacing:0.2px;">
+                  Vehicle Desk
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td style="background:#ffffff;border:1px solid #e7e5e4;border-radius:12px;padding:20px;">
+                <h1 style="margin:0 0 8px 0;font-size:18px;line-height:24px;color:#1c1917;">
+                  ${escapeHtml(opts.subject)}
+                </h1>
+                <p style="margin:0 0 16px 0;font-size:14px;line-height:20px;color:#44403c;">
+                  ${escapeHtml(opts.intro)}
+                </p>
+
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
+                  <tr>
+                    <td style="padding:10px 12px;border:1px solid #e7e5e4;border-radius:10px;background:#fafaf9;">
+                      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
+                        <tr>
+                          <td style="padding:6px 0;font-size:12px;line-height:16px;color:#78716c;">${escapeHtml(opts.labels.vehicle)}</td>
+                          <td align="right" style="padding:6px 0;font-size:13px;line-height:18px;color:#1c1917;font-weight:600;letter-spacing:0.3px;">${licensePlate}</td>
+                        </tr>
+                        <tr>
+                          <td style="padding:10px 0 6px 0;font-size:12px;line-height:16px;color:#78716c;">${escapeHtml(opts.labels.items)}</td>
+                          <td align="right" style="padding:10px 0 6px 0;font-size:12px;line-height:16px;color:#78716c;">${escapeHtml(opts.labels.date)}</td>
+                        </tr>
+                        ${rows}
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+
+                ${
+                  vehicleUrl
+                    ? `
+                <table role="presentation" cellpadding="0" cellspacing="0" style="border-collapse:collapse;margin:16px 0 0 0;">
+                  <tr>
+                    <td>
+                      <a href="${vehicleUrl}" style="display:inline-block;background:#1c1917;color:#ffffff;text-decoration:none;padding:10px 12px;border-radius:10px;font-size:13px;line-height:18px;font-weight:600;">
+                        ${vehicleCtaLabel}
+                      </a>
+                    </td>
+                  </tr>
+                </table>
+                <p style="margin:10px 0 0 0;font-size:12px;line-height:18px;color:#78716c;word-break:break-word;">
+                  ${vehicleUrl}
+                </p>`
+                    : ""
+                }
+
+                <p style="margin:16px 0 0 0;font-size:12px;line-height:18px;color:#78716c;">
+                  ${escapeHtml(opts.footer)}
+                </p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>`;
+}
+
+export function expiryEmailTemplate(lang: Lang, vars: TemplateVars): EmailTemplate {
   const key = lang === "hu" ? "hu" : lang === "ro" ? "ro" : "en";
+  const first = vars.items[0];
+  const primary = first
+    ? { type: first.type, date: first.date }
+    : { type: "", date: "" };
 
   if (key === "hu") {
+    const subject = `Közelgő lejáratok – ${vars.license_plate}`;
+    const textLines = vars.items.map(
+      (it) => `- ${it.type}: ${it.date}`,
+    );
+    const text = [
+      `A(z) ${vars.license_plate} rendszámú járműnél közeleg(nek) lejárat(ok):`,
+      ...textLines,
+      "",
+      "Beállításokban letilthatod az e-mail értesítéseket.",
+    ].join("\n");
     return {
-      subject: "Közelgő jármű lejárat",
-      text: interpolate(
-        "A(z) {{license_plate}} rendszámú jármű {{type}} {{date}} dátumon lejár.",
-        vars,
-      ),
+      subject,
+      text,
+      html: expiryEmailHtml({
+        subject,
+        intro: interpolate(
+          "A(z) {{license_plate}} járműnél közeleg a(z) {{type}} lejárata.",
+          { license_plate: vars.license_plate, ...primary },
+        ),
+        labels: { vehicle: "Jármű", items: "Tétel", item: "Tétel", date: "Lejárat" },
+        vars: { license_plate: vars.license_plate, items: vars.items },
+        vehicleUrl: vars.vehicleUrl,
+        vehicleCtaLabel: "Jármű megnyitása",
+        footer: "Ez egy automatikus értesítés a lejáratokról.",
+      }),
     };
   }
 
   if (key === "ro") {
+    const subject = `Expirări în curând – ${vars.license_plate}`;
+    const textLines = vars.items.map((it) => `- ${it.type}: ${it.date}`);
+    const text = [
+      `Vehiculul ${vars.license_plate} are următoarele elemente care expiră:`,
+      ...textLines,
+      "",
+      "Poți dezactiva aceste email-uri în Setări.",
+    ].join("\n");
     return {
-      subject: "Expirare vehicul în curând",
-      text: interpolate(
-        "Vehiculul {{license_plate}} are {{type}} care expiră la data de {{date}}.",
-        vars,
-      ),
+      subject,
+      text,
+      html: expiryEmailHtml({
+        subject,
+        intro: interpolate(
+          "Vehiculul {{license_plate}} are {{type}} care expiră în curând.",
+          { license_plate: vars.license_plate, ...primary },
+        ),
+        labels: {
+          vehicle: "Vehicul",
+          items: "Element",
+          item: "Element",
+          date: "Data expirării",
+        },
+        vars: { license_plate: vars.license_plate, items: vars.items },
+        vehicleUrl: vars.vehicleUrl,
+        vehicleCtaLabel: "Deschide vehiculul",
+        footer: "Aceasta este o notificare automată despre expirări.",
+      }),
     };
   }
 
+  const subject = `Upcoming expiries – ${vars.license_plate}`;
+  const textLines = vars.items.map((it) => `- ${it.type}: ${it.date}`);
+  const text = [
+    `Your vehicle ${vars.license_plate} has upcoming expiries:`,
+    ...textLines,
+    "",
+    "You can disable these emails in Settings.",
+  ].join("\n");
   return {
-    subject: "Upcoming vehicle expiry",
-    text: interpolate(
-      "Your vehicle {{license_plate}} has {{type}} expiring on {{date}}.",
-      vars,
-    ),
+    subject,
+    text,
+    html: expiryEmailHtml({
+      subject,
+      intro: interpolate(
+        "{{type}} is coming due soon for {{license_plate}}.",
+        { license_plate: vars.license_plate, ...primary },
+      ),
+      labels: { vehicle: "Vehicle", items: "Item", item: "Item", date: "Expiry date" },
+      vars: { license_plate: vars.license_plate, items: vars.items },
+      vehicleUrl: vars.vehicleUrl,
+      vehicleCtaLabel: "Open vehicle",
+      footer: "This is an automated reminder about upcoming expiries.",
+    }),
   };
+}
+
+export function inviteEmailTemplate(args: {
+  toEmail: string;
+  signupUrl: string;
+  lang: "en" | "hu" | "ro";
+}) {
+  const key = args.lang === "hu" ? "hu" : args.lang === "ro" ? "ro" : "en";
+  const subject =
+    key === "hu"
+      ? "Meghívó a Vehicle Desk alkalmazáshoz"
+      : key === "ro"
+        ? "Invitație la Vehicle Desk"
+        : "You’re invited to Vehicle Desk";
+  const safeUrl = escapeHtml(args.signupUrl);
+  const text =
+    key === "hu"
+      ? `Meghívást kaptál a Vehicle Desk alkalmazáshoz.\n\nFiók létrehozása:\n${args.signupUrl}\n`
+      : key === "ro"
+        ? `Ai fost invitat(ă) la Vehicle Desk.\n\nCreează-ți contul aici:\n${args.signupUrl}\n`
+        : `You’ve been invited to Vehicle Desk.\n\nCreate your account here:\n${args.signupUrl}\n`;
+  const intro =
+    key === "hu"
+      ? "Hozd létre a fiókodat az alábbi linkkel."
+      : key === "ro"
+        ? "Creează-ți contul folosind linkul de mai jos."
+        : "Create your account using the link below.";
+  const cta =
+    key === "hu" ? "Fiók létrehozása" : key === "ro" ? "Creează cont" : "Create account";
+
+  const html = `<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="x-apple-disable-message-reformatting" />
+    <title>${escapeHtml(subject)}</title>
+  </head>
+  <body style="margin:0;padding:0;background:#f7f7f6;color:#1c1917;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
+      <tr>
+        <td align="center" style="padding:24px 12px;">
+          <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="border-collapse:collapse;max-width:600px;width:100%;">
+            <tr>
+              <td style="padding:0 0 12px 0;">
+                <div style="font-size:14px;line-height:20px;color:#57534e;font-weight:600;letter-spacing:0.2px;">
+                  Vehicle Desk
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td style="background:#ffffff;border:1px solid #e7e5e4;border-radius:12px;padding:20px;">
+                <h1 style="margin:0 0 8px 0;font-size:18px;line-height:24px;color:#1c1917;">
+                  ${escapeHtml(subject)}
+                </h1>
+                <p style="margin:0 0 16px 0;font-size:14px;line-height:20px;color:#44403c;">
+                  ${escapeHtml(intro)}
+                </p>
+                <a href="${safeUrl}" style="display:inline-block;background:#1c1917;color:#ffffff;text-decoration:none;padding:10px 12px;border-radius:10px;font-size:13px;line-height:18px;font-weight:600;">
+                  ${escapeHtml(cta)}
+                </a>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>`;
+
+  return { subject, text, html };
 }
 

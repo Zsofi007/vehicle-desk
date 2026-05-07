@@ -59,6 +59,7 @@ export async function getExpiryItemsForVehicle(
     .from("expiry_items")
     .select("*")
     .eq("vehicle_id", vehicleId)
+    .order("is_active", { ascending: false })
     .order("expiry_date", { ascending: false });
 
   if (error) throw error;
@@ -94,6 +95,7 @@ export async function getUpcomingExpiriesForUser(
     `,
     )
     .in("vehicle_id", ids)
+    .eq("is_active", true)
     .gte("expiry_date", today)
     .lte("expiry_date", end)
     .order("expiry_date", { ascending: true });
@@ -148,6 +150,7 @@ export async function getAlertsForUser(userId: string): Promise<
     `,
     )
     .in("vehicle_id", ids)
+    .eq("is_active", true)
     .order("expiry_date", { ascending: true });
 
   if (error) throw error;

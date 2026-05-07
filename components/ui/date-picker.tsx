@@ -44,6 +44,7 @@ export function DatePicker({
   const [open, setOpen] = useState(false);
   const locale = useLocale();
   const dfLocale = localeForDayPicker(locale);
+  const currentYear = new Date().getFullYear();
 
   const selected = useMemo(() => ymdToDate(value), [value]);
 
@@ -72,7 +73,7 @@ export function DatePicker({
           </Button>
         </PopoverTrigger>
         <PopoverContent
-          className="w-auto max-h-none overflow-visible p-0"
+          className="w-auto p-0"
           align="start"
           sideOffset={6}
         >
@@ -80,6 +81,10 @@ export function DatePicker({
             mode="single"
             selected={selected}
             defaultMonth={selected}
+            fixedWeeks
+            captionLayout="dropdown"
+            fromYear={currentYear}
+            toYear={currentYear + 20}
             onSelect={(d) => {
               if (!d) return;
               onChange(format(d, "yyyy-MM-dd"));

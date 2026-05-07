@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Fleet Manager | Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed": "#dfe2ed",
+                        "surface-container-low": "#f5f3f4",
+                        "secondary": "#5b5e67",
+                        "on-tertiary-container": "#a38c6a",
+                        "on-secondary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "on-primary-fixed-variant": "#3c475a",
+                        "primary-fixed-dim": "#bcc7de",
+                        "on-tertiary-fixed": "#271902",
+                        "background": "#fbf8fa",
+                        "surface-container-lowest": "#ffffff",
+                        "on-surface-variant": "#45474c",
+                        "on-primary-fixed": "#111c2d",
+                        "on-background": "#1b1b1d",
+                        "surface-tint": "#545f73",
+                        "on-secondary-fixed": "#181c23",
+                        "surface-container-high": "#eae7e9",
+                        "tertiary-fixed-dim": "#ddc39d",
+                        "on-error": "#ffffff",
+                        "tertiary-fixed": "#fadfb8",
+                        "surface-variant": "#e4e2e3",
+                        "on-secondary-fixed-variant": "#43474f",
+                        "surface-dim": "#dcd9db",
+                        "surface-container-highest": "#e4e2e3",
+                        "error-container": "#ffdad6",
+                        "secondary-fixed-dim": "#c3c6d1",
+                        "primary": "#091426",
+                        "secondary-container": "#dfe2ed",
+                        "on-tertiary": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "outline-variant": "#c5c6cd",
+                        "surface-container": "#f0edef",
+                        "surface-bright": "#fbf8fa",
+                        "inverse-on-surface": "#f3f0f2",
+                        "on-tertiary-fixed-variant": "#564427",
+                        "primary-fixed": "#d8e3fb",
+                        "tertiary-container": "#35260c",
+                        "on-error-container": "#93000a",
+                        "on-primary-container": "#8590a6",
+                        "outline": "#75777d",
+                        "tertiary": "#1e1200",
+                        "on-secondary-container": "#61646d",
+                        "inverse-primary": "#bcc7de",
+                        "primary-container": "#1e293b",
+                        "surface": "#fbf8fa",
+                        "inverse-surface": "#303032",
+                        "on-surface": "#1b1b1d"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "xxl": "48px",
+                        "sm": "8px",
+                        "xxxl": "64px",
+                        "lg": "24px",
+                        "xs": "4px",
+                        "md": "16px",
+                        "xl": "32px"
+                    },
+                    "fontFamily": {
+                        "display": ["Inter"],
+                        "h3": ["Inter"],
+                        "h2": ["Inter"],
+                        "label-md": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "h1": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "display": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "h3": ["20px", {"lineHeight": "28px", "letterSpacing": "0", "fontWeight": "600"}],
+                        "h2": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600"}],
+                        "h1": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "letterSpacing": "0", "fontWeight": "400"}],
+                        "body-sm": ["14px", {"lineHeight": "20px", "letterSpacing": "0", "fontWeight": "400"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "letterSpacing": "0", "fontWeight": "400"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background font-body-md text-on-background antialiased">
+<!-- Shared SideNavBar -->
+<aside class="h-screen w-64 fixed left-0 top-0 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex flex-col py-6">
+<div class="px-6 mb-8 flex items-center gap-3">
+<div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-lg">directions_car</span>
+</div>
+<div>
+<h1 class="text-lg font-bold tracking-tight text-slate-900 dark:text-white leading-none">Fleet Manager</h1>
+<p class="text-[10px] uppercase tracking-wider text-slate-500 font-bold">SaaS Platform</p>
+</div>
+</div>
+<nav class="flex-1 space-y-1">
+<div class="bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white border-r-2 border-slate-900 dark:border-slate-100 px-6 py-3 flex items-center gap-3 cursor-pointer active:opacity-80 transition-colors duration-200">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-label-md">Dashboard</span>
+</div>
+<div class="text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 px-6 py-3 flex items-center gap-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer active:opacity-80 transition-colors duration-200">
+<span class="material-symbols-outlined" data-icon="directions_car">directions_car</span>
+<span class="font-label-md">Vehicles</span>
+</div>
+<div class="text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 px-6 py-3 flex items-center gap-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer active:opacity-80 transition-colors duration-200">
+<span class="material-symbols-outlined" data-icon="build">build</span>
+<span class="font-label-md">Maintenance</span>
+</div>
+<div class="text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 px-6 py-3 flex items-center gap-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer active:opacity-80 transition-colors duration-200">
+<span class="material-symbols-outlined" data-icon="notifications_active">notifications_active</span>
+<span class="font-label-md">Alerts</span>
+</div>
+</nav>
+<div class="mt-auto pt-6 border-t border-slate-100 dark:border-slate-800 space-y-1">
+<div class="text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 px-6 py-3 flex items-center gap-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer transition-colors duration-200">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-label-md">Settings</span>
+</div>
+<div class="text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 px-6 py-3 flex items-center gap-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer transition-colors duration-200">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span class="font-label-md">Logout</span>
+</div>
+</div>
+</aside>
+<!-- Main Canvas Area -->
+<main class="ml-64 min-h-screen">
+<!-- Shared TopNavBar -->
+<header class="sticky top-0 w-full z-40 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm dark:shadow-none flex items-center justify-between px-8 py-3 h-16">
+<div class="flex-1 max-w-md">
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-slate-50 border-0 rounded text-body-sm focus:ring-1 focus:ring-slate-400 transition-all outline-none" placeholder="Search vehicles, VINs, or tasks..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-4 text-slate-500">
+<button class="hover:text-slate-900 dark:hover:text-white transition-all">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="hover:text-slate-900 dark:hover:text-white transition-all flex items-center gap-1">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+<span class="font-label-sm">Support</span>
+</button>
+</div>
+<div class="h-8 w-px bg-slate-200"></div>
+<div class="flex items-center gap-3 cursor-pointer group">
+<div class="text-right">
+<p class="font-label-md text-on-background leading-none">Alex Rivera</p>
+<p class="text-[10px] text-slate-500 font-medium">Fleet Admin</p>
+</div>
+<img alt="User Profile" class="w-8 h-8 rounded-full object-cover border border-slate-200" data-alt="portrait of a professional man in a clean studio setting with neutral lighting and sharp focus" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB8zn0wHkmy2-7AGk8H8aiUJxyIPlGX9eXwALVudI_NtQjwpWQa-bOSdhKYK2io-RlihpTLKgUbZJJ2gskn3u5xhQGK1MbKoM2AN8gmguehyXV3-dgK-3XA0OzuyqVFFv2qwbvuwGjxNBnC5krLZn-0xAyKSmx3XIeueGoxhl1ZntPDuDi2hPUUwtCjGCXPH5ANYGBCMIDhVTS6tEduf4PHcN3POJPBDXEKnHGycJw05gDjujMi6YwRLIh6HTpSMSGSBxwVfZQpIqhp"/>
+</div>
+</div>
+</header>
+<!-- Content Body -->
+<div class="max-w-7xl mx-auto p-8">
+<!-- Dashboard Header -->
+<div class="flex justify-between items-end mb-8">
+<div>
+<h2 class="font-h1 text-primary mb-1">Fleet Overview</h2>
+<p class="text-body-md text-secondary">Real-time status of your vehicle maintenance ecosystem.</p>
+</div>
+<button class="bg-primary text-white px-6 py-2.5 rounded font-label-md flex items-center gap-2 hover:bg-slate-800 transition-colors shadow-sm active:scale-[0.98]">
+<span class="material-symbols-outlined text-sm">add</span>
+                    Add Vehicle
+                </button>
+</div>
+<!-- Bento Overview Cards -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-lg mb-xl">
+<!-- Total Vehicles Card -->
+<div class="bg-white border border-slate-200 p-lg flex flex-col justify-between group hover:border-slate-300 transition-all shadow-sm">
+<div class="flex justify-between items-start mb-4">
+<div class="w-12 h-12 bg-primary-fixed flex items-center justify-center rounded">
+<span class="material-symbols-outlined text-on-primary-fixed" data-icon="directions_car">directions_car</span>
+</div>
+<span class="text-slate-400 material-symbols-outlined">more_vert</span>
+</div>
+<div>
+<p class="text-label-sm text-secondary uppercase tracking-wider mb-1">Total Vehicles</p>
+<h3 class="font-display text-primary">124</h3>
+<p class="text-body-sm text-on-tertiary-container flex items-center gap-1 mt-2">
+<span class="material-symbols-outlined text-sm">arrow_upward</span>
+<span>4 from last month</span>
+</p>
+</div>
+</div>
+<!-- Expiring Soon Card -->
+<div class="bg-white border border-slate-200 p-lg flex flex-col justify-between group hover:border-slate-300 transition-all shadow-sm">
+<div class="flex justify-between items-start mb-4">
+<div class="w-12 h-12 bg-error-container flex items-center justify-center rounded">
+<span class="material-symbols-outlined text-on-error-container" data-icon="event_busy">event_busy</span>
+</div>
+<span class="text-slate-400 material-symbols-outlined">more_vert</span>
+</div>
+<div>
+<p class="text-label-sm text-secondary uppercase tracking-wider mb-1">Expiring Soon</p>
+<h3 class="font-display text-primary">8</h3>
+<p class="text-body-sm text-error flex items-center gap-1 mt-2 font-medium">
+                            Requires immediate action
+                        </p>
+</div>
+</div>
+<!-- Recently Added Card -->
+<div class="bg-white border border-slate-200 p-lg flex flex-col justify-between group hover:border-slate-300 transition-all shadow-sm">
+<div class="flex justify-between items-start mb-4">
+<div class="w-12 h-12 bg-secondary-container flex items-center justify-center rounded">
+<span class="material-symbols-outlined text-on-secondary-container" data-icon="new_releases">new_releases</span>
+</div>
+<span class="text-slate-400 material-symbols-outlined">more_vert</span>
+</div>
+<div>
+<p class="text-label-sm text-secondary uppercase tracking-wider mb-1">Recently Added</p>
+<h3 class="font-display text-primary">12</h3>
+<p class="text-body-sm text-secondary flex items-center gap-1 mt-2">
+                            Last 30 days
+                        </p>
+</div>
+</div>
+</div>
+<!-- Alerts & Main List Section -->
+<div class="grid grid-cols-1 gap-xl">
+<div class="bg-white border border-slate-200 shadow-sm overflow-hidden">
+<div class="px-8 py-6 border-b border-slate-100 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-on-secondary-container">warning</span>
+<h3 class="font-h2 text-primary">Maintenance Alerts</h3>
+</div>
+<button class="text-label-sm text-primary hover:underline">View all alerts</button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead class="bg-surface-container-low">
+<tr>
+<th class="px-8 py-4 text-label-sm text-secondary uppercase tracking-wider">Item Type</th>
+<th class="px-8 py-4 text-label-sm text-secondary uppercase tracking-wider">Vehicle</th>
+<th class="px-8 py-4 text-label-sm text-secondary uppercase tracking-wider">Expiration Date</th>
+<th class="px-8 py-4 text-label-sm text-secondary uppercase tracking-wider">Status</th>
+<th class="px-8 py-4 text-label-sm text-secondary uppercase tracking-wider text-right">Action</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-100">
+<!-- Row 1: Expired -->
+<tr class="hover:bg-slate-50 transition-colors">
+<td class="px-8 py-4">
+<div class="flex items-center gap-3">
+<div class="p-2 bg-slate-50 rounded">
+<span class="material-symbols-outlined text-primary text-lg">description</span>
+</div>
+<span class="font-label-md text-on-background">Annual Inspection</span>
+</div>
+</td>
+<td class="px-8 py-4">
+<span class="text-body-sm text-secondary">Ford Transit (TX-2092)</span>
+</td>
+<td class="px-8 py-4">
+<span class="text-body-sm text-error font-medium">Oct 12, 2023</span>
+</td>
+<td class="px-8 py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded text-[11px] font-bold uppercase bg-error-container text-on-error-container">
+                                            Expired
+                                        </span>
+</td>
+<td class="px-8 py-4 text-right">
+<button class="text-primary hover:text-slate-700 font-label-sm underline">Renew Now</button>
+</td>
+</tr>
+<!-- Row 2: Warning -->
+<tr class="hover:bg-slate-50 transition-colors">
+<td class="px-8 py-4">
+<div class="flex items-center gap-3">
+<div class="p-2 bg-slate-50 rounded">
+<span class="material-symbols-outlined text-primary text-lg">security</span>
+</div>
+<span class="font-label-md text-on-background">Insurance Renewal</span>
+</div>
+</td>
+<td class="px-8 py-4">
+<span class="text-body-sm text-secondary">Tesla Model 3 (EL-0041)</span>
+</td>
+<td class="px-8 py-4">
+<span class="text-body-sm text-on-background font-medium">Nov 28, 2023</span>
+</td>
+<td class="px-8 py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded text-[11px] font-bold uppercase bg-tertiary-fixed text-on-tertiary-fixed-variant">
+                                            Warning
+                                        </span>
+</td>
+<td class="px-8 py-4 text-right">
+<button class="text-primary hover:text-slate-700 font-label-sm underline">Update Policy</button>
+</td>
+</tr>
+<!-- Row 3: Normal -->
+<tr class="hover:bg-slate-50 transition-colors">
+<td class="px-8 py-4">
+<div class="flex items-center gap-3">
+<div class="p-2 bg-slate-50 rounded">
+<span class="material-symbols-outlined text-primary text-lg">local_shipping</span>
+</div>
+<span class="font-label-md text-on-background">Vignette (E-Toll)</span>
+</div>
+</td>
+<td class="px-8 py-4">
+<span class="text-body-sm text-secondary">Freightliner M2 (HD-881)</span>
+</td>
+<td class="px-8 py-4">
+<span class="text-body-sm text-on-background font-medium">Jan 15, 2024</span>
+</td>
+<td class="px-8 py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded text-[11px] font-bold uppercase bg-primary-fixed text-on-primary-fixed-variant">
+                                            Normal
+                                        </span>
+</td>
+<td class="px-8 py-4 text-right">
+<button class="text-primary hover:text-slate-700 font-label-sm underline">Details</button>
+</td>
+</tr>
+<!-- Row 4: Normal -->
+<tr class="hover:bg-slate-50 transition-colors">
+<td class="px-8 py-4">
+<div class="flex items-center gap-3">
+<div class="p-2 bg-slate-50 rounded">
+<span class="material-symbols-outlined text-primary text-lg">build</span>
+</div>
+<span class="font-label-md text-on-background">Scheduled Oil Change</span>
+</div>
+</td>
+<td class="px-8 py-4">
+<span class="text-body-sm text-secondary">Ford Transit (TX-2088)</span>
+</td>
+<td class="px-8 py-4">
+<span class="text-body-sm text-on-background font-medium">Dec 02, 2023</span>
+</td>
+<td class="px-8 py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded text-[11px] font-bold uppercase bg-primary-fixed text-on-primary-fixed-variant">
+                                            Normal
+                                        </span>
+</td>
+<td class="px-8 py-4 text-right">
+<button class="text-primary hover:text-slate-700 font-label-sm underline">Log Task</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Secondary Bento Grid for Details -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-lg">
+<div class="bg-white border border-slate-200 p-8 shadow-sm">
+<div class="flex items-center justify-between mb-6">
+<h4 class="font-h3 text-primary">Service Utilization</h4>
+<span class="material-symbols-outlined text-slate-400">equalizer</span>
+</div>
+<div class="space-y-6">
+<div>
+<div class="flex justify-between mb-2">
+<span class="text-label-md text-secondary">Active Services</span>
+<span class="text-label-md font-bold text-primary">82%</span>
+</div>
+<div class="w-full bg-slate-100 h-2">
+<div class="bg-primary h-2" style="width: 82%"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between mb-2">
+<span class="text-label-md text-secondary">Maintenance Compliance</span>
+<span class="text-label-md font-bold text-primary">94%</span>
+</div>
+<div class="w-full bg-slate-100 h-2">
+<div class="bg-primary h-2" style="width: 94%"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-white border border-slate-200 p-8 shadow-sm relative overflow-hidden">
+<div class="relative z-10">
+<h4 class="font-h3 text-primary mb-4">Quick Insights</h4>
+<ul class="space-y-4">
+<li class="flex gap-3">
+<div class="w-1 bg-on-tertiary-container rounded-full"></div>
+<p class="text-body-sm text-secondary">Fleet average age: <span class="font-bold text-primary">3.2 Years</span></p>
+</li>
+<li class="flex gap-3">
+<div class="w-1 bg-on-tertiary-container rounded-full"></div>
+<p class="text-body-sm text-secondary">Predicted monthly spend: <span class="font-bold text-primary">$4,200</span></p>
+</li>
+<li class="flex gap-3">
+<div class="w-1 bg-on-tertiary-container rounded-full"></div>
+<p class="text-body-sm text-secondary">Vehicles idle: <span class="font-bold text-primary">12</span></p>
+</li>
+</ul>
+</div>
+<div class="absolute -right-4 -bottom-4 opacity-10">
+<span class="material-symbols-outlined text-[120px]" style="font-variation-settings: 'FILL' 1;">analytics</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

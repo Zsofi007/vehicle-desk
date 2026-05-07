@@ -1,7 +1,9 @@
-import { getCurrentUserWithRole, requireAuth } from "@/lib/auth";
+import { getCurrentUserWithRole, getPreferredLocaleForUser, requireAuth } from "@/lib/auth";
 import type { AppLocale } from "@/lib/i18n";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getTranslations } from "next-intl/server";
 import { Car, LayoutDashboard, Settings, Shield } from "lucide-react";
+import { redirect } from "@/lib/navigation";
 
 import { AppSidebar, type AppNavItem } from "@/components/AppSidebar";
 import { AddVehicleFab } from "@/components/AddVehicleFab";
@@ -26,13 +28,26 @@ function icon(kind: "dashboard" | "vehicles" | "admin" | "settings") {
 export default async function AppSectionLayout({ children, params }: Props) {
   const { locale: loc } = await params;
   const locale = loc as AppLocale;
-  await requireAuth(locale);
+  const user = await requireAuth(locale);
+  const preferred = await getPreferredLocaleForUser(user.id);
+  if (preferred && preferred !== locale) {
+    // Ensure the UI locale matches the user's preference (e.g. default 'ro' for new users).
+    redirect({ href: "/dashboard", locale: preferred });
+  }
   const current = await getCurrentUserWithRole();
 
   const tNav = await getTranslations("nav");
   const tCommon = await getTranslations("common");
   const tAria = await getTranslations("aria");
   const tVeh = await getTranslations("vehicles");
+
+  const supabase = await createSupabaseServerClient();
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("company_name")
+    .eq("id", user.id)
+    .maybeSingle();
+  const companySubtitle = String(profile?.company_name ?? "").trim();
 
   const items: AppNavItem[] = [
     { href: "/dashboard", label: tNav("dashboard"), icon: icon("dashboard") },
@@ -53,7 +68,7 @@ export default async function AppSectionLayout({ children, params }: Props) {
         <AppSidebar
           locale={locale}
           title={tCommon("appName")}
-          subtitle="SaaS Platform"
+          subtitle={companySubtitle || tCommon("appName")}
           items={items}
         />
       </aside>
@@ -67,7 +82,7 @@ export default async function AppSectionLayout({ children, params }: Props) {
                   <AppSidebar
                     locale={locale}
                     title={tCommon("appName")}
-                    subtitle="SaaS Platform"
+                    subtitle={companySubtitle || tCommon("appName")}
                     items={items}
                   />
                   <div className="border-t border-slate-200 p-4">

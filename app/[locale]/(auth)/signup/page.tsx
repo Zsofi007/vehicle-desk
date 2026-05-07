@@ -23,7 +23,7 @@ export default async function SignupPage({ params }: Props) {
           </h1>
           <p className="mt-2 text-sm text-stone-600">{t("signupSubtitle")}</p>
         </div>
-        <LanguageSwitcher ariaLabel={tNav("language")} />
+        <LanguageSwitcher ariaLabel={tNav("language")} persistPreference={false} />
       </div>
       <SignupForm locale={locale} />
     </div>

@@ -40,7 +40,8 @@ export function Calendar({
         ...formatters,
       }}
       classNames={{
-        root: cn("w-fit", defaultClassNames.root),
+        // Keep a consistent popover height when navigating months.
+        root: cn("w-fit min-h-[19rem]", defaultClassNames.root),
         months: cn("relative flex flex-col gap-4", defaultClassNames.months),
         month: cn("flex w-full flex-col gap-4", defaultClassNames.month),
         nav: cn(

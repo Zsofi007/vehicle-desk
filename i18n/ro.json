@@ -34,6 +34,11 @@
   "settings": {
     "title": "Setări",
     "subtitle": "Gestionează limba și notificările.",
+    "companyTitle": "Companie",
+    "companyLabel": "Numele companiei",
+    "companyPlaceholder": "ex. Acme Logistics SRL",
+    "companySave": "Salvează",
+    "companySaved": "Salvat",
     "languageTitle": "Limbă",
     "languageLabel": "Limba preferată",
     "notificationsTitle": "Notificări",
@@ -44,6 +49,8 @@
   },
   "auth": {
     "email": "E-mail",
+    "companyName": "Numele companiei",
+    "companyNamePlaceholder": "Opțional",
     "inviteToken": "Token invitație",
     "password": "Parolă",
     "confirmPassword": "Confirmă parola",
@@ -140,6 +147,7 @@
   "expiry": {
     "title": "Termene și reînnoiri",
     "empty": "Încă nu există poziții de reînnoire.",
+    "inactive": "Inactiv",
     "type": "Tip",
     "type_itp": "ITP",
     "type_rca": "RCA",

@@ -2,6 +2,7 @@
 
 import { useId, useMemo, useState } from "react";
 import { useFormStatus } from "react-dom";
+import { useSearchParams } from "next/navigation";
 
 import type { AppLocale } from "@/lib/i18n";
 import { Link, useRouter } from "@/lib/navigation";
@@ -27,12 +28,18 @@ function Submit({ label, disabled }: { label: string; disabled?: boolean }) {
 
 export function SignupForm({ locale }: Props) {
   const t = useTranslations("auth");
+  const tCommon = useTranslations("common");
   const tNav = useTranslations("nav");
   const te = useTranslations("errors");
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const initialEmail = searchParams.get("email") ?? "";
+  const initialToken = searchParams.get("token") ?? "";
+  const [email, setEmail] = useState(initialEmail);
+  const [companyName, setCompanyName] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [inviteToken, setInviteToken] = useState("");
+  const [inviteToken, setInviteToken] = useState(initialToken);
   const confirmHintId = useId();
   const reqHintId = useId();
   const [error, setError] = useState<string | null>(null);
@@ -54,13 +61,14 @@ export function SignupForm({ locale }: Props) {
         setError(null);
         const fd = new FormData(e.currentTarget);
         const email = String(fd.get("email") ?? "");
+        const companyName = String(fd.get("companyName") ?? "");
         const pwd = String(fd.get("password") ?? "");
         const token = String(fd.get("inviteToken") ?? "");
 
         const res = await fetch("/api/auth/signup", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, password: pwd, token }),
+          body: JSON.stringify({ email, password: pwd, token, companyName }),
         });
 
         if (!res.ok) {
@@ -88,6 +96,27 @@ export function SignupForm({ locale }: Props) {
           autoComplete="email"
           required
           className="rounded-md border border-stone-300 px-3 py-2 text-stone-900 shadow-sm"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+      </div>
+
+      <div className="grid gap-2">
+        <label htmlFor="su-company" className="text-sm font-medium text-stone-800">
+          {t("companyName")}{" "}
+          <span className="text-xs font-normal text-stone-500">
+            ({tCommon("optional")})
+          </span>
+        </label>
+        <input
+          id="su-company"
+          name="companyName"
+          type="text"
+          autoComplete="organization"
+          className="rounded-md border border-stone-300 px-3 py-2 text-stone-900 shadow-sm"
+          placeholder={t("companyNamePlaceholder")}
+          value={companyName}
+          onChange={(e) => setCompanyName(e.target.value)}
         />
       </div>
 

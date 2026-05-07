@@ -9,6 +9,7 @@ const bodySchema = z.object({
   email: z.string().email(),
   password: z.string().min(8).regex(/\d/),
   token: z.string().min(10),
+  companyName: z.string().trim().max(120).optional(),
 });
 
 function genericError() {
@@ -25,6 +26,9 @@ export async function POST(req: Request) {
   const email = parsed.data.email.trim().toLowerCase();
   const password = parsed.data.password;
   const tokenHash = hashInviteToken(parsed.data.token.trim());
+  const companyNameRaw = parsed.data.companyName;
+  const company_name =
+    companyNameRaw && companyNameRaw.length > 0 ? companyNameRaw : null;
 
   const admin = createSupabaseAdminClient();
   const { data: invite, error: inviteError } = await admin
@@ -61,6 +65,7 @@ export async function POST(req: Request) {
       id: created.user.id,
       email,
       role,
+      company_name,
     });
   }
 

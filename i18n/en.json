@@ -34,6 +34,11 @@
   "settings": {
     "title": "Settings",
     "subtitle": "Manage language and notifications.",
+    "companyTitle": "Company",
+    "companyLabel": "Company name",
+    "companyPlaceholder": "e.g. Acme Logistics SRL",
+    "companySave": "Save",
+    "companySaved": "Saved",
     "languageTitle": "Language",
     "languageLabel": "Preferred language",
     "notificationsTitle": "Notifications",
@@ -44,6 +49,8 @@
   },
   "auth": {
     "email": "Email",
+    "companyName": "Company name",
+    "companyNamePlaceholder": "Optional",
     "inviteToken": "Invite token",
     "password": "Password",
     "confirmPassword": "Confirm password",
@@ -140,6 +147,7 @@
   "expiry": {
     "title": "Expiry & renewals",
     "empty": "No renewal items yet.",
+    "inactive": "Inactive",
     "type": "Type",
     "type_itp": "ITP",
     "type_rca": "RCA",
