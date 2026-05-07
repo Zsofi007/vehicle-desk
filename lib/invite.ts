@@ -6,6 +6,7 @@ export type InviteRow = {
   id: string;
   email: string;
   token: string;
+  organization_id?: string | null;
   expires_at: string;
   used: boolean;
   created_at: string;

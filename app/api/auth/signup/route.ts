@@ -16,11 +16,16 @@ function genericError() {
   return NextResponse.json({ error: "invalid" }, { status: 400 });
 }
 
+function debugError(reason: string) {
+  if (process.env.NODE_ENV === "production") return genericError();
+  return NextResponse.json({ error: "invalid", reason }, { status: 400 });
+}
+
 export async function POST(req: Request) {
   const json = await req.json().catch(() => null);
   const parsed = bodySchema.safeParse(json);
   if (!parsed.success) {
-    return genericError();
+    return debugError("validation");
   }
 
   const email = parsed.data.email.trim().toLowerCase();
@@ -37,17 +42,47 @@ export async function POST(req: Request) {
     .eq("token", tokenHash)
     .maybeSingle();
 
-  if (inviteError || !invite) return genericError();
-  if (invite.used) return genericError();
-  if (String(invite.email).trim().toLowerCase() !== email) return genericError();
-  if (new Date(invite.expires_at).getTime() <= Date.now()) return genericError();
+  if (inviteError) return debugError("invite_lookup_failed");
+  if (!invite) return debugError("invite_not_found");
+  if (invite.used) return debugError("invite_used");
+  if (String(invite.email).trim().toLowerCase() !== email) return debugError("invite_email_mismatch");
+  if (new Date(invite.expires_at).getTime() <= Date.now()) return debugError("invite_expired");
 
   const { data: created, error: createError } = await admin.auth.admin.createUser({
     email,
     password,
     email_confirm: true,
   });
-  if (createError) return genericError();
+  if (createError) return debugError(`create_user_failed:${createError.message}`);
+
+  const userId = created?.user?.id ?? null;
+  if (!userId) return debugError("create_user_missing_id");
+
+  const inviteOrgId = invite.organization_id ? String(invite.organization_id) : null;
+
+  // If the invite targets an existing organization, join it as a member.
+  // Otherwise, create a default org for the new user (id = user id) and make them the owner.
+  const organizationId = inviteOrgId ?? userId;
+
+  if (!inviteOrgId) {
+    const orgName =
+      company_name && String(company_name).trim().length > 0
+        ? String(company_name).trim()
+        : email.split("@")[0] || email;
+
+    const { error: orgError } = await admin.from("organizations").insert({
+      id: organizationId,
+      name: orgName,
+    });
+    if (orgError) return debugError(`create_org_failed:${orgError.message}`);
+  }
+
+  const { error: memError } = await admin.from("organization_members").insert({
+    organization_id: organizationId,
+    user_id: userId,
+    role: inviteOrgId ? "member" : "owner",
+  });
+  if (memError) return debugError(`create_membership_failed:${memError.message}`);
 
   // Create profile with default role. Safeguards:
   // - If ADMIN_EMAIL is set and matches, user becomes admin.
@@ -60,14 +95,14 @@ export async function POST(req: Request) {
     .eq("role", "admin");
 
   const role = isAdminEmail || (adminCount ?? 0) === 0 ? "admin" : "user";
-  if (created?.user?.id) {
-    await admin.from("profiles").insert({
-      id: created.user.id,
-      email,
-      role,
-      company_name,
-    });
-  }
+  const { error: profileError } = await admin.from("profiles").insert({
+    id: userId,
+    email,
+    role,
+    company_name,
+    active_organization_id: organizationId,
+  });
+  if (profileError) return debugError(`create_profile_failed:${profileError.message}`);
 
   // Consume invite (best-effort, but prevents reuse under normal circumstances).
   await admin

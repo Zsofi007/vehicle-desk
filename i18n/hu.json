@@ -29,7 +29,8 @@
     "login": "Bejelentkezés",
     "signup": "Regisztráció",
     "logout": "Kijelentkezés",
-    "language": "Nyelv"
+    "language": "Nyelv",
+    "organization": "Szervezet"
   },
   "settings": {
     "title": "Beállítások",
@@ -39,6 +40,16 @@
     "companyPlaceholder": "pl. Acme Logistics Kft.",
     "companySave": "Mentés",
     "companySaved": "Mentve",
+    "membersTitle": "Tagok",
+    "membersEmail": "E-mail",
+    "membersRole": "Szerepkör",
+    "membersYou": "te",
+    "orgRole_owner": "Tulajdonos",
+    "orgRole_admin": "Admin",
+    "orgRole_member": "Tag",
+    "orgOverviewTitle": "Szervezetek",
+    "orgOverviewOrg": "Szervezet",
+    "orgOverviewOwners": "Tulajdonos(ok)",
     "languageTitle": "Nyelv",
     "languageLabel": "Preferált nyelv",
     "notificationsTitle": "Értesítések",
@@ -46,6 +57,15 @@
     "emailNotificationsHint": "Lejárati emlékeztetők 14 nappal és 1 nappal előtte.",
     "toggleOn": "Be",
     "toggleOff": "Ki"
+  },
+  "invites": {
+    "emailLabel": "E-mail",
+    "languageLabel": "Nyelv",
+    "tokenLabel": "Meghívó token",
+    "copied": "Másolva.",
+    "inviteOrgOwner": "Szervezettulajdonos meghívása",
+    "createInvite": "Meghívó létrehozása",
+    "inviteCreatedNoToken": "A meghívó elkészült. A címzett e-mailben megkapja a regisztrációs linket."
   },
   "auth": {
     "email": "E-mail",
@@ -178,6 +198,7 @@
     "deleteVehicle": "Jármű törlése",
     "mainNavigation": "Fő navigáció",
     "localeSwitcher": "Nyelv választása",
-    "expiryStatus": "Megújítás állapota"
+    "expiryStatus": "Megújítás állapota",
+    "organizationSwitcher": "Szervezet váltása"
   }
 }

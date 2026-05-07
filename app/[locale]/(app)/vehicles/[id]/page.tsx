@@ -5,13 +5,13 @@ import { ArrowLeft } from "lucide-react";
 import { ExpirySection } from "@/components/ExpirySection";
 import { MaintenanceSection } from "@/components/MaintenanceSection";
 import { VehicleDetailHeader } from "@/components/VehicleDetailHeader";
-import { requireAuth } from "@/lib/auth";
+import { getCurrentUserWithRole, requireActiveOrganization } from "@/lib/auth";
 import type { AppLocale } from "@/lib/i18n";
-import { Link } from "@/lib/navigation";
+import { Link, redirect } from "@/lib/navigation";
 import {
   getExpiryItemsForVehicle,
   getMaintenanceForVehicle,
-  getVehicleForUser,
+  getVehicleForOrg,
 } from "@/lib/queries";
 
 type Props = {
@@ -21,13 +21,17 @@ type Props = {
 export default async function VehicleDetailPage({ params }: Props) {
   const { locale: loc, id } = await params;
   const locale = loc as AppLocale;
-  const user = await requireAuth(locale);
+  const current = await getCurrentUserWithRole();
+  if (current?.role === "admin") {
+    redirect({ href: "/admin/invites", locale });
+  }
+  const { organization } = await requireActiveOrganization(locale);
   const t = await getTranslations("vehicles");
   const td = await getTranslations("vehicleDetail");
   const tMaint = await getTranslations("maintenance");
   const tExp = await getTranslations("expiry");
 
-  const vehicle = await getVehicleForUser(user.id, id);
+  const vehicle = await getVehicleForOrg(organization.id, id);
   if (!vehicle) {
     notFound();
   }

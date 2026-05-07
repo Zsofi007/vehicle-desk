@@ -13,6 +13,9 @@ type Props = {
   buttonLabel: string;
   tokenLabel: string;
   copiedLabel: string;
+  /** When false, a successful invite does not show or require a token (org admins). */
+  exposeCreatedToken: boolean;
+  inviteCreatedNoTokenMessage: string;
 };
 
 export function InviteForm({
@@ -21,6 +24,8 @@ export function InviteForm({
   buttonLabel,
   tokenLabel,
   copiedLabel,
+  exposeCreatedToken,
+  inviteCreatedNoTokenMessage,
 }: Props) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
@@ -30,6 +35,7 @@ export function InviteForm({
   const [token, setToken] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [inviteSentNoToken, setInviteSentNoToken] = useState(false);
 
   const localeFlag: Record<"en" | "hu" | "ro", React.ComponentType<{ className?: string }>> =
     {
@@ -47,6 +53,7 @@ export function InviteForm({
         setError(null);
         setCopied(false);
         setToken(null);
+        setInviteSentNoToken(false);
 
         startTransition(async () => {
           const res = await fetch("/api/invite", {
@@ -59,12 +66,20 @@ export function InviteForm({
             | { token?: string }
             | null;
 
-          if (!res.ok || !data?.token) {
+          if (!res.ok) {
             setError("Forbidden.");
             return;
           }
 
-          setToken(data.token);
+          if (exposeCreatedToken) {
+            if (!data?.token) {
+              setError("Forbidden.");
+              return;
+            }
+            setToken(data.token);
+          } else {
+            setInviteSentNoToken(true);
+          }
           setEmail("");
           router.refresh();
         });
@@ -168,6 +183,12 @@ export function InviteForm({
       {error ? (
         <p className="text-sm text-red-800" role="alert">
           {error}
+        </p>
+      ) : null}
+
+      {inviteSentNoToken && !token ? (
+        <p className="w-full text-sm text-stone-700 sm:col-span-2 sm:mt-3" role="status">
+          {inviteCreatedNoTokenMessage}
         </p>
       ) : null}
 

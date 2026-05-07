@@ -9,27 +9,27 @@ import {
 } from "@/lib/dates";
 import type { ExpiryItem, MaintenanceRecord, Vehicle } from "@/types";
 
-export async function getVehiclesForUser(userId: string): Promise<Vehicle[]> {
+export async function getVehiclesForOrg(organizationId: string): Promise<Vehicle[]> {
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
     .from("vehicles")
     .select("*")
-    .eq("user_id", userId)
+    .eq("organization_id", organizationId)
     .order("created_at", { ascending: false });
 
   if (error) throw error;
   return (data ?? []) as Vehicle[];
 }
 
-export async function getVehicleForUser(
-  userId: string,
+export async function getVehicleForOrg(
+  organizationId: string,
   vehicleId: string,
 ): Promise<Vehicle | null> {
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
     .from("vehicles")
     .select("*")
-    .eq("user_id", userId)
+    .eq("organization_id", organizationId)
     .eq("id", vehicleId)
     .maybeSingle();
 
@@ -71,10 +71,10 @@ export type ExpiryWithVehicle = ExpiryItem & {
 };
 
 /** Expiries due in the next 7 days (inclusive), calendar UTC. */
-export async function getUpcomingExpiriesForUser(
-  userId: string,
+export async function getUpcomingExpiriesForOrg(
+  organizationId: string,
 ): Promise<ExpiryWithVehicle[]> {
-  const vehicles = await getVehiclesForUser(userId);
+  const vehicles = await getVehiclesForOrg(organizationId);
   const ids = vehicles.map((v) => v.id);
   if (ids.length === 0) return [];
 
@@ -125,10 +125,10 @@ export type DashboardAlert = {
   vehicle: Pick<Vehicle, "id" | "make" | "model" | "license_plate">;
 };
 
-export async function getAlertsForUser(userId: string): Promise<
+export async function getAlertsForOrg(organizationId: string): Promise<
   DashboardAlert[]
 > {
-  const vehicles = await getVehiclesForUser(userId);
+  const vehicles = await getVehiclesForOrg(organizationId);
   const ids = vehicles.map((v) => v.id);
   if (ids.length === 0) return [];
 

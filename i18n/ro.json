@@ -29,7 +29,8 @@
     "login": "Autentificare",
     "signup": "Înregistrare",
     "logout": "Deconectare",
-    "language": "Limbă"
+    "language": "Limbă",
+    "organization": "Organizație"
   },
   "settings": {
     "title": "Setări",
@@ -39,6 +40,16 @@
     "companyPlaceholder": "ex. Acme Logistics SRL",
     "companySave": "Salvează",
     "companySaved": "Salvat",
+    "membersTitle": "Membri",
+    "membersEmail": "E-mail",
+    "membersRole": "Rol",
+    "membersYou": "tu",
+    "orgRole_owner": "Proprietar",
+    "orgRole_admin": "Admin",
+    "orgRole_member": "Membru",
+    "orgOverviewTitle": "Organizații",
+    "orgOverviewOrg": "Organizație",
+    "orgOverviewOwners": "Proprietar(i)",
     "languageTitle": "Limbă",
     "languageLabel": "Limba preferată",
     "notificationsTitle": "Notificări",
@@ -46,6 +57,15 @@
     "emailNotificationsHint": "Primești e-mailuri de reamintire cu 14 zile și 1 zi înainte de expirare.",
     "toggleOn": "Pornit",
     "toggleOff": "Oprit"
+  },
+  "invites": {
+    "emailLabel": "E-mail",
+    "languageLabel": "Limbă",
+    "tokenLabel": "Token invitație",
+    "copied": "Copiat.",
+    "inviteOrgOwner": "Invită proprietar organizație",
+    "createInvite": "Creează invitație",
+    "inviteCreatedNoToken": "Invitația a fost creată. Destinatarul va primi pe e-mail linkul de înregistrare."
   },
   "auth": {
     "email": "E-mail",
@@ -178,6 +198,7 @@
     "deleteVehicle": "Șterge vehiculul",
     "mainNavigation": "Navigare principală",
     "localeSwitcher": "Alege limba",
-    "expiryStatus": "Stare termen"
+    "expiryStatus": "Stare termen",
+    "organizationSwitcher": "Schimbă organizația"
   }
 }

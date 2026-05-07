@@ -29,7 +29,8 @@
     "login": "Log in",
     "signup": "Sign up",
     "logout": "Log out",
-    "language": "Language"
+    "language": "Language",
+    "organization": "Organization"
   },
   "settings": {
     "title": "Settings",
@@ -39,6 +40,16 @@
     "companyPlaceholder": "e.g. Acme Logistics SRL",
     "companySave": "Save",
     "companySaved": "Saved",
+    "membersTitle": "Members",
+    "membersEmail": "Email",
+    "membersRole": "Role",
+    "membersYou": "you",
+    "orgRole_owner": "Owner",
+    "orgRole_admin": "Admin",
+    "orgRole_member": "Member",
+    "orgOverviewTitle": "Organizations",
+    "orgOverviewOrg": "Organization",
+    "orgOverviewOwners": "Owner(s)",
     "languageTitle": "Language",
     "languageLabel": "Preferred language",
     "notificationsTitle": "Notifications",
@@ -46,6 +57,15 @@
     "emailNotificationsHint": "Get expiry reminder emails 14 days and 1 day before.",
     "toggleOn": "On",
     "toggleOff": "Off"
+  },
+  "invites": {
+    "emailLabel": "Email",
+    "languageLabel": "Language",
+    "tokenLabel": "Invite token",
+    "copied": "Copied.",
+    "inviteOrgOwner": "Invite org owner",
+    "createInvite": "Create invite",
+    "inviteCreatedNoToken": "Invite created. The recipient will receive an email with the signup link."
   },
   "auth": {
     "email": "Email",
@@ -178,6 +198,7 @@
     "deleteVehicle": "Delete vehicle",
     "mainNavigation": "Main navigation",
     "localeSwitcher": "Choose language",
-    "expiryStatus": "Renewal status"
+    "expiryStatus": "Renewal status",
+    "organizationSwitcher": "Switch organization"
   }
 }

@@ -6,10 +6,12 @@ import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { inviteEmailTemplate } from "@/lib/email/templates";
 import { getResendClient } from "@/lib/email/resend";
 import { generateInviteToken, hashInviteToken, inviteExpiryIso } from "@/lib/invite";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 const bodySchema = z.object({
   email: z.string().email(),
   lang: z.enum(["en", "hu", "ro"]).optional(),
+  organizationId: z.string().uuid().optional(),
 });
 
 function isAuthorized(req: Request) {
@@ -24,11 +26,6 @@ export async function POST(req: Request) {
   const current = await getCurrentUserWithRole();
   const isAdmin = current?.role === "admin";
 
-  // Allow either an authenticated admin OR a server-to-server bearer secret.
-  if (!isAdmin && !isAuthorized(req)) {
-    return NextResponse.json({ error: "forbidden" }, { status: 403 });
-  }
-
   const json = await req.json().catch(() => null);
   const parsed = bodySchema.safeParse(json);
   if (!parsed.success) {
@@ -37,9 +34,60 @@ export async function POST(req: Request) {
 
   const email = parsed.data.email.trim().toLowerCase();
   const lang = parsed.data.lang ?? "en";
+  const requestedOrgId = parsed.data.organizationId ?? null;
   const rawToken = generateInviteToken();
   const token = hashInviteToken(rawToken);
   const expires_at = inviteExpiryIso(72);
+
+  let organization_id: string | null = null;
+  if (isAuthorized(req) && !isAdmin) {
+    // Server-to-server invites must be explicit about the target organization.
+    if (!requestedOrgId) {
+      return NextResponse.json({ error: "validation" }, { status: 400 });
+    }
+    organization_id = requestedOrgId;
+  } else {
+    // Session-based: use the caller's active organization and verify org admin role.
+    const supabase = await createSupabaseServerClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) {
+      return NextResponse.json({ error: "forbidden" }, { status: 403 });
+    }
+
+    // Overall admins can only invite new org owners:
+    // - invite has no organization_id
+    // - signup creates a new org and makes the user owner
+    if (isAdmin) {
+      organization_id = null;
+    } else {
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("active_organization_id")
+        .eq("id", user.id)
+        .maybeSingle();
+      const activeOrgId = profile?.active_organization_id
+        ? String(profile.active_organization_id)
+        : null;
+      if (!activeOrgId) {
+        return NextResponse.json({ error: "forbidden" }, { status: 403 });
+      }
+
+      const { data: membership } = await supabase
+        .from("organization_members")
+        .select("role")
+        .eq("user_id", user.id)
+        .eq("organization_id", activeOrgId)
+        .maybeSingle();
+      const role = String(membership?.role ?? "");
+      const isOrgAdmin = role === "owner" || role === "admin";
+      if (!isOrgAdmin) {
+        return NextResponse.json({ error: "forbidden" }, { status: 403 });
+      }
+      organization_id = activeOrgId;
+    }
+  }
 
   const supabase = createSupabaseAdminClient();
   const { error } = await supabase.from("invites").insert({
@@ -47,6 +95,7 @@ export async function POST(req: Request) {
     token,
     expires_at,
     used: false,
+    organization_id,
   });
 
   if (error) {
@@ -69,13 +118,14 @@ export async function POST(req: Request) {
         html: tpl.html,
       });
     } catch {
-      // Ignore email failures; admin can still copy the token from UI.
+      // Ignore email failures; global admins can still copy the token from the API response.
     }
   }
 
+  // Only global admins receive the raw token in the response. Org admins rely on email.
   return NextResponse.json({
     email,
-    token: rawToken,
+    ...(isAdmin ? { token: rawToken } : {}),
     expires_at,
   });
 }

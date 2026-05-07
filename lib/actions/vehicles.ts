@@ -42,6 +42,16 @@ export async function createVehicle(
     return { error: "unauthorized" };
   }
 
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("active_organization_id")
+    .eq("id", user.id)
+    .maybeSingle();
+  const orgId = profile?.active_organization_id ? String(profile.active_organization_id) : null;
+  if (!orgId) {
+    return { error: "unauthorized" };
+  }
+
   const parsed = vehicleSchema.safeParse({
     make: formData.get("make"),
     model: formData.get("model"),
@@ -57,6 +67,7 @@ export async function createVehicle(
 
   const { error } = await supabase.from("vehicles").insert({
     user_id: user.id,
+    organization_id: orgId,
     make: parsed.data.make,
     model: parsed.data.model,
     vehicle_type: parsed.data.vehicle_type,
@@ -101,6 +112,16 @@ export async function updateVehicle(
     return { error: "unauthorized" };
   }
 
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("active_organization_id")
+    .eq("id", user.id)
+    .maybeSingle();
+  const orgId = profile?.active_organization_id ? String(profile.active_organization_id) : null;
+  if (!orgId) {
+    return { error: "unauthorized" };
+  }
+
   const parsed = vehicleSchema.safeParse({
     make: formData.get("make"),
     model: formData.get("model"),
@@ -125,7 +146,7 @@ export async function updateVehicle(
       odometer: parsed.data.odometer,
     })
     .eq("id", vehicleId)
-    .eq("user_id", user.id);
+    .eq("organization_id", orgId);
 
   if (error) {
     return { error: error.message };
