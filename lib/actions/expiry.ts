@@ -5,6 +5,7 @@ import { z } from "zod";
 
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import type { AppLocale } from "@/lib/i18n";
+import { processDocumentDeletionQueueForParent } from "@/lib/actions/documents";
 
 const expiryTypeEnum = z.enum([
   "ITP",
@@ -150,6 +151,8 @@ export async function deleteExpiryItem(
   if (error) {
     throw new Error(error.message);
   }
+
+  await processDocumentDeletionQueueForParent({ kind: "expiry", parentId: itemId });
 
   revalidatePath(`/${locale}/vehicles/${vehicleId}`, "page");
   revalidatePath(`/${locale}/dashboard`, "page");

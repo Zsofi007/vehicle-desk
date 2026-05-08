@@ -28,6 +28,7 @@ import {
 } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/cn";
+import { DocumentsInline } from "@/components/DocumentsInline";
 
 type Props = {
   vehicleId: string;
@@ -215,6 +216,8 @@ function MaintenanceRow({
           {t("odometer")}: {row.odometer.toLocaleString(locale)} km
         </p>
         {row.notes ? <p className="mt-2 text-sm text-stone-700">{row.notes}</p> : null}
+
+        <DocumentsInline locale={locale} kind="maintenance" parentId={row.id} />
       </li>
     );
   }

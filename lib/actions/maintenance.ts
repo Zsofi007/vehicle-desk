@@ -5,6 +5,7 @@ import { z } from "zod";
 
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import type { AppLocale } from "@/lib/i18n";
+import { processDocumentDeletionQueueForParent } from "@/lib/actions/documents";
 
 const maintenanceTypeEnum = z.enum([
   "OIL_CHANGE",
@@ -124,6 +125,8 @@ export async function deleteMaintenanceRecord(
   if (error) {
     throw new Error(error.message);
   }
+
+  await processDocumentDeletionQueueForParent({ kind: "maintenance", parentId: recordId });
 
   revalidatePath(`/${locale}/vehicles/${vehicleId}`, "page");
   revalidatePath(`/${locale}/dashboard`, "page");
