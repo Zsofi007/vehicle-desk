@@ -102,7 +102,12 @@
     "emptyUpcoming": "No renewals due this week.",
     "openVehicle": "Open vehicle",
     "expiresOn": "Expires",
-    "vehicleLabel": "Vehicle"
+    "vehicleLabel": "Vehicle",
+    "odometerUpdateRecommendedTitle": "Odometer update recommended",
+    "odometerUpdateRecommendedSummary": "{count, plural, one {# vehicle hasn’t had an odometer update in 90+ days.} other {# vehicles haven’t had an odometer update in 90+ days.}}",
+    "odometerUpdateRecommendedToggle": "See outdated cars",
+    "odometerLastUpdateLabel": "Last update:",
+    "odometerUpdateRecommendedShowing": "Showing {shown} of {total}."
   },
   "vehicles": {
     "title": "Vehicles",
@@ -141,7 +146,9 @@
     "open": "Open",
     "openVehicleAriaLabel": "Open vehicle",
     "make": "Make",
-    "model": "Model"
+    "model": "Model",
+    "odometerOutdatedBadge": "Odometer outdated",
+    "quickOdometerTitle": "Odometer (quick update)"
   },
   "vehicleDetail": {
     "title": "Vehicle",
@@ -210,6 +217,26 @@
     "errorUnsupportedType": "Unsupported file type. Upload PDF/JPG/PNG/WEBP.",
     "errorUploadFailed": "Upload failed. Please try again.",
     "errorLoadFailed": "Could not load documents. Please try again."
+  },
+  "maintenanceIntervals": {
+    "type": "Type",
+    "status": "Status",
+    "intervalKm": "Interval (km)",
+    "intervalDays": "Interval (days)",
+    "dueAt": "Due at",
+    "dueSoonKm": "Due soon (km)",
+    "dueSoonDays": "Due soon (days)",
+    "actions": "Actions",
+    "save": "Save",
+    "clear": "Clear override",
+    "readOnlyHint": "Only owners and admins can edit these defaults.",
+    "vehicleTitle": "Recurring maintenance",
+    "vehicleHint": "Overrides apply only to this vehicle.",
+    "status_ok": "OK",
+    "status_due_soon": "Due soon",
+    "status_overdue": "Overdue",
+    "status_no_history": "No history",
+    "status_not_configured": "Not configured"
   },
   "aria": {
     "deleteVehicle": "Delete vehicle",

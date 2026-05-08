@@ -24,6 +24,15 @@ const schema = z.object({
   notes: z.string().max(5000).optional(),
 });
 
+function parseOptionalPositiveInt(raw: FormDataEntryValue | null) {
+  if (raw === null) return null;
+  const s = String(raw).trim();
+  if (s === "") return null;
+  const n = Number(s);
+  if (!Number.isFinite(n) || n <= 0) return null;
+  return Math.floor(n);
+}
+
 export type MaintenanceActionState = {
   error?: string;
 };
@@ -103,6 +112,33 @@ export async function updateMaintenanceRecord(
 
   if (error) {
     return { error: error.message };
+  }
+
+  // If interval fields are present in the form, persist them as the per-vehicle override
+  // for this maintenance type. Empty values clear the override.
+  if (formData.has("interval_km") || formData.has("interval_days")) {
+    const intervalKm = parseOptionalPositiveInt(formData.get("interval_km"));
+    const intervalDays = parseOptionalPositiveInt(formData.get("interval_days"));
+
+    if (intervalKm === null && intervalDays === null) {
+      await supabase
+        .from("maintenance_interval_overrides")
+        .delete()
+        .eq("vehicle_id", vehicleId)
+        .eq("type", parsed.data.type);
+    } else {
+      await supabase.from("maintenance_interval_overrides").upsert(
+        {
+          vehicle_id: vehicleId,
+          type: parsed.data.type,
+          interval_km: intervalKm,
+          interval_days: intervalDays,
+          due_soon_km: null,
+          due_soon_days: null,
+        },
+        { onConflict: "vehicle_id,type" },
+      );
+    }
   }
 
   revalidatePath(`/${locale}/vehicles/${vehicleId}`, "page");

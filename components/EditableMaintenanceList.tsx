@@ -1,12 +1,16 @@
 "use client";
 
-import { useActionState, useEffect, useId, useRef, useState } from "react";
+import { useActionState, useCallback, useEffect, useId, useRef, useState } from "react";
 import { useFormStatus } from "react-dom";
 import { Check, ChevronDown, Pencil, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import type { AppLocale } from "@/lib/i18n";
 import type { MaintenanceRecord } from "@/types";
+import type { MaintenanceTypeKey } from "@/lib/type-keys";
+import {
+  getEffectiveMaintenanceIntervalsForVehicle,
+} from "@/lib/actions/maintenance-intervals";
 import {
   deleteMaintenanceRecord,
   updateMaintenanceRecord,
@@ -40,34 +44,86 @@ function iconSrc(n: number) {
   return `/maintenance-icons/divided-icons_${String(n).padStart(2, "0")}.png`;
 }
 
-function normalizeType(raw: string) {
-  return raw.trim().toLowerCase();
+function typeMeta(
+  t: ReturnType<typeof useTranslations>,
+  type: string,
+): { label: string; icon: string | null } {
+  switch (type) {
+    case "OIL_CHANGE":
+      return { label: t("type_oil_change"), icon: iconSrc(13) };
+    case "FILTERS":
+      return { label: t("type_filters"), icon: iconSrc(14) };
+    case "BRAKES":
+      return { label: t("type_brakes"), icon: iconSrc(10) };
+    case "TIRES":
+      return { label: t("type_tires"), icon: iconSrc(15) };
+    case "BATTERY":
+      return { label: t("type_battery"), icon: iconSrc(4) };
+    case "TIMING_BELT":
+      return { label: t("type_timing_belt"), icon: iconSrc(9) };
+    case "OTHER":
+      return { label: t("type_other"), icon: iconSrc(4) };
+    default:
+      return { label: type, icon: iconSrc(4) };
+  }
 }
 
-function deriveMaintenanceType(raw: string): {
-  presetType: "Oil" | "Filters" | "Engine parts" | "Brakes" | "Tyres" | "Other" | "";
-  customType: string;
-} {
-  const key = normalizeType(raw);
-  if (key === "oil" || key === "oil & filters" || key === "oil and filters") {
-    return { presetType: "Oil", customType: "" };
+function addDaysYmd(ymd: string, days: number) {
+  const [y, m, d] = ymd.split("-").map((x) => Number(x));
+  const dt = new Date(Date.UTC(y, (m ?? 1) - 1, d ?? 1));
+  dt.setUTCDate(dt.getUTCDate() + days);
+  return dt.toISOString().slice(0, 10);
+}
+
+function formatDueAt(opts: {
+  intervalKm: number | null;
+  intervalDays: number | null;
+  baseOdometer: number;
+  baseDate: string;
+}) {
+  const parts: string[] = [];
+  if (typeof opts.intervalKm === "number") {
+    parts.push(`${(opts.baseOdometer + opts.intervalKm).toLocaleString()} km`);
   }
-  if (key === "filters" || key === "filter") {
-    return { presetType: "Filters", customType: "" };
+  if (typeof opts.intervalDays === "number") {
+    parts.push(addDaysYmd(opts.baseDate, opts.intervalDays));
   }
-  if (key === "engine parts" || key === "engine components") {
-    return { presetType: "Engine parts", customType: "" };
-  }
-  if (key === "brakes") {
-    return { presetType: "Brakes", customType: "" };
-  }
-  if (key === "tyres" || key === "tires" || key === "tire") {
-    return { presetType: "Tyres", customType: "" };
-  }
-  if (key === "other") {
-    return { presetType: "Other", customType: "" };
-  }
-  return { presetType: "Other", customType: raw };
+  return parts.join(" · ");
+}
+
+function classifyDueStatus(params: {
+  currentOdometer: number;
+  recordOdometer: number;
+  recordDate: string;
+  intervalKm: number | null;
+  intervalDays: number | null;
+  dueSoonKm?: number;
+  dueSoonDays?: number;
+}): "overdue" | "due_soon" | "ok" | null {
+  const dueSoonKm = params.dueSoonKm ?? 1000;
+  const dueSoonDays = params.dueSoonDays ?? 14;
+  const now = new Date();
+  const todayYmd = now.toISOString().slice(0, 10);
+
+  const overdueByKm =
+    typeof params.intervalKm === "number" &&
+    params.currentOdometer >= params.recordOdometer + params.intervalKm;
+  const dueSoonByKm =
+    typeof params.intervalKm === "number" &&
+    params.currentOdometer >= params.recordOdometer + params.intervalKm - dueSoonKm;
+
+  const dueDate =
+    typeof params.intervalDays === "number"
+      ? addDaysYmd(params.recordDate, params.intervalDays)
+      : null;
+  const overdueByTime = dueDate !== null && todayYmd >= dueDate;
+  const dueSoonByTime =
+    dueDate !== null && todayYmd >= addDaysYmd(dueDate, -dueSoonDays);
+
+  if (overdueByKm || overdueByTime) return "overdue";
+  if (dueSoonByKm || dueSoonByTime) return "due_soon";
+  if (params.intervalKm !== null || params.intervalDays !== null) return "ok";
+  return null;
 }
 
 function SaveButton() {
@@ -80,42 +136,72 @@ function MaintenanceRow({
   vehicleId,
   locale,
   row,
+  intervalsByType,
+  currentOdometer,
+  refreshIntervals,
 }: {
   vehicleId: string;
   locale: AppLocale;
   row: MaintenanceRecord;
+  intervalsByType: Map<MaintenanceTypeKey, { interval_km: number | null; interval_days: number | null }>;
+  currentOdometer: number;
+  refreshIntervals: () => Promise<void>;
 }) {
   const router = useRouter();
   const t = useTranslations("maintenance");
   const tc = useTranslations("common");
   const te = useTranslations("errors");
   const tVeh = useTranslations("vehicles");
+  const tIntervals = useTranslations("maintenanceIntervals");
 
   const [editing, setEditing] = useState(false);
   const [open, setOpen] = useState(false);
-  const [presetType, setPresetType] = useState(() => deriveMaintenanceType(row.type).presetType);
-  const [customType, setCustomType] = useState(() => deriveMaintenanceType(row.type).customType);
-  const customId = useId();
-  const customRef = useRef<HTMLInputElement | null>(null);
+  const [presetType, setPresetType] = useState<MaintenanceTypeKey>(
+    () => (row.type as MaintenanceTypeKey) ?? "OIL_CHANGE",
+  );
 
   const [date, setDate] = useState(row.date);
   const [odometer, setOdometer] = useState(String(row.odometer));
   const [notes, setNotes] = useState(row.notes ?? "");
+  const [intervalKm, setIntervalKm] = useState<string>("");
+  const [intervalDays, setIntervalDays] = useState<string>("");
 
-  const isCustom = presetType === "Other";
-  const resolvedType = isCustom ? customType.trim() : presetType;
+  const effective = intervalsByType.get(presetType) ?? { interval_km: null, interval_days: null };
+  const dueAt = effective.interval_km || effective.interval_days
+    ? formatDueAt({
+        intervalKm: effective.interval_km,
+        intervalDays: effective.interval_days,
+        baseOdometer: row.odometer,
+        baseDate: row.date,
+      })
+    : "";
 
-  useEffect(() => {
-    if (isCustom) queueMicrotask(() => customRef.current?.focus());
-  }, [isCustom]);
+  const status = classifyDueStatus({
+    currentOdometer,
+    recordOdometer: row.odometer,
+    recordDate: row.date,
+    intervalKm: effective.interval_km,
+    intervalDays: effective.interval_days,
+  });
+
+  const draftDueAt =
+    intervalKm.trim() !== "" || intervalDays.trim() !== ""
+      ? formatDueAt({
+          intervalKm: intervalKm.trim() === "" ? null : Number(intervalKm),
+          intervalDays: intervalDays.trim() === "" ? null : Number(intervalDays),
+          baseOdometer: row.odometer,
+          baseDate: row.date,
+        })
+      : dueAt;
 
   const typeOptions = [
-    { value: "Oil" as const, label: t("type_oil"), icon: 13 },
-    { value: "Filters" as const, label: t("type_filters"), icon: 14 },
-    { value: "Engine parts" as const, label: t("type_engine_parts"), icon: 9 },
-    { value: "Brakes" as const, label: t("type_brakes"), icon: 10 },
-    { value: "Tyres" as const, label: t("type_tyres"), icon: 15 },
-    { value: "Other" as const, label: t("type_other"), icon: 4 },
+    { value: "OIL_CHANGE" as const, label: t("type_oil_change"), icon: 13 },
+    { value: "FILTERS" as const, label: t("type_filters"), icon: 14 },
+    { value: "BRAKES" as const, label: t("type_brakes"), icon: 10 },
+    { value: "TIRES" as const, label: t("type_tires"), icon: 15 },
+    { value: "BATTERY" as const, label: t("type_battery"), icon: 4 },
+    { value: "TIMING_BELT" as const, label: t("type_timing_belt"), icon: 9 },
+    { value: "OTHER" as const, label: t("type_other"), icon: 4 },
   ];
 
   const bound = updateMaintenanceRecord.bind(null, vehicleId, row.id, locale);
@@ -128,29 +214,13 @@ function MaintenanceRow({
     if (!state || state.error) return;
     queueMicrotask(() => {
       setEditing(false);
+      void refreshIntervals();
       router.refresh();
     });
-  }, [router, state]);
+  }, [refreshIntervals, router, state]);
 
   if (!editing) {
-    const meta = (() => {
-      const key = normalizeType(row.type);
-      if (key === "oil" || key === "oil & filters" || key === "oil and filters") {
-        return { label: t("type_oil"), icon: iconSrc(13) };
-      }
-      if (key === "filters" || key === "filter") {
-        return { label: t("type_filters"), icon: iconSrc(14) };
-      }
-      if (key === "engine parts" || key === "engine components") {
-        return { label: t("type_engine_parts"), icon: iconSrc(9) };
-      }
-      if (key === "brakes") return { label: t("type_brakes"), icon: iconSrc(10) };
-      if (key === "tyres" || key === "tires" || key === "tire") {
-        return { label: t("type_tyres"), icon: iconSrc(15) };
-      }
-      if (key === "other") return { label: t("type_other"), icon: iconSrc(4) };
-      return { label: row.type, icon: iconSrc(4) };
-    })();
+    const meta = typeMeta(t, row.type);
 
     return (
       <li className="px-4 py-4">
@@ -183,11 +253,10 @@ function MaintenanceRow({
                 setDate(row.date);
                 setOdometer(String(row.odometer));
                 setNotes(row.notes ?? "");
-                {
-                  const derived = deriveMaintenanceType(row.type);
-                  setPresetType(derived.presetType);
-                  setCustomType(derived.customType);
-                }
+                setPresetType((row.type as MaintenanceTypeKey) ?? "OIL_CHANGE");
+                const eff = intervalsByType.get((row.type as MaintenanceTypeKey) ?? "OIL_CHANGE");
+                setIntervalKm(eff?.interval_km ? String(eff.interval_km) : "");
+                setIntervalDays(eff?.interval_days ? String(eff.interval_days) : "");
               }}
               className="h-9 w-9"
             >
@@ -215,6 +284,24 @@ function MaintenanceRow({
         <p className="mt-1 text-sm text-stone-600 tabular-nums">
           {t("odometer")}: {row.odometer.toLocaleString(locale)} km
         </p>
+        {status === "overdue" ? (
+          <p className="mt-2">
+            <span className="inline-flex rounded border border-red-200 bg-red-50 px-2 py-0.5 text-xs font-semibold text-red-900">
+              {tIntervals("status_overdue")}
+            </span>
+          </p>
+        ) : status === "due_soon" ? (
+          <p className="mt-2">
+            <span className="inline-flex rounded border border-amber-200 bg-amber-50 px-2 py-0.5 text-xs font-semibold text-amber-900">
+              {tIntervals("status_due_soon")}
+            </span>
+          </p>
+        ) : null}
+        {dueAt ? (
+          <p className="mt-1 text-sm text-stone-600 tabular-nums">
+            {tIntervals("dueAt")}: {dueAt}
+          </p>
+        ) : null}
         {row.notes ? <p className="mt-2 text-sm text-stone-700">{row.notes}</p> : null}
 
         <DocumentsInline locale={locale} kind="maintenance" parentId={row.id} />
@@ -234,13 +321,13 @@ function MaintenanceRow({
 
         <div className="grid gap-2">
           <label className="text-sm font-medium text-stone-800">{t("type")}</label>
-          <input type="hidden" name="type" value={resolvedType} />
+          <input type="hidden" name="type" value={presetType} />
           <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
               <Button type="button" variant="secondary" className="w-full justify-between">
-                <span className={cn("truncate", !resolvedType && "text-slate-500")}>
-                  {resolvedType
-                    ? typeOptions.find((o) => o.value === presetType)?.label ?? resolvedType
+                <span className={cn("truncate", !presetType && "text-slate-500")}>
+                  {presetType
+                    ? typeOptions.find((o) => o.value === presetType)?.label ?? presetType
                     : tc("none")}
                 </span>
                 <ChevronDown className="h-4 w-4 text-slate-500" aria-hidden />
@@ -258,7 +345,6 @@ function MaintenanceRow({
                         value={opt.label}
                         onSelect={() => {
                           setPresetType(opt.value);
-                          if (opt.value !== "Other") setCustomType("");
                           setOpen(false);
                         }}
                       >
@@ -284,23 +370,52 @@ function MaintenanceRow({
               </Command>
             </PopoverContent>
           </Popover>
+        </div>
 
-          {isCustom ? (
+        <div className="rounded-lg border border-stone-200 bg-stone-50 px-3 py-3">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <p className="text-sm font-medium text-stone-900">{tIntervals("vehicleTitle")}</p>
+          </div>
+          <div className="mt-3 grid gap-3 sm:grid-cols-2 sm:gap-4">
             <div className="grid gap-2">
-              <label htmlFor={customId} className="text-sm font-medium text-stone-800">
-                {tc("custom")}
+              <label className="text-sm font-medium text-stone-800">
+                {tIntervals("intervalKm")}
               </label>
-              <input
-                id={customId}
-                ref={customRef}
-                value={customType}
-                onChange={(e) => setCustomType(e.target.value)}
-                required
-                autoComplete="off"
-                className="rounded-md border border-stone-300 px-3 py-2 text-stone-900 shadow-sm"
+              <Input
+                name="interval_km"
+                type="number"
+                inputMode="numeric"
+                min={1}
+                step={1}
+                value={intervalKm}
+                onChange={(e) => setIntervalKm(e.currentTarget.value)}
+                className="tabular-nums"
               />
             </div>
-          ) : null}
+            <div className="grid gap-2">
+              <label className="text-sm font-medium text-stone-800">
+                {tIntervals("intervalDays")}
+              </label>
+              <Input
+                name="interval_days"
+                type="number"
+                inputMode="numeric"
+                min={1}
+                step={1}
+                value={intervalDays}
+                onChange={(e) => setIntervalDays(e.currentTarget.value)}
+                className="tabular-nums"
+              />
+            </div>
+          </div>
+
+          {draftDueAt ? (
+            <p className="mt-2 text-sm text-stone-600 tabular-nums">
+              {tIntervals("dueAt")}: {draftDueAt}
+            </p>
+          ) : (
+            <p className="mt-2 text-sm text-stone-600">{tIntervals("status_not_configured")}</p>
+          )}
         </div>
 
         <div className="grid gap-2 sm:grid-cols-2 sm:gap-4">
@@ -355,11 +470,7 @@ function MaintenanceRow({
               setDate(row.date);
               setOdometer(String(row.odometer));
               setNotes(row.notes ?? "");
-              {
-                const derived = deriveMaintenanceType(row.type);
-                setPresetType(derived.presetType);
-                setCustomType(derived.customType);
-              }
+              setPresetType((row.type as MaintenanceTypeKey) ?? "OIL_CHANGE");
             }}
           >
             {tc("cancel")}
@@ -373,6 +484,25 @@ function MaintenanceRow({
 
 export function EditableMaintenanceList({ vehicleId, locale, records }: Props) {
   const t = useTranslations("maintenance");
+  const [intervalsByType, setIntervalsByType] = useState<
+    Map<MaintenanceTypeKey, { interval_km: number | null; interval_days: number | null }>
+  >(new Map());
+  const [currentOdometer, setCurrentOdometer] = useState(0);
+
+  const refreshIntervals = useCallback(async () => {
+    const res = await getEffectiveMaintenanceIntervalsForVehicle(vehicleId);
+    if (!("ok" in res) || !res.ok) return;
+    const m = new Map<MaintenanceTypeKey, { interval_km: number | null; interval_days: number | null }>();
+    for (const row of res.intervals) {
+      m.set(row.type, { interval_km: row.interval_km, interval_days: row.interval_days });
+    }
+    setIntervalsByType(m);
+    setCurrentOdometer(res.currentOdometer);
+  }, [vehicleId]);
+
+  useEffect(() => {
+    void refreshIntervals();
+  }, [refreshIntervals]);
 
   if (records.length === 0) {
     return (
@@ -385,7 +515,15 @@ export function EditableMaintenanceList({ vehicleId, locale, records }: Props) {
   return (
     <ul className="divide-y divide-stone-200 rounded-lg border border-stone-200 bg-white">
       {records.map((row) => (
-        <MaintenanceRow key={row.id} vehicleId={vehicleId} locale={locale} row={row} />
+        <MaintenanceRow
+          key={row.id}
+          vehicleId={vehicleId}
+          locale={locale}
+          row={row}
+          intervalsByType={intervalsByType}
+          currentOdometer={currentOdometer}
+          refreshIntervals={refreshIntervals}
+        />
       ))}
     </ul>
   );

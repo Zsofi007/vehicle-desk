@@ -58,6 +58,11 @@ export default async function VehiclesPage({ params }: Props) {
       status,
       statusLabel: badge.text,
       statusClassName: badge.cls,
+      odometerOutdated:
+        typeof (v as any).last_odometer_update_at === "string"
+          ? new Date(String((v as any).last_odometer_update_at)).getTime() <
+            Date.now() - 90 * 24 * 60 * 60 * 1000
+          : false,
     };
   });
 

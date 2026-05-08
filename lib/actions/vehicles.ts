@@ -157,3 +157,52 @@ export async function updateVehicle(
   revalidatePath(`/${locale}/dashboard`, "page");
   return {};
 }
+
+export async function updateVehicleOdometerOnly(
+  locale: AppLocale,
+  vehicleId: string,
+  _prev: VehicleActionState | undefined,
+  formData: FormData,
+): Promise<VehicleActionState> {
+  const supabase = await createSupabaseServerClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    return { error: "unauthorized" };
+  }
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("active_organization_id")
+    .eq("id", user.id)
+    .maybeSingle();
+  const orgId = profile?.active_organization_id ? String(profile.active_organization_id) : null;
+  if (!orgId) {
+    return { error: "unauthorized" };
+  }
+
+  const parsed = z
+    .object({
+      odometer: z.coerce.number().int().min(0).max(9_999_999),
+    })
+    .safeParse({ odometer: formData.get("odometer") });
+
+  if (!parsed.success) {
+    return { error: "validation" };
+  }
+
+  const { error } = await supabase
+    .from("vehicles")
+    .update({ odometer: parsed.data.odometer })
+    .eq("id", vehicleId)
+    .eq("organization_id", orgId);
+
+  if (error) {
+    return { error: error.message };
+  }
+
+  revalidatePath(`/${locale}/vehicles/${vehicleId}`, "page");
+  revalidatePath(`/${locale}/dashboard`, "page");
+  return {};
+}

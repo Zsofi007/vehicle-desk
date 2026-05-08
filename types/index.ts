@@ -12,6 +12,8 @@ export type Vehicle = {
   updated_at: string;
   created_by: string | null;
   updated_by: string | null;
+  last_odometer_update_at?: string;
+  last_odometer_reminder_sent_at?: string | null;
 };
 
 export type MaintenanceType =
