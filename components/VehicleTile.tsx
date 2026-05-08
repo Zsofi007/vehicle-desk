@@ -18,6 +18,7 @@ type Props = {
   licensePlate: string;
   statusLabel: string;
   statusClassName: string;
+  odometerOutdated?: boolean;
 };
 
 export function VehicleTile({
@@ -29,6 +30,7 @@ export function VehicleTile({
   licensePlate,
   statusLabel,
   statusClassName,
+  odometerOutdated,
 }: Props) {
   const router = useRouter();
   const t = useTranslations("vehicles");
@@ -59,6 +61,12 @@ export function VehicleTile({
       >
         {statusLabel}
       </span>
+
+      {odometerOutdated ? (
+        <span className="absolute left-2 top-2 rounded-full border border-amber-200 bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-900">
+          {t("odometerOutdatedBadge")}
+        </span>
+      ) : null}
 
       <div className="flex h-28 w-28 items-center justify-center rounded-sm">
         {logoSrc && !hideLogo ? (

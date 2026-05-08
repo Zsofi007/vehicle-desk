@@ -13,6 +13,8 @@ import type { MaintenanceTypeKey } from "@/lib/type-keys";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { DatePicker } from "@/components/ui/date-picker";
+import { Input } from "@/components/ui/input";
+import { upsertVehicleMaintenanceIntervalOverride } from "@/lib/actions/maintenance-intervals";
 import {
   Command,
   CommandEmpty,
@@ -49,6 +51,7 @@ export function AddMaintenanceForm({ vehicleId, locale, onSuccess, onCancel }: P
   const t = useTranslations("maintenance");
   const tc = useTranslations("common");
   const te = useTranslations("errors");
+  const tIntervals = useTranslations("maintenanceIntervals");
   const bound = createMaintenanceRecord.bind(null, vehicleId, locale);
   const [state, formAction] = useActionState(
     bound,
@@ -65,6 +68,11 @@ export function AddMaintenanceForm({ vehicleId, locale, onSuccess, onCancel }: P
   const [date, setDate] = useState(today);
   const [open, setOpen] = useState(false);
   const [presetType, setPresetType] = useState<MaintenanceTypeKey>("OIL_CHANGE");
+  const [showInterval, setShowInterval] = useState(false);
+  const [intervalKm, setIntervalKm] = useState<string>("");
+  const [intervalDays, setIntervalDays] = useState<string>("");
+  const [intervalSaving, setIntervalSaving] = useState(false);
+  const [intervalError, setIntervalError] = useState<string | null>(null);
 
   const typeOptions: Array<{
     value: MaintenanceTypeKey;
@@ -150,6 +158,106 @@ export function AddMaintenanceForm({ vehicleId, locale, onSuccess, onCancel }: P
             </Command>
           </PopoverContent>
         </Popover>
+      </div>
+
+      <div className="rounded-lg border border-stone-200 bg-stone-50 px-4 py-3">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <p className="text-sm font-medium text-stone-900">
+            {tIntervals("vehicleTitle")}
+          </p>
+          <Button
+            type="button"
+            size="sm"
+            variant="secondary"
+            onClick={() => setShowInterval((v) => !v)}
+          >
+            {showInterval ? tc("close") : tc("actions")}
+          </Button>
+        </div>
+
+        {!showInterval ? null : (
+          <div className="mt-3 grid gap-3">
+            {intervalError ? (
+              <p className="text-sm text-red-800" role="alert">
+                {intervalError === "validation" ? te("validation") : te("deleteFailed")}
+              </p>
+            ) : null}
+
+            <div className="grid gap-2 sm:grid-cols-2 sm:gap-4">
+              <div className="grid gap-2">
+                <label className="text-sm font-medium text-stone-800">
+                  {tIntervals("intervalKm")}
+                </label>
+                <Input
+                  type="number"
+                  inputMode="numeric"
+                  min={1}
+                  step={1}
+                  value={intervalKm}
+                  onChange={(e) => setIntervalKm(e.currentTarget.value)}
+                  className="tabular-nums"
+                />
+              </div>
+              <div className="grid gap-2">
+                <label className="text-sm font-medium text-stone-800">
+                  {tIntervals("intervalDays")}
+                </label>
+                <Input
+                  type="number"
+                  inputMode="numeric"
+                  min={1}
+                  step={1}
+                  value={intervalDays}
+                  onChange={(e) => setIntervalDays(e.currentTarget.value)}
+                  className="tabular-nums"
+                />
+              </div>
+            </div>
+
+            <div className="flex flex-wrap justify-end gap-2">
+              <Button
+                type="button"
+                variant="secondary"
+                disabled={intervalSaving}
+                onClick={() => {
+                  setIntervalKm("");
+                  setIntervalDays("");
+                  setIntervalError(null);
+                }}
+              >
+                {tc("cancel")}
+              </Button>
+              <Button
+                type="button"
+                disabled={intervalSaving}
+                onClick={async () => {
+                  setIntervalSaving(true);
+                  setIntervalError(null);
+                  try {
+                    const res = await upsertVehicleMaintenanceIntervalOverride({
+                      locale,
+                      vehicleId,
+                      type: presetType,
+                      intervalKm,
+                      intervalDays,
+                      dueSoonKm: null,
+                      dueSoonDays: null,
+                    });
+                    if ("error" in res) {
+                      setIntervalError(res.error ?? "error");
+                      return;
+                    }
+                    setShowInterval(false);
+                  } finally {
+                    setIntervalSaving(false);
+                  }
+                }}
+              >
+                {tIntervals("save")}
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
       <div className="grid gap-2 sm:grid-cols-2 sm:gap-4">
         <div className="grid gap-2">

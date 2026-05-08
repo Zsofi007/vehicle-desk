@@ -7,6 +7,7 @@ import { Link, redirect } from "@/lib/navigation";
 import { VehicleMakeLogo } from "@/components/VehicleMakeLogo";
 import {
   getAlertsForOrg,
+  getMaintenanceDueForOrg,
   getUpcomingExpiriesForOrg,
   getVehiclesForOrg,
 } from "@/lib/queries";
@@ -48,13 +49,25 @@ export default async function DashboardPage({ params }: Props) {
   const t = await getTranslations("dashboard");
   const tExp = await getTranslations("expiry");
   const tStatus = await getTranslations("status");
+  const tIntervals = await getTranslations("maintenanceIntervals");
   const localeTag = await getLocale();
 
   const vehicles = await getVehiclesForOrg(organization.id);
   const upcoming = await getUpcomingExpiriesForOrg(organization.id);
   const alerts = await getAlertsForOrg(organization.id);
+  const dueMaint = await getMaintenanceDueForOrg(organization.id);
+  const maintOverdue = dueMaint.filter((r) => r.status === "overdue");
+  const maintSoon = dueMaint.filter((r) => r.status === "due_soon");
   const expired = alerts.filter((a) => a.kind === "expired");
   const soon = alerts.filter((a) => a.kind === "expiry_soon");
+
+  const staleBefore = new Date();
+  staleBefore.setUTCDate(staleBefore.getUTCDate() - 90);
+  const staleVehicles = vehicles.filter((v) => {
+    const ts = (v as any).last_odometer_update_at as string | undefined;
+    if (!ts) return false;
+    return new Date(ts).getTime() < staleBefore.getTime();
+  });
 
   return (
     <div className="space-y-8">
@@ -89,6 +102,174 @@ export default async function DashboardPage({ params }: Props) {
             hint: upcoming.length > 0 ? t("upcomingExpiries") : t("emptyUpcoming"),
           })}
         </div>
+      </section>
+
+      {staleVehicles.length > 0 ? (
+        <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+          <p className="text-sm font-medium text-slate-900">
+            {t("odometerUpdateRecommendedTitle")}
+          </p>
+          <p className="mt-1 text-sm text-slate-600">
+            {t("odometerUpdateRecommendedSummary", { count: staleVehicles.length })}
+          </p>
+          <details className="mt-3">
+            <summary className="cursor-pointer select-none text-sm font-medium text-slate-700 hover:text-slate-900">
+              {t("odometerUpdateRecommendedToggle")}
+            </summary>
+            <div className="mt-3 grid gap-2">
+              {staleVehicles.slice(0, 10).map((v) => (
+                <div
+                  key={v.id}
+                  className="flex items-center gap-3 rounded-lg border border-slate-200 bg-white p-3"
+                >
+                  <VehicleMakeLogo make={v.make} className="h-12 w-12 object-contain" />
+                  <div className="min-w-0 flex-1">
+                    <div className="truncate text-sm text-slate-600">
+                      {v.make} {v.model}
+                      <span className="text-slate-400"> · </span>
+                      <span className="tabular-nums">{v.year}</span>
+                    </div>
+                    <div className="mt-1 text-xs text-slate-500">
+                      {t("odometerLastUpdateLabel")}{" "}
+                      {formatDateYmdUtc(
+                        String((v as any).last_odometer_update_at).slice(0, 10),
+                        localeTag,
+                      )}
+                    </div>
+                  </div>
+
+                  <Link
+                    href={`/vehicles/${v.id}`}
+                    className="inline-flex items-center justify-center gap-2 rounded border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-900 shadow-sm hover:bg-slate-50"
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src="/car-key-2.png"
+                      alt=""
+                      aria-hidden
+                      className="h-5 w-5"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                    {t("openVehicle")}
+                  </Link>
+                </div>
+              ))}
+              {staleVehicles.length > 10 ? (
+                <p className="text-xs text-slate-500">
+                  {t("odometerUpdateRecommendedShowing", {
+                    shown: 10,
+                    total: staleVehicles.length,
+                  })}
+                </p>
+              ) : null}
+            </div>
+          </details>
+        </section>
+      ) : null}
+
+      <section aria-labelledby="maintenance-due-heading" className="space-y-3">
+        <div className="flex items-center justify-between gap-3">
+          <h2
+            id="maintenance-due-heading"
+            className="text-base font-semibold text-slate-900"
+          >
+            {tIntervals("vehicleTitle")}
+          </h2>
+          <div className="text-sm font-medium text-slate-700">
+            {maintOverdue.length > 0 ? (
+              <span className="text-red-700">
+                {maintOverdue.length} {tIntervals("status_overdue")} · {maintSoon.length}{" "}
+                {tIntervals("status_due_soon")}
+              </span>
+            ) : maintSoon.length > 0 ? (
+              <span className="text-amber-700">
+                {maintSoon.length} {tIntervals("status_due_soon")}
+              </span>
+            ) : (
+              <span className="text-slate-600">{tIntervals("status_ok")}</span>
+            )}
+          </div>
+        </div>
+
+        {maintOverdue.length + maintSoon.length === 0 ? null : (
+          <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+            <table className="w-full text-left text-sm">
+              <thead className="border-b border-slate-200 bg-slate-50 text-xs font-semibold uppercase tracking-wider text-slate-600">
+                <tr>
+                  <th className="px-4 py-3">{tIntervals("type")}</th>
+                  <th className="px-4 py-3">{t("vehicleLabel")}</th>
+                  <th className="px-4 py-3">Reason</th>
+                  <th className="px-4 py-3">{tIntervals("status")}</th>
+                  <th className="px-4 py-3 text-right">{t("openVehicle")}</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {dueMaint
+                  .filter((r) => r.status === "overdue" || r.status === "due_soon")
+                  .slice(0, 6)
+                  .map((row) => {
+                    const statusLabel =
+                      row.status === "overdue"
+                        ? tIntervals("status_overdue")
+                        : tIntervals("status_due_soon");
+                    const statusStyle =
+                      row.status === "overdue"
+                        ? "border-red-200 bg-red-50 text-red-900"
+                        : "border-amber-200 bg-amber-50 text-amber-900";
+                    const reason =
+                      row.reason === "km"
+                        ? "km"
+                        : row.reason === "time"
+                          ? "time"
+                          : "—";
+
+                    const vehicle = vehicles.find((v) => v.id === row.vehicle_id);
+                    const vehicleLabel = vehicle
+                      ? `${vehicle.make} ${vehicle.model} · ${vehicle.license_plate}`
+                      : row.vehicle_id;
+
+                    return (
+                      <tr key={`${row.vehicle_id}:${row.type}`} className="hover:bg-slate-50/50">
+                        <td className="px-4 py-4 font-medium text-slate-900">{row.type}</td>
+                        <td className="px-4 py-4 text-slate-700">
+                          <span className="min-w-0 truncate">{vehicleLabel}</span>
+                        </td>
+                        <td className="px-4 py-4 text-slate-700">{reason}</td>
+                        <td className="px-4 py-4">
+                          <span
+                            className={[
+                              "inline-flex rounded border px-2 py-0.5 text-xs font-semibold",
+                              statusStyle,
+                            ].join(" ")}
+                          >
+                            {statusLabel}
+                          </span>
+                        </td>
+                        <td className="px-4 py-4 text-right">
+                          <Link
+                            href={`/vehicles/${row.vehicle_id}`}
+                            className="inline-flex items-center justify-center gap-2 rounded border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-900 shadow-sm hover:bg-slate-50"
+                          >
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                              src="/car-key-2.png"
+                              alt=""
+                              aria-hidden
+                              className="h-5 w-5"
+                              loading="lazy"
+                              decoding="async"
+                            />
+                            {t("openVehicle")}
+                          </Link>
+                        </td>
+                      </tr>
+                    );
+                  })}
+              </tbody>
+            </table>
+          </div>
+        )}
       </section>
 
       <section aria-labelledby="alerts-heading" className="space-y-3">

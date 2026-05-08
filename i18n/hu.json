@@ -102,7 +102,12 @@
     "emptyUpcoming": "Ezen a héten nincs esedékes megújítás.",
     "openVehicle": "Jármű megnyitása",
     "expiresOn": "Lejár",
-    "vehicleLabel": "Jármű"
+    "vehicleLabel": "Jármű",
+    "odometerUpdateRecommendedTitle": "Kilométeróra frissítése javasolt",
+    "odometerUpdateRecommendedSummary": "{count, plural, one {# járműnél nem volt kilométeróra-frissítés 90+ napja.} other {# járműnél nem volt kilométeróra-frissítés 90+ napja.}}",
+    "odometerUpdateRecommendedToggle": "Elavult járművek megtekintése",
+    "odometerLastUpdateLabel": "Utolsó frissítés:",
+    "odometerUpdateRecommendedShowing": "{shown} / {total} megjelenítve."
   },
   "vehicles": {
     "title": "Járművek",
@@ -141,7 +146,9 @@
     "open": "Megnyitás",
     "openVehicleAriaLabel": "Jármű megnyitása",
     "make": "Márka",
-    "model": "Típus"
+    "model": "Típus",
+    "odometerOutdatedBadge": "Elavult km óra",
+    "quickOdometerTitle": "Km óra (gyors frissítés)"
   },
   "vehicleDetail": {
     "title": "Jármű",
@@ -210,6 +217,26 @@
     "errorUnsupportedType": "Nem támogatott fájltípus. PDF/JPG/PNG/WEBP engedélyezett.",
     "errorUploadFailed": "Sikertelen feltöltés. Próbáld újra.",
     "errorLoadFailed": "Nem sikerült betölteni a dokumentumokat. Próbáld újra."
+  },
+  "maintenanceIntervals": {
+    "type": "Típus",
+    "status": "Állapot",
+    "intervalKm": "Intervallum (km)",
+    "intervalDays": "Intervallum (nap)",
+    "dueAt": "Esedékes",
+    "dueSoonKm": "Hamarosan esedékes (km)",
+    "dueSoonDays": "Hamarosan esedékes (nap)",
+    "actions": "Műveletek",
+    "save": "Mentés",
+    "clear": "Felülbírálás törlése",
+    "readOnlyHint": "Csak tulajdonosok és adminok szerkeszthetik ezeket az alapértékeket.",
+    "vehicleTitle": "Ismétlődő karbantartás",
+    "vehicleHint": "A felülbírálás csak erre a járműre vonatkozik.",
+    "status_ok": "Rendben",
+    "status_due_soon": "Hamarosan esedékes",
+    "status_overdue": "Lejárt",
+    "status_no_history": "Nincs előzmény",
+    "status_not_configured": "Nincs beállítva"
   },
   "aria": {
     "deleteVehicle": "Jármű törlése",

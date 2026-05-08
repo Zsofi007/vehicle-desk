@@ -8,7 +8,8 @@ export type RateLimitScope =
   | "signup"
   | "invite"
   | "login"
-  | "cron_expiry_alerts";
+  | "cron_expiry_alerts"
+  | "cron_odometer_reminders";
 
 export type RateLimitResult = {
   allowed: boolean;

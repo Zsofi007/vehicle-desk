@@ -18,6 +18,7 @@ export type VehicleTileRow = {
   status: VehicleStatus;
   statusLabel: string;
   statusClassName: string;
+  odometerOutdated?: boolean;
 };
 
 type Props = {
@@ -219,7 +220,7 @@ export function VehiclesBrowser({
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 [@media(min-width:1100px)]:grid-cols-3 xl:grid-cols-4">
-        {sorted.map(({ vehicle, statusLabel, statusClassName }) => (
+        {sorted.map(({ vehicle, statusLabel, statusClassName, odometerOutdated }) => (
           <VehicleTile
             key={vehicle.id}
             locale={locale}
@@ -230,6 +231,7 @@ export function VehiclesBrowser({
             licensePlate={vehicle.license_plate}
             statusLabel={statusLabel}
             statusClassName={statusClassName}
+            odometerOutdated={Boolean(odometerOutdated)}
           />
         ))}
       </div>

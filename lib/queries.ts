@@ -9,6 +9,24 @@ import {
 } from "@/lib/dates";
 import type { ExpiryItem, MaintenanceRecord, Vehicle } from "@/types";
 
+export type MaintenanceDueStatus = "ok" | "due_soon" | "overdue" | "no_history";
+
+export type MaintenanceDueRow = {
+  vehicle_id: string;
+  type: string;
+  last_date: string | null;
+  last_odometer: number | null;
+  current_odometer: number;
+  interval_km: number | null;
+  interval_days: number | null;
+  due_soon_km: number;
+  due_soon_days: number;
+  next_due_odometer: number | null;
+  next_due_date: string | null;
+  status: MaintenanceDueStatus;
+  reason: "km" | "time" | "no_history" | null;
+};
+
 export async function getVehiclesForOrg(organizationId: string): Promise<Vehicle[]> {
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
@@ -179,4 +197,15 @@ export async function getAlertsForOrg(organizationId: string): Promise<
     }
   }
   return alerts;
+}
+
+export async function getMaintenanceDueForOrg(
+  organizationId: string,
+): Promise<MaintenanceDueRow[]> {
+  const supabase = await createSupabaseServerClient();
+  const { data, error } = await supabase.rpc("maintenance_due_for_org", {
+    p_organization_id: organizationId,
+  });
+  if (error) throw error;
+  return (data ?? []) as MaintenanceDueRow[];
 }

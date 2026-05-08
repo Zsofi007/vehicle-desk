@@ -102,7 +102,12 @@
     "emptyUpcoming": "Nicio reînnoire scadentă săptămâna aceasta.",
     "openVehicle": "Deschide vehiculul",
     "expiresOn": "Expiră la",
-    "vehicleLabel": "Vehicul"
+    "vehicleLabel": "Vehicul",
+    "odometerUpdateRecommendedTitle": "Se recomandă actualizarea kilometrajului",
+    "odometerUpdateRecommendedSummary": "{count, plural, one {# vehicul nu a avut o actualizare a kilometrajului de peste 90 de zile.} other {# vehicule nu au avut o actualizare a kilometrajului de peste 90 de zile.}}",
+    "odometerUpdateRecommendedToggle": "Vezi vehiculele neactualizate",
+    "odometerLastUpdateLabel": "Ultima actualizare:",
+    "odometerUpdateRecommendedShowing": "Se afișează {shown} din {total}."
   },
   "vehicles": {
     "title": "Vehicule",
@@ -141,7 +146,9 @@
     "open": "Deschide",
     "openVehicleAriaLabel": "Deschide vehiculul",
     "make": "Marcă",
-    "model": "Model"
+    "model": "Model",
+    "odometerOutdatedBadge": "Kilometraj neactualizat",
+    "quickOdometerTitle": "Kilometraj (actualizare rapidă)"
   },
   "vehicleDetail": {
     "title": "Vehicul",
@@ -210,6 +217,26 @@
     "errorUnsupportedType": "Tip de fișier neacceptat. Încarcă PDF/JPG/PNG/WEBP.",
     "errorUploadFailed": "Încărcarea a eșuat. Încearcă din nou.",
     "errorLoadFailed": "Nu s-au putut încărca documentele. Încearcă din nou."
+  },
+  "maintenanceIntervals": {
+    "type": "Tip",
+    "status": "Stare",
+    "intervalKm": "Interval (km)",
+    "intervalDays": "Interval (zile)",
+    "dueAt": "Scadent la",
+    "dueSoonKm": "Scadent curând (km)",
+    "dueSoonDays": "Scadent curând (zile)",
+    "actions": "Acțiuni",
+    "save": "Salvează",
+    "clear": "Șterge suprascrierea",
+    "readOnlyHint": "Doar proprietarii și adminii pot edita aceste valori implicite.",
+    "vehicleTitle": "Întreținere recurentă",
+    "vehicleHint": "Suprascrierile se aplică doar acestui vehicul.",
+    "status_ok": "În regulă",
+    "status_due_soon": "Scade curând",
+    "status_overdue": "Întârziat",
+    "status_no_history": "Fără istoric",
+    "status_not_configured": "Neconfigurat"
   },
   "aria": {
     "deleteVehicle": "Șterge vehiculul",
