@@ -11,36 +11,29 @@ function iconSrc(n: number) {
   return `/maintenance-icons/divided-icons_${String(n).padStart(2, "0")}.png`;
 }
 
-function normalizeType(raw: string) {
-  return raw.trim().toLowerCase();
-}
-
 export async function MaintenanceList({ records }: Props) {
   const t = await getTranslations("maintenance");
   const locale = await getLocale();
 
   function typeMeta(type: string): { label: string; icon: string | null } {
-    const key = normalizeType(type);
-    // Support older stored strings too.
-    if (key === "oil" || key === "oil & filters" || key === "oil and filters") {
-      return { label: t("type_oil"), icon: iconSrc(13) };
+    switch (type) {
+      case "OIL_CHANGE":
+        return { label: t("type_oil_change"), icon: iconSrc(13) };
+      case "FILTERS":
+        return { label: t("type_filters"), icon: iconSrc(14) };
+      case "BRAKES":
+        return { label: t("type_brakes"), icon: iconSrc(10) };
+      case "TIRES":
+        return { label: t("type_tires"), icon: iconSrc(15) };
+      case "BATTERY":
+        return { label: t("type_battery"), icon: iconSrc(4) };
+      case "TIMING_BELT":
+        return { label: t("type_timing_belt"), icon: iconSrc(9) };
+      case "OTHER":
+        return { label: t("type_other"), icon: iconSrc(4) };
+      default:
+        return { label: type, icon: null };
     }
-    if (key === "filters" || key === "filter") {
-      return { label: t("type_filters"), icon: iconSrc(14) };
-    }
-    if (key === "engine parts" || key === "engine components") {
-      return { label: t("type_engine_parts"), icon: iconSrc(9) };
-    }
-    if (key === "brakes") {
-      return { label: t("type_brakes"), icon: iconSrc(10) };
-    }
-    if (key === "tyres" || key === "tires" || key === "tires" || key === "tire") {
-      return { label: t("type_tyres"), icon: iconSrc(15) };
-    }
-    if (key === "other") {
-      return { label: t("type_other"), icon: iconSrc(4) };
-    }
-    return { label: type, icon: null };
   }
 
   if (records.length === 0) {

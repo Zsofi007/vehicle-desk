@@ -11,19 +11,36 @@ export type Vehicle = {
   created_at: string;
 };
 
+export type MaintenanceType =
+  | "OIL_CHANGE"
+  | "BRAKES"
+  | "TIRES"
+  | "BATTERY"
+  | "FILTERS"
+  | "TIMING_BELT"
+  | "OTHER";
+
 export type MaintenanceRecord = {
   id: string;
   vehicle_id: string;
-  type: string;
+  type: MaintenanceType;
   date: string;
   odometer: number;
   notes: string | null;
 };
 
+export type ExpiryType =
+  | "ITP"
+  | "RCA"
+  | "CASCO"
+  | "VIGNETTE"
+  | "ROVINIETA"
+  | "OTHER";
+
 export type ExpiryItem = {
   id: string;
   vehicle_id: string;
-  type: string;
+  type: ExpiryType;
   expiry_date: string;
   cost: string | number | null;
   is_active?: boolean;

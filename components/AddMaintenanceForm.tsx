@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useId, useRef, useState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { useFormStatus } from "react-dom";
 import { Check, ChevronDown } from "lucide-react";
 
@@ -9,6 +9,7 @@ import {
   type MaintenanceActionState,
 } from "@/lib/actions/maintenance";
 import type { AppLocale } from "@/lib/i18n";
+import type { MaintenanceTypeKey } from "@/lib/type-keys";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { DatePicker } from "@/components/ui/date-picker";
@@ -21,7 +22,6 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { cn } from "@/lib/cn";
 
 type Props = {
   vehicleId: string;
@@ -64,29 +64,20 @@ export function AddMaintenanceForm({ vehicleId, locale, onSuccess, onCancel }: P
   const today = new Date().toISOString().slice(0, 10);
   const [date, setDate] = useState(today);
   const [open, setOpen] = useState(false);
-  const [presetType, setPresetType] = useState<
-    "Oil" | "Filters" | "Engine parts" | "Brakes" | "Tyres" | "Other" | ""
-  >("Oil");
-  const [customType, setCustomType] = useState("");
-  const customId = useId();
-  const customRef = useRef<HTMLInputElement | null>(null);
+  const [presetType, setPresetType] = useState<MaintenanceTypeKey>("OIL_CHANGE");
 
-  const isCustom = presetType === "Other";
-  const resolvedType = isCustom ? customType.trim() : presetType;
-
-  useEffect(() => {
-    if (isCustom) {
-      queueMicrotask(() => customRef.current?.focus());
-    }
-  }, [isCustom]);
-
-  const typeOptions = [
-    { value: "Oil" as const, label: t("type_oil"), icon: 13 },
-    { value: "Filters" as const, label: t("type_filters"), icon: 14 },
-    { value: "Engine parts" as const, label: t("type_engine_parts"), icon: 9 },
-    { value: "Brakes" as const, label: t("type_brakes"), icon: 10 },
-    { value: "Tyres" as const, label: t("type_tyres"), icon: 15 },
-    { value: "Other" as const, label: t("type_other"), icon: 4 },
+  const typeOptions: Array<{
+    value: MaintenanceTypeKey;
+    label: string;
+    icon: number;
+  }> = [
+    { value: "OIL_CHANGE", label: t("type_oil_change"), icon: 13 },
+    { value: "FILTERS", label: t("type_filters"), icon: 14 },
+    { value: "BRAKES", label: t("type_brakes"), icon: 10 },
+    { value: "TIRES", label: t("type_tires"), icon: 15 },
+    { value: "BATTERY", label: t("type_battery"), icon: 4 },
+    { value: "TIMING_BELT", label: t("type_timing_belt"), icon: 9 },
+    { value: "OTHER", label: t("type_other"), icon: 4 },
   ];
 
   return (
@@ -111,15 +102,13 @@ export function AddMaintenanceForm({ vehicleId, locale, onSuccess, onCancel }: P
         <label htmlFor="m-type" className="text-sm font-medium text-stone-800">
           {t("type")}
         </label>
-        <input type="hidden" name="type" value={resolvedType} />
+        <input type="hidden" name="type" value={presetType} />
 
         <Popover open={open} onOpenChange={setOpen}>
           <PopoverTrigger asChild>
             <Button type="button" variant="secondary" className="w-full justify-between">
-              <span className={cn("truncate", !resolvedType && "text-slate-500")}>
-                {resolvedType
-                  ? typeOptions.find((o) => o.value === presetType)?.label ?? resolvedType
-                  : tc("none")}
+              <span className="truncate">
+                {typeOptions.find((o) => o.value === presetType)?.label ?? tc("none")}
               </span>
               <ChevronDown className="h-4 w-4 text-slate-500" aria-hidden />
             </Button>
@@ -136,7 +125,6 @@ export function AddMaintenanceForm({ vehicleId, locale, onSuccess, onCancel }: P
                       value={opt.label}
                       onSelect={() => {
                         setPresetType(opt.value);
-                        if (opt.value !== "Other") setCustomType("");
                         setOpen(false);
                       }}
                     >
@@ -162,23 +150,6 @@ export function AddMaintenanceForm({ vehicleId, locale, onSuccess, onCancel }: P
             </Command>
           </PopoverContent>
         </Popover>
-
-        {isCustom ? (
-          <div className="grid gap-2">
-            <label htmlFor={customId} className="text-sm font-medium text-stone-800">
-              {tc("custom")}
-            </label>
-            <input
-              id={customId}
-              ref={customRef}
-              value={customType}
-              onChange={(e) => setCustomType(e.target.value)}
-              required
-              autoComplete="off"
-              className="rounded-md border border-stone-300 px-3 py-2 text-stone-900 shadow-sm"
-            />
-          </div>
-        ) : null}
       </div>
       <div className="grid gap-2 sm:grid-cols-2 sm:gap-4">
         <div className="grid gap-2">
