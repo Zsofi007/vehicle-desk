@@ -9,6 +9,9 @@ export type Vehicle = {
   license_plate: string;
   odometer: number;
   created_at: string;
+  updated_at: string;
+  created_by: string | null;
+  updated_by: string | null;
 };
 
 export type MaintenanceType =
@@ -27,6 +30,10 @@ export type MaintenanceRecord = {
   date: string;
   odometer: number;
   notes: string | null;
+  created_at: string;
+  updated_at: string;
+  created_by: string | null;
+  updated_by: string | null;
 };
 
 export type ExpiryType =
@@ -45,6 +52,10 @@ export type ExpiryItem = {
   cost: string | number | null;
   is_active?: boolean;
   negated_at?: string | null;
+  created_at: string;
+  updated_at: string;
+  created_by: string | null;
+  updated_by: string | null;
 };
 
 export type Invite = {
