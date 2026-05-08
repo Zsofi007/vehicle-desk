@@ -1,14 +1,14 @@
 import { getTranslations, getLocale } from "next-intl/server";
 
-import { requireAuth } from "@/lib/auth";
+import { getCurrentUserWithRole, requireActiveOrganization } from "@/lib/auth";
 import { formatDateYmdUtc } from "@/lib/format";
 import type { AppLocale } from "@/lib/i18n";
-import { Link } from "@/lib/navigation";
+import { Link, redirect } from "@/lib/navigation";
 import { VehicleMakeLogo } from "@/components/VehicleMakeLogo";
 import {
-  getAlertsForUser,
-  getUpcomingExpiriesForUser,
-  getVehiclesForUser,
+  getAlertsForOrg,
+  getUpcomingExpiriesForOrg,
+  getVehiclesForOrg,
 } from "@/lib/queries";
 
 type Props = {
@@ -40,15 +40,19 @@ function statCard({
 export default async function DashboardPage({ params }: Props) {
   const { locale: loc } = await params;
   const locale = loc as AppLocale;
-  const user = await requireAuth(locale);
+  const current = await getCurrentUserWithRole();
+  if (current?.role === "admin") {
+    redirect({ href: "/admin/invites", locale });
+  }
+  const { organization } = await requireActiveOrganization(locale);
   const t = await getTranslations("dashboard");
   const tExp = await getTranslations("expiry");
   const tStatus = await getTranslations("status");
   const localeTag = await getLocale();
 
-  const vehicles = await getVehiclesForUser(user.id);
-  const upcoming = await getUpcomingExpiriesForUser(user.id);
-  const alerts = await getAlertsForUser(user.id);
+  const vehicles = await getVehiclesForOrg(organization.id);
+  const upcoming = await getUpcomingExpiriesForOrg(organization.id);
+  const alerts = await getAlertsForOrg(organization.id);
   const expired = alerts.filter((a) => a.kind === "expired");
   const soon = alerts.filter((a) => a.kind === "expiry_soon");
 

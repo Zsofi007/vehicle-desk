@@ -2,7 +2,7 @@
 
 import { useId, useRef, useState, useTransition } from "react";
 
-import { updateCompanyName } from "@/lib/actions/profile";
+import { updateOrganizationName } from "@/lib/actions/org-settings";
 import { useRouter } from "@/lib/navigation";
 
 type Props = {
@@ -11,6 +11,7 @@ type Props = {
   placeholder?: string;
   saveLabel: string;
   savedLabel: string;
+  canEdit?: boolean;
 };
 
 export function CompanyNameField({
@@ -19,6 +20,7 @@ export function CompanyNameField({
   placeholder,
   saveLabel,
   savedLabel,
+  canEdit = true,
 }: Props) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
@@ -49,32 +51,34 @@ export function CompanyNameField({
             setCurrent(e.target.value);
             setSaved(false);
           }}
-          disabled={pending}
+          disabled={pending || !canEdit}
         />
-        <button
-          type="button"
-          disabled={pending || !isDirty}
-          onClick={() => {
-            setSaved(false);
-            startTransition(async () => {
-              await updateCompanyName(current);
-              baselineRef.current = current;
-              router.refresh();
-              setSaved(true);
-              window.setTimeout(() => setSaved(false), 1400);
-            });
-          }}
-          className={[
-            "inline-flex h-10 items-center justify-center rounded-lg border px-3 text-sm font-medium shadow-sm",
-            "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-600",
-            pending ? "cursor-not-allowed opacity-60" : "hover:bg-slate-50",
-            saved
-              ? "border-emerald-200 bg-emerald-50 text-emerald-900 hover:bg-emerald-100"
-              : "border-slate-200 bg-white text-slate-900",
-          ].join(" ")}
-        >
-          {saved ? savedLabel : saveLabel}
-        </button>
+        {canEdit ? (
+          <button
+            type="button"
+            disabled={pending || !isDirty}
+            onClick={() => {
+              setSaved(false);
+              startTransition(async () => {
+                await updateOrganizationName(current);
+                baselineRef.current = current;
+                router.refresh();
+                setSaved(true);
+                window.setTimeout(() => setSaved(false), 1400);
+              });
+            }}
+            className={[
+              "inline-flex h-10 items-center justify-center rounded-lg border px-3 text-sm font-medium shadow-sm",
+              "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-600",
+              pending ? "cursor-not-allowed opacity-60" : "hover:bg-slate-50",
+              saved
+                ? "border-emerald-200 bg-emerald-50 text-emerald-900 hover:bg-emerald-100"
+                : "border-slate-200 bg-white text-slate-900",
+            ].join(" ")}
+          >
+            {saved ? savedLabel : saveLabel}
+          </button>
+        ) : null}
       </div>
     </div>
   );

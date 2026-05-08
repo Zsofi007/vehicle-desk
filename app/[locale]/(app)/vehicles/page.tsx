@@ -1,10 +1,11 @@
 import { getTranslations } from "next-intl/server";
 
-import { requireAuth } from "@/lib/auth";
+import { getCurrentUserWithRole, requireActiveOrganization } from "@/lib/auth";
 import type { AppLocale } from "@/lib/i18n";
-import { getAlertsForUser, getVehiclesForUser } from "@/lib/queries";
+import { getAlertsForOrg, getVehiclesForOrg } from "@/lib/queries";
 import { AddVehicleModal } from "@/components/AddVehicleModal";
 import { VehiclesBrowser, type VehicleTileRow } from "@/components/VehiclesBrowser";
+import { redirect } from "@/lib/navigation";
 
 type Props = {
   params: Promise<{ locale: string }>;
@@ -13,13 +14,17 @@ type Props = {
 export default async function VehiclesPage({ params }: Props) {
   const { locale: loc } = await params;
   const locale = loc as AppLocale;
-  const user = await requireAuth(locale);
+  const current = await getCurrentUserWithRole();
+  if (current?.role === "admin") {
+    redirect({ href: "/admin/invites", locale });
+  }
+  const { organization } = await requireActiveOrganization(locale);
   const t = await getTranslations("vehicles");
   const tNav = await getTranslations("nav");
   const tStatus = await getTranslations("status");
 
-  const vehicles = await getVehiclesForUser(user.id);
-  const alerts = await getAlertsForUser(user.id);
+  const vehicles = await getVehiclesForOrg(organization.id);
+  const alerts = await getAlertsForOrg(organization.id);
 
   const vehicleStatus = new Map<string, "expired" | "soon" | "ok">();
   for (const a of alerts) {
