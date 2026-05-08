@@ -71,6 +71,7 @@ export default async function VehicleDetailPage({ params }: Props) {
         vehicleId={vehicle.id}
         locale={locale}
         records={maintenance}
+        currentOdometer={vehicle.odometer}
       />
 
       <ExpirySection

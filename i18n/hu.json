@@ -212,10 +212,13 @@
   "documents": {
     "title": "Dokumentumok",
     "upload": "Feltöltés",
+    "collapse": "Bezárás",
     "loading": "Dokumentumok betöltése…",
     "empty": "Még nincs dokumentum.",
+    "limits": "Max. {max}. PDF/JPG/PNG/WEBP.",
     "download": "Letöltés",
     "delete": "Dokumentum törlése",
+    "deleteConfirm": "A dokumentum véglegesen törlődik.",
     "errorTooLarge": "A fájl túl nagy (max. 5 MB).",
     "errorUnsupportedType": "Nem támogatott fájltípus. PDF/JPG/PNG/WEBP engedélyezett.",
     "errorUploadFailed": "Sikertelen feltöltés. Próbáld újra.",

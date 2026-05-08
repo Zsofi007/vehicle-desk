@@ -28,6 +28,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 type Props = {
   vehicleId: string;
   locale: AppLocale;
+  initialOdometer?: number | null;
   onSuccess?: () => void;
   onCancel?: () => void;
 };
@@ -47,7 +48,13 @@ function SubmitButton() {
   );
 }
 
-export function AddMaintenanceForm({ vehicleId, locale, onSuccess, onCancel }: Props) {
+export function AddMaintenanceForm({
+  vehicleId,
+  locale,
+  initialOdometer,
+  onSuccess,
+  onCancel,
+}: Props) {
   const t = useTranslations("maintenance");
   const tc = useTranslations("common");
   const te = useTranslations("errors");
@@ -73,6 +80,7 @@ export function AddMaintenanceForm({ vehicleId, locale, onSuccess, onCancel }: P
   const [intervalDays, setIntervalDays] = useState<string>("");
   const [intervalSaving, setIntervalSaving] = useState(false);
   const [intervalError, setIntervalError] = useState<string | null>(null);
+  const initialOdo = typeof initialOdometer === "number" ? String(initialOdometer) : undefined;
 
   const typeOptions: Array<{
     value: MaintenanceTypeKey;
@@ -191,6 +199,7 @@ export function AddMaintenanceForm({ vehicleId, locale, onSuccess, onCancel }: P
                   inputMode="numeric"
                   min={1}
                   step={1}
+                  name="interval_km"
                   value={intervalKm}
                   onChange={(e) => setIntervalKm(e.currentTarget.value)}
                   className="tabular-nums"
@@ -205,6 +214,7 @@ export function AddMaintenanceForm({ vehicleId, locale, onSuccess, onCancel }: P
                   inputMode="numeric"
                   min={1}
                   step={1}
+                  name="interval_days"
                   value={intervalDays}
                   onChange={(e) => setIntervalDays(e.currentTarget.value)}
                   className="tabular-nums"
@@ -273,6 +283,7 @@ export function AddMaintenanceForm({ vehicleId, locale, onSuccess, onCancel }: P
             name="odometer"
             required
             className="tabular-nums"
+            defaultValue={initialOdo}
           />
         </div>
       </div>

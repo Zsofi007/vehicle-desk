@@ -15,6 +15,7 @@ type Props = {
   vehicleId: string;
   locale: AppLocale;
   records: MaintenanceRecord[];
+  currentOdometer?: number | null;
 };
 
 export function MaintenanceSection({
@@ -23,6 +24,7 @@ export function MaintenanceSection({
   vehicleId,
   locale,
   records,
+  currentOdometer,
 }: Props) {
   const [adding, setAdding] = useState(false);
   const headingId = useId();
@@ -50,6 +52,7 @@ export function MaintenanceSection({
         <AddMaintenanceForm
           vehicleId={vehicleId}
           locale={locale}
+          initialOdometer={currentOdometer}
           onSuccess={() => setAdding(false)}
           onCancel={() => setAdding(false)}
         />

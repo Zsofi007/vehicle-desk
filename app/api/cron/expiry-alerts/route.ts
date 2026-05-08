@@ -5,6 +5,7 @@ import { expiryEmailTemplate } from "@/lib/email/templates";
 import { getResendClient } from "@/lib/email/resend";
 import { addDaysUTC, formatIsoDateForLocale, toIsoDateUTC } from "@/lib/expiry-alerts";
 import { hashSecret, hitRateLimit } from "@/lib/rate-limit";
+import { getCarLogoSrc } from "@/lib/car-logos";
 
 function isAuthorized(req: Request) {
   const secret = process.env.CRON_SECRET;
@@ -73,7 +74,7 @@ export async function POST(req: Request) {
   const vehicleIds = Array.from(new Set(candidates.map((c) => c.vehicle_id)));
   const { data: vehicles } = await admin
     .from("vehicles")
-    .select("id,user_id,license_plate")
+    .select("id,user_id,license_plate,make,model,year")
     .in("id", vehicleIds);
 
   const vehicleById = new Map((vehicles ?? []).map((v) => [v.id, v]));
@@ -105,6 +106,8 @@ export async function POST(req: Request) {
     const lang = (profile.preferred_language ?? "en") as "en" | "hu" | "ro";
     const origin = getRequestOrigin(req);
     const vehicleUrl = `${origin}/${lang}/vehicles/${vehicleId}`;
+    const logoSrc = veh.make ? getCarLogoSrc(String(veh.make)) : null;
+    const logoUrl = logoSrc ? `${origin}${logoSrc}` : null;
     const templateItems = items
       .map((it) => ({
         type: String(it.type),
@@ -114,6 +117,10 @@ export async function POST(req: Request) {
 
     const tpl = expiryEmailTemplate(lang, {
       license_plate: String(veh.license_plate),
+      make: String((veh as { make?: string | null }).make ?? ""),
+      model: String((veh as { model?: string | null }).model ?? ""),
+      year: Number((veh as { year?: number | null }).year ?? 0),
+      logoUrl,
       items: templateItems,
       vehicleUrl,
     });

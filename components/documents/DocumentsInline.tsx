@@ -163,23 +163,20 @@ export function DocumentsInline({ locale, kind, parentId }: Props) {
       <div className="mt-3 grid gap-3">
         {error ? (
           <p className="text-sm text-red-800" role="alert">
-            {t("loadError")}
+            {t("errorLoadFailed")}
           </p>
         ) : null}
         {uploadError ? (
           <p className="text-sm text-red-800" role="alert">
             {uploadError === "type"
-              ? t("invalidType")
+              ? t("errorUnsupportedType")
               : uploadError === "size"
-                ? t("tooLarge")
-                : t("uploadError")}
+                ? t("errorTooLarge")
+                : t("errorUploadFailed")}
           </p>
         ) : null}
 
         <div className="grid gap-2">
-          <label htmlFor={inputId} className="text-sm font-medium text-stone-800">
-            {t("upload")}
-          </label>
           <input
             ref={fileRef}
             id={inputId}
@@ -193,8 +190,20 @@ export function DocumentsInline({ locale, kind, parentId }: Props) {
               if (!f) return;
               await onUploadFile(f);
             }}
-            className="block w-full text-sm"
+            className="sr-only"
           />
+          <Button
+            type="button"
+            size="sm"
+            variant="secondary"
+            disabled={uploading}
+            onClick={() => {
+              fileRef.current?.click();
+            }}
+          >
+            <Paperclip className="h-4 w-4" aria-hidden />
+            {uploading ? `${t("upload")}…` : t("upload")}
+          </Button>
           <p className="text-xs text-stone-600">
             {t("limits", { max: formatBytes(maxBytes) })}
           </p>

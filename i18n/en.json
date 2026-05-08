@@ -212,10 +212,13 @@
   "documents": {
     "title": "Documents",
     "upload": "Upload",
+    "collapse": "Close",
     "loading": "Loading documents…",
     "empty": "No documents yet.",
+    "limits": "Max {max}. PDF/JPG/PNG/WEBP.",
     "download": "Download",
     "delete": "Delete document",
+    "deleteConfirm": "This will permanently delete this document.",
     "errorTooLarge": "File is too large (max 5 MB).",
     "errorUnsupportedType": "Unsupported file type. Upload PDF/JPG/PNG/WEBP.",
     "errorUploadFailed": "Upload failed. Please try again.",

@@ -212,10 +212,13 @@
   "documents": {
     "title": "Documente",
     "upload": "Încarcă",
+    "collapse": "Închide",
     "loading": "Se încarcă documentele…",
     "empty": "Nu există documente încă.",
+    "limits": "Max {max}. PDF/JPG/PNG/WEBP.",
     "download": "Descarcă",
     "delete": "Șterge documentul",
+    "deleteConfirm": "Acest document va fi șters definitiv.",
     "errorTooLarge": "Fișierul este prea mare (max. 5 MB).",
     "errorUnsupportedType": "Tip de fișier neacceptat. Încarcă PDF/JPG/PNG/WEBP.",
     "errorUploadFailed": "Încărcarea a eșuat. Încearcă din nou.",
