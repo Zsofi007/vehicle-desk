@@ -152,6 +152,19 @@ export default async function SettingsPage({ params }: Props) {
           />
         </div>
       </section>
+
+      <section className="rounded-xl border border-stone-200 bg-white p-4 shadow-sm">
+        <h2 className="text-sm font-semibold text-stone-900">{t("exportTitle")}</h2>
+        <p className="mt-1 text-sm text-stone-600">{t("exportHint")}</p>
+        <div className="mt-3">
+          <a
+            href="/api/export"
+            className="inline-flex items-center justify-center rounded-md bg-stone-900 px-4 py-2 text-sm font-medium text-white hover:bg-stone-800"
+          >
+            {t("exportButton")}
+          </a>
+        </div>
+      </section>
     </div>
   );
 }

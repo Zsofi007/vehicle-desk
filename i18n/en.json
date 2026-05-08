@@ -55,6 +55,9 @@
     "notificationsTitle": "Notifications",
     "emailNotificationsLabel": "Email notifications",
     "emailNotificationsHint": "Get expiry reminder emails 14 days and 1 day before.",
+    "exportTitle": "Export",
+    "exportHint": "Download vehicles, maintenance records, and expiry items as CSV (ZIP).",
+    "exportButton": "Download export",
     "toggleOn": "On",
     "toggleOff": "Off"
   },

@@ -55,6 +55,9 @@
     "notificationsTitle": "Notificări",
     "emailNotificationsLabel": "Notificări prin e-mail",
     "emailNotificationsHint": "Primești e-mailuri de reamintire cu 14 zile și 1 zi înainte de expirare.",
+    "exportTitle": "Export",
+    "exportHint": "Descarcă vehicule, întreținere și termene ca CSV (ZIP).",
+    "exportButton": "Descarcă exportul",
     "toggleOn": "Pornit",
     "toggleOff": "Oprit"
   },
