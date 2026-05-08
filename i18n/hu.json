@@ -55,6 +55,9 @@
     "notificationsTitle": "Értesítések",
     "emailNotificationsLabel": "E-mail értesítések",
     "emailNotificationsHint": "Lejárati emlékeztetők 14 nappal és 1 nappal előtte.",
+    "exportTitle": "Export",
+    "exportHint": "Járművek, karbantartások és lejáratok letöltése CSV-ben (ZIP).",
+    "exportButton": "Export letöltése",
     "toggleOn": "Be",
     "toggleOff": "Ki"
   },
