@@ -4,6 +4,7 @@ import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { expiryEmailTemplate } from "@/lib/email/templates";
 import { getResendClient } from "@/lib/email/resend";
 import { addDaysUTC, formatIsoDateForLocale, toIsoDateUTC } from "@/lib/expiry-alerts";
+import { hashSecret, hitRateLimit } from "@/lib/rate-limit";
 
 function isAuthorized(req: Request) {
   const secret = process.env.CRON_SECRET;
@@ -16,6 +17,23 @@ function isAuthorized(req: Request) {
 export async function POST(req: Request) {
   if (!isAuthorized(req)) {
     return NextResponse.json({ error: "forbidden" }, { status: 403 });
+  }
+
+  const auth = req.headers.get("authorization") ?? "";
+  const rawToken = auth.startsWith("Bearer ") ? auth.slice("Bearer ".length) : "";
+  const tokenHash = rawToken ? hashSecret(rawToken) : "missing";
+  const rl = await hitRateLimit({
+    scope: "cron_expiry_alerts",
+    key: `cron:${tokenHash}`,
+    limit: 60,
+    windowSeconds: 60,
+  });
+  if (!rl.allowed) {
+    const retryAfter = Math.max(0, Math.ceil((rl.resetAt.getTime() - Date.now()) / 1000));
+    return NextResponse.json(
+      { error: "rate_limited" },
+      { status: 429, headers: { "Retry-After": String(retryAfter) } },
+    );
   }
 
   const admin = createSupabaseAdminClient();

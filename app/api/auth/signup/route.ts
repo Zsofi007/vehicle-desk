@@ -4,6 +4,7 @@ import { z } from "zod";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { hashInviteToken } from "@/lib/invite";
+import { getClientIp, hitRateLimit } from "@/lib/rate-limit";
 
 const bodySchema = z.object({
   email: z.string().email(),
@@ -22,6 +23,21 @@ function debugError(reason: string) {
 }
 
 export async function POST(req: Request) {
+  const ip = getClientIp(req);
+  const rl = await hitRateLimit({
+    scope: "signup",
+    key: ip,
+    limit: 5,
+    windowSeconds: 60,
+  });
+  if (!rl.allowed) {
+    const retryAfter = Math.max(0, Math.ceil((rl.resetAt.getTime() - Date.now()) / 1000));
+    return NextResponse.json(
+      { error: "rate_limited" },
+      { status: 429, headers: { "Retry-After": String(retryAfter) } },
+    );
+  }
+
   const json = await req.json().catch(() => null);
   const parsed = bodySchema.safeParse(json);
   if (!parsed.success) {

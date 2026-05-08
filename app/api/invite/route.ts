@@ -7,6 +7,7 @@ import { inviteEmailTemplate } from "@/lib/email/templates";
 import { getResendClient } from "@/lib/email/resend";
 import { generateInviteToken, hashInviteToken, inviteExpiryIso } from "@/lib/invite";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { getClientIp, hitRateLimit } from "@/lib/rate-limit";
 
 const bodySchema = z.object({
   email: z.string().email(),
@@ -23,6 +24,21 @@ function isAuthorized(req: Request) {
 }
 
 export async function POST(req: Request) {
+  const ip = getClientIp(req);
+  const rl = await hitRateLimit({
+    scope: "invite",
+    key: ip,
+    limit: 10,
+    windowSeconds: 60,
+  });
+  if (!rl.allowed) {
+    const retryAfter = Math.max(0, Math.ceil((rl.resetAt.getTime() - Date.now()) / 1000));
+    return NextResponse.json(
+      { error: "rate_limited" },
+      { status: 429, headers: { "Retry-After": String(retryAfter) } },
+    );
+  }
+
   const current = await getCurrentUserWithRole();
   const isAdmin = current?.role === "admin";
 

@@ -193,6 +193,7 @@
     "unauthorized": "You must be signed in.",
     "notFound": "Page not found.",
     "validation": "Please review the form.",
+    "rateLimited": "Too many attempts. Please try again in a moment.",
     "deleteFailed": "Could not delete. Try again."
   },
   "aria": {
