@@ -6,8 +6,17 @@ import { z } from "zod";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import type { AppLocale } from "@/lib/i18n";
 
+const expiryTypeEnum = z.enum([
+  "ITP",
+  "RCA",
+  "CASCO",
+  "VIGNETTE",
+  "ROVINIETA",
+  "OTHER",
+]);
+
 const baseSchema = z.object({
-  type: z.string().min(1).max(120),
+  type: expiryTypeEnum,
   expiry_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
 });
 
@@ -50,13 +59,7 @@ export async function createExpiryItem(
   }
 
   const supabase = await createSupabaseServerClient();
-  const normalizedType = parsed.data.type.trim().toLowerCase();
-  const shouldReplaceExisting =
-    normalizedType === "itp" ||
-    normalizedType === "rca" ||
-    normalizedType === "casco" ||
-    normalizedType === "rovinietă" ||
-    normalizedType === "rovinieta";
+  const shouldReplaceExisting = parsed.data.type !== "OTHER";
 
   if (shouldReplaceExisting) {
     // If the same expiry type already exists for this vehicle, keep it for history but negate it.

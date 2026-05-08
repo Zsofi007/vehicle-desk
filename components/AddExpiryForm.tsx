@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useId, useRef, useState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { useFormStatus } from "react-dom";
 import { Check, ChevronDown } from "lucide-react";
 
@@ -9,6 +9,7 @@ import {
   type ExpiryActionState,
 } from "@/lib/actions/expiry";
 import type { AppLocale } from "@/lib/i18n";
+import type { ExpiryTypeKey } from "@/lib/type-keys";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { DatePicker } from "@/components/ui/date-picker";
@@ -21,7 +22,6 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { cn } from "@/lib/cn";
 
 type Props = {
   vehicleId: string;
@@ -53,10 +53,9 @@ function addUtcYearsYmd(years: number) {
 }
 
 function defaultExpiryYmdForType(type: string, vehicleYear?: number) {
-  const key = type.trim().toLowerCase();
   const nowYear = new Date().getUTCFullYear();
   const isYoung = typeof vehicleYear === "number" && nowYear - vehicleYear < 10;
-  if (key === "itp") return addUtcYearsYmd(isYoung ? 2 : 1);
+  if (type === "ITP") return addUtcYearsYmd(isYoung ? 2 : 1);
   return addUtcYearsYmd(1);
 }
 
@@ -83,33 +82,20 @@ export function AddExpiryForm({
   }, [onSuccess, state]);
 
   const [open, setOpen] = useState(false);
-  const [presetType, setPresetType] = useState<
-    "ITP" | "RCA" | "CASCO" | "Vignette" | "Rovinietă" | "Other"
-  >("ITP");
-  const [customType, setCustomType] = useState("");
-  const customId = useId();
-  const customRef = useRef<HTMLInputElement | null>(null);
+  const [presetType, setPresetType] = useState<ExpiryTypeKey>("ITP");
   const [expiryDate, setExpiryDate] = useState(() =>
     defaultExpiryYmdForType("ITP", vehicleYear),
   );
 
-  const isCustom = presetType === "Other";
-  const resolvedType = isCustom ? customType.trim() : presetType;
-
-  useEffect(() => {
-    if (isCustom) {
-      queueMicrotask(() => customRef.current?.focus());
-    }
-  }, [isCustom]);
-
-  const typeOptions = [
-    { value: "ITP" as const, label: t("type_itp"), iconSrc: "/service-icons/better-icons_24.png" },
-    { value: "RCA" as const, label: t("type_rca"), iconSrc: "/service-icons/better-icons_19.png" },
-    { value: "CASCO" as const, label: t("type_casco"), iconSrc: "/service-icons/better-icons_25.png" },
-    { value: "Vignette" as const, label: t("type_vignette"), iconSrc: "/service-icons/better-icons_11.png" },
-    { value: "Rovinietă" as const, label: t("type_rovinieta"), iconSrc: "/service-icons/rovinieta.png" },
-    { value: "Other" as const, label: t("type_other"), iconSrc: "/service-icons/better-icons_12.png" },
-  ];
+  const typeOptions: Array<{ value: ExpiryTypeKey; label: string; iconSrc: string }> =
+    [
+      { value: "ITP", label: t("type_itp"), iconSrc: "/service-icons/better-icons_24.png" },
+      { value: "RCA", label: t("type_rca"), iconSrc: "/service-icons/better-icons_19.png" },
+      { value: "CASCO", label: t("type_casco"), iconSrc: "/service-icons/better-icons_25.png" },
+      { value: "VIGNETTE", label: t("type_vignette"), iconSrc: "/service-icons/better-icons_11.png" },
+      { value: "ROVINIETA", label: t("type_rovinieta"), iconSrc: "/service-icons/rovinieta.png" },
+      { value: "OTHER", label: t("type_other"), iconSrc: "/service-icons/better-icons_12.png" },
+    ];
 
   return (
     <form
@@ -133,15 +119,13 @@ export function AddExpiryForm({
         <label htmlFor="e-type" className="text-sm font-medium text-stone-800">
           {t("type")}
         </label>
-        <input type="hidden" name="type" value={resolvedType} />
+        <input type="hidden" name="type" value={presetType} />
 
         <Popover open={open} onOpenChange={setOpen}>
           <PopoverTrigger asChild>
             <Button type="button" variant="secondary" className="w-full justify-between">
-              <span className={cn("truncate", !resolvedType && "text-slate-500")}>
-                {resolvedType
-                  ? typeOptions.find((o) => o.value === presetType)?.label ?? resolvedType
-                  : tc("none")}
+              <span className="truncate">
+                {typeOptions.find((o) => o.value === presetType)?.label ?? tc("none")}
               </span>
               <ChevronDown className="h-4 w-4 text-slate-500" aria-hidden />
             </Button>
@@ -158,7 +142,6 @@ export function AddExpiryForm({
                       value={opt.label}
                       onSelect={() => {
                         setPresetType(opt.value);
-                        if (opt.value !== "Other") setCustomType("");
                         setExpiryDate(defaultExpiryYmdForType(opt.value, vehicleYear));
 
                         setOpen(false);
@@ -186,23 +169,6 @@ export function AddExpiryForm({
             </Command>
           </PopoverContent>
         </Popover>
-
-        {isCustom ? (
-          <div className="grid gap-2">
-            <label htmlFor={customId} className="text-sm font-medium text-stone-800">
-              {tc("custom")}
-            </label>
-            <input
-              id={customId}
-              ref={customRef}
-              value={customType}
-              onChange={(e) => setCustomType(e.target.value)}
-              required
-              autoComplete="off"
-              className="rounded-md border border-stone-300 px-3 py-2 text-stone-900 shadow-sm"
-            />
-          </div>
-        ) : null}
       </div>
       <div className="grid gap-2 sm:grid-cols-2 sm:gap-4">
         <div className="grid gap-2">

@@ -32,16 +32,22 @@ export async function ExpiryList({ items }: Props) {
   }
 
   function expiryTypeMeta(type: string): { label: string; iconSrc?: string } {
-    const key = type.trim().toLowerCase();
-    if (key === "itp") return { label: t("type_itp"), iconSrc: "/service-icons/better-icons_24.png" };
-    if (key === "rca") return { label: t("type_rca"), iconSrc: "/service-icons/better-icons_19.png" };
-    if (key === "casco") return { label: t("type_casco"), iconSrc: "/service-icons/better-icons_25.png" };
-    if (key === "vignette" || key === "vignetă" || key === "vigneta")
-      return { label: t("type_vignette"), iconSrc: "/service-icons/better-icons_11.png" };
-    if (key === "rovinietă" || key === "rovinieta")
-      return { label: t("type_rovinieta"), iconSrc: "/service-icons/rovinieta.png" };
-    if (key === "other") return { label: t("type_other"), iconSrc: "/service-icons/better-icons_12.png" };
-    return { label: type };
+    switch (type) {
+      case "ITP":
+        return { label: t("type_itp"), iconSrc: "/service-icons/better-icons_24.png" };
+      case "RCA":
+        return { label: t("type_rca"), iconSrc: "/service-icons/better-icons_19.png" };
+      case "CASCO":
+        return { label: t("type_casco"), iconSrc: "/service-icons/better-icons_25.png" };
+      case "VIGNETTE":
+        return { label: t("type_vignette"), iconSrc: "/service-icons/better-icons_11.png" };
+      case "ROVINIETA":
+        return { label: t("type_rovinieta"), iconSrc: "/service-icons/rovinieta.png" };
+      case "OTHER":
+        return { label: t("type_other"), iconSrc: "/service-icons/better-icons_12.png" };
+      default:
+        return { label: type };
+    }
   }
 
   return (

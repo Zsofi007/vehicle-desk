@@ -6,8 +6,18 @@ import { z } from "zod";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import type { AppLocale } from "@/lib/i18n";
 
+const maintenanceTypeEnum = z.enum([
+  "OIL_CHANGE",
+  "BRAKES",
+  "TIRES",
+  "BATTERY",
+  "FILTERS",
+  "TIMING_BELT",
+  "OTHER",
+]);
+
 const schema = z.object({
-  type: z.string().min(1).max(120),
+  type: maintenanceTypeEnum,
   date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   odometer: z.coerce.number().int().min(0),
   notes: z.string().max(5000).optional(),
