@@ -31,6 +31,12 @@ Copy `.env.example` to `.env.local` and set:
 | `RESEND_API_KEY` | Resend API key (server-only) |
 | `RESEND_FROM_EMAIL` | From address (e.g. `Vehicle Desk <no-reply@yourdomain.com>`) |
 | `CRON_SECRET` | Secret for Vercel cron to call `/api/cron/expiry-alerts` |
+| `NEXT_PUBLIC_SENTRY_DSN` | Sentry DSN for client error reporting (optional) |
+| `SENTRY_DSN` | Sentry DSN for server (optional; can reuse client DSN) |
+| `SENTRY_ENVIRONMENT` | Sentry environment name (e.g. `production`, `preview`) |
+| `SENTRY_AUTH_TOKEN` | Sentry auth token (build-time; needed for source map upload) |
+| `SENTRY_ORG` | Sentry org slug (build-time; source map upload) |
+| `SENTRY_PROJECT` | Sentry project slug (build-time; source map upload) |
 
 Only the **publishable** key is used in the browser and server with the user session. Do **not** expose the service role key to the client.
 

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import * as Sentry from "@sentry/nextjs";
 
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { expiryEmailTemplate } from "@/lib/email/templates";
@@ -22,6 +23,7 @@ export async function POST(req: Request) {
   const resend = getResendClient();
   const from = process.env.RESEND_FROM_EMAIL;
   if (!from) {
+    Sentry.captureMessage("CRON missing RESEND_FROM_EMAIL", "error");
     return NextResponse.json({ error: "missing_from" }, { status: 500 });
   }
 

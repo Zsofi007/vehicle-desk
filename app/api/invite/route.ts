@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import * as Sentry from "@sentry/nextjs";
 
 import { getCurrentUserWithRole } from "@/lib/auth";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
@@ -99,6 +100,7 @@ export async function POST(req: Request) {
   });
 
   if (error) {
+    Sentry.captureException(error);
     return NextResponse.json({ error: "error" }, { status: 500 });
   }
 
