@@ -127,6 +127,17 @@ If you use the Stitch MCP server to inspect an existing design:
 | `npm run start` | Start production server |
 | `npm run lint` | ESLint |
 
+## Rate limiting
+
+This app includes lightweight, Postgres-backed rate limiting (no Redis) to reduce abuse:
+
+- `POST /api/auth/signup`: 5/min per IP
+- `POST /api/invite`: 10/min per IP
+- Login server action: 10/min per IP (best-effort via forwarded headers)
+- `POST /api/cron/expiry-alerts`: 60/min per secret
+
+When exceeded, API routes return `429` with `Retry-After`. The login form shows a generic “try again later” message.
+
 ## License
 
 Private / your choice—configure per your organization.

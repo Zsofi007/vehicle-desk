@@ -193,6 +193,7 @@
     "unauthorized": "Be kell jelentkezned.",
     "notFound": "Az oldal nem található.",
     "validation": "Ellenőrizd az űrlapot.",
+    "rateLimited": "Túl sok próbálkozás. Kérjük, próbáld újra egy kicsit később.",
     "deleteFailed": "Nem sikerült törölni. Próbáld újra."
   },
   "aria": {

@@ -193,6 +193,7 @@
     "unauthorized": "Trebuie să fii autentificat.",
     "notFound": "Pagina nu a fost găsită.",
     "validation": "Verifică formularul.",
+    "rateLimited": "Prea multe încercări. Te rugăm să încerci din nou în curând.",
     "deleteFailed": "Ștergerea a eșuat. Încearcă din nou."
   },
   "aria": {

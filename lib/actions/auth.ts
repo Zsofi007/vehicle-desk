@@ -4,6 +4,9 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { redirect } from "@/lib/navigation";
 import type { AppLocale } from "@/lib/i18n";
 import { z } from "zod";
+import { headers } from "next/headers";
+
+import { getClientIpFromHeaders, hitRateLimit } from "@/lib/rate-limit";
 
 const credentialsSchema = z.object({
   email: z.string().email(),
@@ -18,6 +21,17 @@ export async function signIn(
   _prev: AuthActionState | undefined,
   formData: FormData,
 ) {
+  const ip = getClientIpFromHeaders(await headers());
+  const rl = await hitRateLimit({
+    scope: "login",
+    key: ip,
+    limit: 10,
+    windowSeconds: 60,
+  });
+  if (!rl.allowed) {
+    return { error: "rate_limited" };
+  }
+
   const locale = String(formData.get("locale") ?? "en") as AppLocale;
   const parsed = credentialsSchema.safeParse({
     email: formData.get("email"),

@@ -44,6 +44,11 @@ export function LoginForm({ locale }: Props) {
           {te("validation")}
         </p>
       ) : null}
+      {state?.error === "rate_limited" ? (
+        <p className="text-sm text-red-800" role="alert">
+          {te("rateLimited")}
+        </p>
+      ) : null}
       {state?.error && state.error !== "validation" ? (
         <p className="text-sm text-red-800" role="alert">
           {state.error}
