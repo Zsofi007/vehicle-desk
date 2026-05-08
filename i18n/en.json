@@ -199,6 +199,18 @@
     "rateLimited": "Too many attempts. Please try again in a moment.",
     "deleteFailed": "Could not delete. Try again."
   },
+  "documents": {
+    "title": "Documents",
+    "upload": "Upload",
+    "loading": "Loading documents…",
+    "empty": "No documents yet.",
+    "download": "Download",
+    "delete": "Delete document",
+    "errorTooLarge": "File is too large (max 5 MB).",
+    "errorUnsupportedType": "Unsupported file type. Upload PDF/JPG/PNG/WEBP.",
+    "errorUploadFailed": "Upload failed. Please try again.",
+    "errorLoadFailed": "Could not load documents. Please try again."
+  },
   "aria": {
     "deleteVehicle": "Delete vehicle",
     "mainNavigation": "Main navigation",

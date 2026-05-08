@@ -199,6 +199,18 @@
     "rateLimited": "Túl sok próbálkozás. Kérjük, próbáld újra egy kicsit később.",
     "deleteFailed": "Nem sikerült törölni. Próbáld újra."
   },
+  "documents": {
+    "title": "Dokumentumok",
+    "upload": "Feltöltés",
+    "loading": "Dokumentumok betöltése…",
+    "empty": "Még nincs dokumentum.",
+    "download": "Letöltés",
+    "delete": "Dokumentum törlése",
+    "errorTooLarge": "A fájl túl nagy (max. 5 MB).",
+    "errorUnsupportedType": "Nem támogatott fájltípus. PDF/JPG/PNG/WEBP engedélyezett.",
+    "errorUploadFailed": "Sikertelen feltöltés. Próbáld újra.",
+    "errorLoadFailed": "Nem sikerült betölteni a dokumentumokat. Próbáld újra."
+  },
   "aria": {
     "deleteVehicle": "Jármű törlése",
     "mainNavigation": "Fő navigáció",

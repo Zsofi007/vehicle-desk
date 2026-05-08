@@ -35,6 +35,7 @@ import {
 } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/cn";
+import { DocumentsInline } from "@/components/DocumentsInline";
 
 type Props = {
   vehicleId: string;
@@ -247,6 +248,8 @@ function ExpiryRow({
               </p>
             )}
         </div>
+
+        <DocumentsInline locale={locale} kind="expiry" parentId={row.id} />
       </li>
     );
   }
