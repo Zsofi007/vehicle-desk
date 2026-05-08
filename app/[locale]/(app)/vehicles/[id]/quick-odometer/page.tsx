@@ -5,9 +5,9 @@ import type { AppLocale } from "@/lib/i18n";
 import { getCurrentUserWithRole, requireActiveOrganization, requireAuth } from "@/lib/auth";
 import { redirect } from "@/lib/navigation";
 import { getVehicleForOrg } from "@/lib/queries";
-import { QuickOdometerForm } from "@/components/QuickOdometerForm";
-import { VehicleMakeLogo } from "@/components/VehicleMakeLogo";
-import { LicensePlate } from "@/components/LicensePlate";
+import { QuickOdometerForm } from "@/components/vehicles/QuickOdometerForm";
+import { VehicleMakeLogo } from "@/components/vehicles/VehicleMakeLogo";
+import { LicensePlate } from "@/components/vehicles/LicensePlate";
 
 type Props = {
   params: Promise<{ locale: string; id: string }>;

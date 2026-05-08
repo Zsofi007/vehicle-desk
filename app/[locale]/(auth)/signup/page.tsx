@@ -1,7 +1,7 @@
 import { getTranslations } from "next-intl/server";
 
-import { SignupForm } from "@/components/SignupForm";
-import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { SignupForm } from "@/components/auth/SignupForm";
+import { LanguageSwitcher } from "@/components/shell/LanguageSwitcher";
 import type { AppLocale } from "@/lib/i18n";
 
 type Props = {

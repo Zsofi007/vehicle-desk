@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 
 import { toCsv } from "@/lib/csv";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import type { ExpiryItem, MaintenanceRecord, Vehicle } from "@/types";
 
 type OrgRow = {
   role: string | null;
@@ -85,7 +86,22 @@ export async function GET() {
     .order("created_at", { ascending: true });
   if (vError) return NextResponse.json({ error: "error" }, { status: 500 });
 
-  const vehicleIds = (vehicles ?? []).map((v) => String(v.id));
+  const vehicleRows = (vehicles ?? []) as unknown as Array<
+    Pick<
+      Vehicle,
+      | "id"
+      | "make"
+      | "model"
+      | "year"
+      | "license_plate"
+      | "odometer"
+      | "vehicle_type"
+      | "created_at"
+      | "updated_at"
+    >
+  >;
+
+  const vehicleIds = vehicleRows.map((v) => String(v.id));
 
   const { data: maintenance, error: mError } = vehicleIds.length
     ? await supabase
@@ -95,6 +111,13 @@ export async function GET() {
         .order("created_at", { ascending: true })
     : { data: [], error: null as unknown as null };
   if (mError) return NextResponse.json({ error: "error" }, { status: 500 });
+
+  const maintenanceRows = (maintenance ?? []) as unknown as Array<
+    Pick<
+      MaintenanceRecord,
+      "id" | "vehicle_id" | "type" | "date" | "odometer" | "notes" | "created_at" | "updated_at"
+    >
+  >;
 
   const { data: expiries, error: eError } = vehicleIds.length
     ? await supabase
@@ -107,39 +130,54 @@ export async function GET() {
     : { data: [], error: null as unknown as null };
   if (eError) return NextResponse.json({ error: "error" }, { status: 500 });
 
-  const vehiclesCsv = toCsv(vehicles ?? [], [
-    { header: "id", get: (r) => (r as any).id },
-    { header: "make", get: (r) => (r as any).make },
-    { header: "model", get: (r) => (r as any).model },
-    { header: "year", get: (r) => (r as any).year },
-    { header: "license_plate", get: (r) => (r as any).license_plate },
-    { header: "odometer", get: (r) => (r as any).odometer },
-    { header: "vehicle_type", get: (r) => (r as any).vehicle_type },
-    { header: "created_at", get: (r) => (r as any).created_at },
-    { header: "updated_at", get: (r) => (r as any).updated_at },
+  const expiryRows = (expiries ?? []) as unknown as Array<
+    Pick<
+      ExpiryItem,
+      | "id"
+      | "vehicle_id"
+      | "type"
+      | "expiry_date"
+      | "cost"
+      | "is_active"
+      | "negated_at"
+      | "created_at"
+      | "updated_at"
+    >
+  >;
+
+  const vehiclesCsv = toCsv(vehicleRows, [
+    { header: "id", get: (r) => r.id },
+    { header: "make", get: (r) => r.make },
+    { header: "model", get: (r) => r.model },
+    { header: "year", get: (r) => r.year },
+    { header: "license_plate", get: (r) => r.license_plate },
+    { header: "odometer", get: (r) => r.odometer },
+    { header: "vehicle_type", get: (r) => r.vehicle_type },
+    { header: "created_at", get: (r) => r.created_at },
+    { header: "updated_at", get: (r) => r.updated_at },
   ]);
 
-  const maintenanceCsv = toCsv(maintenance ?? [], [
-    { header: "id", get: (r) => (r as any).id },
-    { header: "vehicle_id", get: (r) => (r as any).vehicle_id },
-    { header: "type", get: (r) => (r as any).type },
-    { header: "date", get: (r) => (r as any).date },
-    { header: "odometer", get: (r) => (r as any).odometer },
-    { header: "notes", get: (r) => (r as any).notes },
-    { header: "created_at", get: (r) => (r as any).created_at },
-    { header: "updated_at", get: (r) => (r as any).updated_at },
+  const maintenanceCsv = toCsv(maintenanceRows, [
+    { header: "id", get: (r) => r.id },
+    { header: "vehicle_id", get: (r) => r.vehicle_id },
+    { header: "type", get: (r) => r.type },
+    { header: "date", get: (r) => r.date },
+    { header: "odometer", get: (r) => r.odometer },
+    { header: "notes", get: (r) => r.notes },
+    { header: "created_at", get: (r) => r.created_at },
+    { header: "updated_at", get: (r) => r.updated_at },
   ]);
 
-  const expiriesCsv = toCsv(expiries ?? [], [
-    { header: "id", get: (r) => (r as any).id },
-    { header: "vehicle_id", get: (r) => (r as any).vehicle_id },
-    { header: "type", get: (r) => (r as any).type },
-    { header: "expiry_date", get: (r) => (r as any).expiry_date },
-    { header: "cost", get: (r) => (r as any).cost },
-    { header: "is_active", get: (r) => (r as any).is_active },
-    { header: "negated_at", get: (r) => (r as any).negated_at },
-    { header: "created_at", get: (r) => (r as any).created_at },
-    { header: "updated_at", get: (r) => (r as any).updated_at },
+  const expiriesCsv = toCsv(expiryRows, [
+    { header: "id", get: (r) => r.id },
+    { header: "vehicle_id", get: (r) => r.vehicle_id },
+    { header: "type", get: (r) => r.type },
+    { header: "expiry_date", get: (r) => r.expiry_date },
+    { header: "cost", get: (r) => r.cost },
+    { header: "is_active", get: (r) => r.is_active ?? null },
+    { header: "negated_at", get: (r) => r.negated_at ?? null },
+    { header: "created_at", get: (r) => r.created_at },
+    { header: "updated_at", get: (r) => r.updated_at },
   ]);
 
   const zip = new JSZip();

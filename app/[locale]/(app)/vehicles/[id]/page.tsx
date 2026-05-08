@@ -2,9 +2,9 @@ import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 
-import { ExpirySection } from "@/components/ExpirySection";
-import { MaintenanceSection } from "@/components/MaintenanceSection";
-import { VehicleDetailHeader } from "@/components/VehicleDetailHeader";
+import { ExpirySection } from "@/components/expiry/ExpirySection";
+import { MaintenanceSection } from "@/components/maintenance/MaintenanceSection";
+import { VehicleDetailHeader } from "@/components/vehicles/VehicleDetailHeader";
 import { getCurrentUserWithRole, requireActiveOrganization } from "@/lib/auth";
 import type { AppLocale } from "@/lib/i18n";
 import { Link, redirect } from "@/lib/navigation";

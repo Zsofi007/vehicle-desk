@@ -4,7 +4,7 @@ import { getCurrentUserWithRole, requireActiveOrganization } from "@/lib/auth";
 import { formatDateYmdUtc } from "@/lib/format";
 import type { AppLocale } from "@/lib/i18n";
 import { Link, redirect } from "@/lib/navigation";
-import { VehicleMakeLogo } from "@/components/VehicleMakeLogo";
+import { VehicleMakeLogo } from "@/components/vehicles/VehicleMakeLogo";
 import {
   getAlertsForOrg,
   getMaintenanceDueForOrg,
@@ -64,7 +64,7 @@ export default async function DashboardPage({ params }: Props) {
   const staleBefore = new Date();
   staleBefore.setUTCDate(staleBefore.getUTCDate() - 90);
   const staleVehicles = vehicles.filter((v) => {
-    const ts = (v as any).last_odometer_update_at as string | undefined;
+    const ts = v.last_odometer_update_at;
     if (!ts) return false;
     return new Date(ts).getTime() < staleBefore.getTime();
   });
@@ -132,7 +132,7 @@ export default async function DashboardPage({ params }: Props) {
                     <div className="mt-1 text-xs text-slate-500">
                       {t("odometerLastUpdateLabel")}{" "}
                       {formatDateYmdUtc(
-                        String((v as any).last_odometer_update_at).slice(0, 10),
+                        String(v.last_odometer_update_at ?? "").slice(0, 10),
                         localeTag,
                       )}
                     </div>

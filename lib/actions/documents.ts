@@ -70,7 +70,8 @@ async function resolveOrgForParent(
       .eq("id", parentId)
       .maybeSingle();
     if (error) return null;
-    const orgId = (data as any)?.vehicle?.organization_id ?? null;
+    const orgId = (data as { vehicle?: { organization_id?: string | null } | null } | null)
+      ?.vehicle?.organization_id ?? null;
     return orgId ? String(orgId) : null;
   }
 
@@ -87,7 +88,8 @@ async function resolveOrgForParent(
     .eq("id", parentId)
     .maybeSingle();
   if (error) return null;
-  const orgId = (data as any)?.vehicle?.organization_id ?? null;
+  const orgId = (data as { vehicle?: { organization_id?: string | null } | null } | null)
+    ?.vehicle?.organization_id ?? null;
   return orgId ? String(orgId) : null;
 }
 
@@ -200,13 +202,18 @@ export async function getDocumentSignedUrl(documentId: string) {
     .maybeSingle();
   if (error || !doc) return { error: "notFound" as const };
 
+  const bucket = String((doc as { bucket_id?: string | null }).bucket_id ?? "");
+  const objectPath = String((doc as { object_path?: string | null }).object_path ?? "");
+  const filename = String((doc as { filename?: string | null }).filename ?? "");
+  if (!bucket || !objectPath) return { error: "error" as const };
+
   const admin = createSupabaseAdminClient();
   const { data: signed, error: signedError } = await admin.storage
-    .from(String((doc as any).bucket_id))
-    .createSignedUrl(String((doc as any).object_path), 60);
+    .from(bucket)
+    .createSignedUrl(objectPath, 60);
 
   if (signedError || !signed?.signedUrl) return { error: "error" as const };
-  return { ok: true as const, url: signed.signedUrl, filename: String((doc as any).filename ?? "") };
+  return { ok: true as const, url: signed.signedUrl, filename };
 }
 
 export async function deleteDocument(documentId: string, locale: AppLocale) {
@@ -227,8 +234,12 @@ export async function deleteDocument(documentId: string, locale: AppLocale) {
     .maybeSingle();
   if (error || !doc) return { error: "notFound" as const };
 
+  const bucket = String((doc as { bucket_id?: string | null }).bucket_id ?? "");
+  const objectPath = String((doc as { object_path?: string | null }).object_path ?? "");
+  if (!bucket || !objectPath) return { error: "error" as const };
+
   const admin = createSupabaseAdminClient();
-  await admin.storage.from(String((doc as any).bucket_id)).remove([String((doc as any).object_path)]);
+  await admin.storage.from(bucket).remove([objectPath]);
 
   const { error: delError } = await supabase.from("documents").delete().eq("id", documentId);
   if (delError) return { error: "error" as const };
@@ -254,7 +265,10 @@ export async function processDocumentDeletionQueueForParent(params: {
     .eq("parent_id", parsed.data.parentId)
     .order("id", { ascending: true });
 
-  const items = (rows ?? []).map((r: any) => ({
+  const items = (
+    (rows as Array<{ id: number; bucket_id: string; object_path: string }> | null | undefined) ??
+    []
+  ).map((r) => ({
     id: Number(r.id),
     bucketId: String(r.bucket_id),
     objectPath: String(r.object_path),
