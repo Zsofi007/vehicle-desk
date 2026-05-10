@@ -15,7 +15,7 @@ function isAuthorized(req: Request) {
   return token === secret;
 }
 
-export async function POST(req: Request) {
+async function runOdometerReminders(req: Request) {
   if (!isAuthorized(req)) {
     return NextResponse.json({ error: "forbidden" }, { status: 403 });
   }
@@ -134,5 +134,14 @@ export async function POST(req: Request) {
   }
 
   return NextResponse.json({ ok: true, sent });
+}
+
+/** Vercel Cron invokes GET; manual triggers may use POST. */
+export async function GET(req: Request) {
+  return runOdometerReminders(req);
+}
+
+export async function POST(req: Request) {
+  return runOdometerReminders(req);
 }
 
