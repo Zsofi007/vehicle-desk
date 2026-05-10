@@ -103,6 +103,10 @@
     "openVehicle": "Jármű megnyitása",
     "expiresOn": "Lejár",
     "vehicleLabel": "Jármű",
+    "maintenanceReason": "Ok",
+    "maintenanceReasonKm": "km",
+    "maintenanceReasonTime": "idő",
+    "maintenanceReasonUnknown": "—",
     "odometerUpdateRecommendedTitle": "Kilométeróra frissítése javasolt",
     "odometerUpdateRecommendedSummary": "{count, plural, one {# járműnél nem volt kilométeróra-frissítés 90+ napja.} other {# járműnél nem volt kilométeróra-frissítés 90+ napja.}}",
     "odometerUpdateRecommendedToggle": "Elavult járművek megtekintése",
@@ -198,6 +202,7 @@
     "expired": "Lejárt",
     "expiringSoon": "Hamarosan esedékes",
     "ok": "Rendben",
+    "state": "Állapot",
     "badgeExpired": "Lejárt",
     "badgeSoon": "7 napon belül esedékes",
     "badgeOk": "Nem esedékes"

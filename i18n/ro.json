@@ -103,6 +103,10 @@
     "openVehicle": "Deschide vehiculul",
     "expiresOn": "Expiră la",
     "vehicleLabel": "Vehicul",
+    "maintenanceReason": "Motiv",
+    "maintenanceReasonKm": "km",
+    "maintenanceReasonTime": "timp",
+    "maintenanceReasonUnknown": "—",
     "odometerUpdateRecommendedTitle": "Se recomandă actualizarea kilometrajului",
     "odometerUpdateRecommendedSummary": "{count, plural, one {# vehicul nu a avut o actualizare a kilometrajului de peste 90 de zile.} other {# vehicule nu au avut o actualizare a kilometrajului de peste 90 de zile.}}",
     "odometerUpdateRecommendedToggle": "Vezi vehiculele neactualizate",
@@ -198,6 +202,7 @@
     "expired": "Expirat",
     "expiringSoon": "Scade curând",
     "ok": "În regulă",
+    "state": "Stare",
     "badgeExpired": "Expirat",
     "badgeSoon": "Scadent în 7 zile",
     "badgeOk": "Nu este scadent curând"
