@@ -251,6 +251,8 @@
   },
   "aria": {
     "deleteVehicle": "Jármű törlése",
+    "navigationPanelTitle": "Navigáció",
+    "closeNavigation": "Navigáció bezárása",
     "mainNavigation": "Fő navigáció",
     "localeSwitcher": "Nyelv választása",
     "expiryStatus": "Megújítás állapota",

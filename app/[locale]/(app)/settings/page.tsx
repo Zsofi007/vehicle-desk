@@ -160,7 +160,7 @@ export default async function SettingsPage({ params }: Props) {
         <div className="mt-3">
           <Link
             href="/api/export"
-            className="inline-flex items-center justify-center rounded-md bg-stone-900 px-4 py-2 text-sm font-medium text-white hover:bg-stone-800"
+            className="inline-flex min-h-11 w-full items-center justify-center rounded-md bg-stone-900 px-4 py-2 text-sm font-medium text-white hover:bg-stone-800 sm:w-auto"
           >
             {t("exportButton")}
           </Link>

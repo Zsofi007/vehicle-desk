@@ -54,7 +54,7 @@ export function OrganizationSwitcher({
           if (nextFocused && e.currentTarget.parentElement?.contains(nextFocused)) return;
           setOpen(false);
         }}
-        className="inline-flex h-10 max-w-[16rem] items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 text-sm font-medium text-slate-900 shadow-sm hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-600"
+        className="inline-flex h-11 max-w-[min(16rem,calc(100vw-8rem))] min-h-11 items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 text-sm font-medium text-slate-900 shadow-sm hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-600"
       >
         <Building2 className="h-4 w-4 text-slate-600" aria-hidden />
         <span className="truncate">{active.name}</span>
@@ -81,7 +81,7 @@ export function OrganizationSwitcher({
                   });
                 }}
                 className={[
-                  "flex w-full items-center gap-2 px-3 py-2 text-left text-sm",
+                  "flex min-h-11 w-full items-center gap-2 px-3 py-2 text-left text-sm",
                   isActive ? "bg-stone-50 text-stone-900" : "text-stone-700 hover:bg-stone-50",
                 ].join(" ")}
               >

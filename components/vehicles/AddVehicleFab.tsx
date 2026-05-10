@@ -19,7 +19,7 @@ export function AddVehicleFab({ locale, label, title, description }: Props) {
   if (!showFab) return null;
 
   return (
-    <div className="fixed bottom-5 right-5 z-50 md:hidden">
+    <div className="fixed z-50 md:hidden bottom-[max(1.25rem,env(safe-area-inset-bottom,0px))] right-[max(1.25rem,env(safe-area-inset-right,0px))]">
       <AddVehicleModal
         locale={locale}
         triggerLabel={label}

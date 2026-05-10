@@ -42,11 +42,12 @@ export function ConfirmDeleteDialog({ title, description, trigger, onConfirm }: 
           ) : null}
         </DialogHeader>
 
-        <div className="mt-4 flex flex-wrap justify-end gap-3">
+        <div className="mt-4 flex flex-col-reverse gap-3 sm:flex-row sm:flex-wrap sm:justify-end">
           <Button
             type="button"
             variant="secondary"
             disabled={pending}
+            className="w-full sm:w-auto"
             onClick={() => setOpen(false)}
           >
             {tc("cancel")}
@@ -55,6 +56,7 @@ export function ConfirmDeleteDialog({ title, description, trigger, onConfirm }: 
             type="button"
             variant="destructive"
             disabled={pending}
+            className="w-full sm:w-auto"
             onClick={() => {
               startTransition(async () => {
                 await onConfirm();

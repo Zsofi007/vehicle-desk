@@ -104,8 +104,8 @@ export function VehiclesBrowser({
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-3">
-        <div className="relative w-full">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
+        <div className="relative min-w-0 flex-1">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/service-icons/better-icons_21.png"
@@ -124,7 +124,8 @@ export function VehiclesBrowser({
           />
         </div>
 
-        <Popover>
+        <div className="flex shrink-0 justify-end sm:justify-start">
+          <Popover>
           <PopoverTrigger asChild>
             <Button
               type="button"
@@ -152,7 +153,7 @@ export function VehiclesBrowser({
                   type="button"
                   onClick={() => setSortKey(opt.key)}
                   className={[
-                    "flex w-full items-center justify-between rounded-lg px-3 py-2 text-sm transition",
+                    "flex min-h-11 w-full items-center justify-between rounded-lg px-3 py-2 text-sm transition",
                     "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-600",
                     active ? "bg-slate-900 text-white" : "hover:bg-slate-50",
                   ].join(" ")}
@@ -164,6 +165,7 @@ export function VehiclesBrowser({
             })}
           </PopoverContent>
         </Popover>
+        </div>
       </div>
 
       <div className="flex flex-wrap items-start justify-between gap-3">
@@ -189,7 +191,7 @@ export function VehiclesBrowser({
                   aria-pressed={active}
                   onClick={() => setStatusFilter(opt.key)}
                   className={[
-                    "shrink-0 rounded-full border px-3 py-2 text-sm font-medium transition",
+                    "min-h-11 shrink-0 rounded-full border px-3 py-2 text-sm font-medium transition",
                     "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-600",
                     active
                       ? "border-slate-300 bg-slate-900 text-white shadow-sm"

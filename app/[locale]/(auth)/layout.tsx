@@ -18,7 +18,7 @@ export default async function AuthLayout({ children, params }: Props) {
   }
 
   return (
-    <div className="flex min-h-[calc(100vh-0px)] flex-col justify-center px-4 py-12">
+    <div className="flex min-h-[100dvh] flex-col justify-center px-4 pt-[max(3rem,env(safe-area-inset-top,0px))] pb-[calc(3rem+env(safe-area-inset-bottom,0px))]">
       <div className="mx-auto w-full max-w-md">{children}</div>
     </div>
   );
