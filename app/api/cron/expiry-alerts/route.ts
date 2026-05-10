@@ -15,7 +15,7 @@ function isAuthorized(req: Request) {
   return token === secret;
 }
 
-export async function POST(req: Request) {
+async function runExpiryAlerts(req: Request) {
   if (!isAuthorized(req)) {
     return NextResponse.json({ error: "forbidden" }, { status: 403 });
   }
@@ -148,6 +148,15 @@ export async function POST(req: Request) {
   }
 
   return NextResponse.json({ ok: true, sent });
+}
+
+/** Vercel Cron invokes GET; manual triggers may use POST. */
+export async function GET(req: Request) {
+  return runExpiryAlerts(req);
+}
+
+export async function POST(req: Request) {
+  return runExpiryAlerts(req);
 }
 
 function getRequestOrigin(req: Request) {
