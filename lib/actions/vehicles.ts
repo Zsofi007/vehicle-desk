@@ -6,20 +6,13 @@ import { z } from "zod";
 import { redirect } from "@/lib/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import type { AppLocale } from "@/lib/i18n";
+/** Vehicle type enum and UI order: shared module (not re-exported here — `"use server"` strips non-actions for clients). */
+import { VehicleType, VEHICLE_TYPES } from "@/lib/vehicle-type";
 
 const vehicleSchema = z.object({
   make: z.string().min(1).max(120),
   model: z.string().min(1).max(120),
-  vehicle_type: z.enum([
-    "car_under_2t",
-    "minivan",
-    "truck",
-    "motorcycle",
-    "trailer",
-    "bus",
-    "electric_car",
-    "other",
-  ]),
+  vehicle_type: z.enum(VEHICLE_TYPES),
   year: z.coerce.number().int().min(1900).max(2100),
   license_plate: z.string().min(1).max(10),
   odometer: z.coerce.number().int().min(0).max(9_999_999),
@@ -125,7 +118,7 @@ export async function updateVehicle(
   const parsed = vehicleSchema.safeParse({
     make: formData.get("make"),
     model: formData.get("model"),
-    vehicle_type: formData.get("vehicle_type") ?? "car_under_2t",
+    vehicle_type: formData.get("vehicle_type") ?? VehicleType.CarUnder2t,
     year: formData.get("year"),
     license_plate: formData.get("license_plate"),
     odometer: formData.get("odometer"),

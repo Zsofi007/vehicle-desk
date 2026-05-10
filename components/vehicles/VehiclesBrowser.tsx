@@ -233,6 +233,7 @@ export function VehiclesBrowser({
             licensePlate={vehicle.license_plate}
             statusLabel={statusLabel}
             statusClassName={statusClassName}
+            vehicleType={vehicle.vehicle_type}
             odometerOutdated={Boolean(odometerOutdated)}
           />
         ))}

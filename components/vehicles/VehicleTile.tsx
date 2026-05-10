@@ -6,6 +6,8 @@ import { useTranslations } from "next-intl";
 import type { AppLocale } from "@/lib/i18n";
 import { useRouter } from "@/lib/navigation";
 import { getCarLogoSrc } from "@/lib/car-logos";
+import type { VehicleType } from "@/lib/vehicle-type";
+import { VehicleTypeIcon } from "./VehicleTypeIcon";
 import { Button } from "@/components/ui/button";
 import { LicensePlate } from "./LicensePlate";
 
@@ -18,6 +20,7 @@ type Props = {
   licensePlate: string;
   statusLabel: string;
   statusClassName: string;
+  vehicleType: VehicleType;
   odometerOutdated?: boolean;
 };
 
@@ -30,6 +33,7 @@ export function VehicleTile({
   licensePlate,
   statusLabel,
   statusClassName,
+  vehicleType,
   odometerOutdated,
 }: Props) {
   const router = useRouter();
@@ -93,6 +97,10 @@ export function VehicleTile({
         <div className="min-w-0">
           <LicensePlate value={licensePlate} size="md" strip="narrow" className="max-w-full" />
         </div>
+        <div className="pointer-events-none absolute bottom-1 left-1 z-[1]">
+          <VehicleTypeIcon type={vehicleType} className="size-12" />
+        </div>
+
         <Button
           type="button"
           variant="secondary"
@@ -102,7 +110,7 @@ export function VehicleTile({
             e.stopPropagation();
             router.push(href, { locale });
           }}
-          className="absolute bottom-2 right-2 h-10 w-auto pr-1 pl-1 rounded-sm"
+          className="absolute bottom-2 right-2 z-[1] h-10 w-auto pr-1 pl-1 rounded-sm"
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img

@@ -4,11 +4,13 @@ import { useState } from "react";
 import { Pencil } from "lucide-react";
 
 import type { AppLocale } from "@/lib/i18n";
+import type { VehicleType } from "@/lib/vehicle-type";
 import { Button } from "@/components/ui/button";
 import { DeleteVehicleButton } from "./DeleteVehicleButton";
 import { LicensePlate } from "./LicensePlate";
 import { VehicleMakeLogo } from "./VehicleMakeLogo";
 import { VehicleDetailsInlineEditor } from "./VehicleDetailsInlineEditor";
+import { VehicleTypeIcon } from "./VehicleTypeIcon";
 
 type Props = {
   locale: AppLocale;
@@ -18,7 +20,7 @@ type Props = {
   year: number;
   licensePlate: string;
   odometer: number;
-  vehicleType: string;
+  vehicleType: VehicleType;
   editLabel: string;
   deleteConfirmLabel: string;
   deleteLabel: string;
@@ -42,9 +44,8 @@ export function VehicleDetailHeader({
   return (
     <>
       <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-3">
           <VehicleMakeLogo make={make} className="object-contain h-28 w-28" />
-
           <header>
             <span>
               <b>
@@ -54,6 +55,7 @@ export function VehicleDetailHeader({
             </span>
             <div className="mt-1 flex flex-wrap items-center">
               <LicensePlate value={licensePlate} size="sm" />
+          <VehicleTypeIcon type={vehicleType} className="ml-2 size-11 sm:size-12" />
             </div>
             <div className="mt-2 inline-flex items-center gap-2">
               {/* eslint-disable-next-line @next/next/no-img-element */}

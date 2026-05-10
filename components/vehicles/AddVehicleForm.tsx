@@ -6,10 +6,12 @@ import { useFormStatus } from "react-dom";
 import { useTranslations } from "next-intl";
 
 import { createVehicle, type VehicleActionState } from "@/lib/actions/vehicles";
+import { VehicleType, VEHICLE_TYPES } from "@/lib/vehicle-type";
 import type { AppLocale } from "@/lib/i18n";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { CarMakeModelFields } from "./CarMakeModelFields";
+import { VehicleTypeIcon } from "./VehicleTypeIcon";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { LicensePlateField } from "./LicensePlateField";
 
@@ -81,26 +83,16 @@ export function AddVehicleForm({ locale, onSuccess }: Props) {
         <p className="text-xs text-slate-600">{t("vehicleTypeHint")}</p>
         <RadioGroup
           name="vehicle_type"
-          defaultValue="car_under_2t"
+          defaultValue={VehicleType.CarUnder2t}
           className="grid gap-2 sm:grid-cols-2"
         >
-          {(
-            [
-              "car_under_2t",
-              "minivan",
-              "truck",
-              "motorcycle",
-              "trailer",
-              "bus",
-              "electric_car",
-              "other",
-            ] as const
-          ).map((value) => (
+          {VEHICLE_TYPES.map((value) => (
             <label
               key={value}
-              className="flex cursor-pointer items-start gap-3 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 hover:bg-slate-50"
+              className="flex cursor-pointer items-center gap-3 rounded-lg border border-slate-200 bg-white px-2 py-1 text-sm text-slate-900 hover:bg-slate-50"
             >
-              <RadioGroupItem value={value} className="mt-0.5" />
+              <RadioGroupItem value={value} className="shrink-0" />
+              <VehicleTypeIcon type={value} className="size-14" />
               <span className="leading-5">{t(`vehicleType_${value}`)}</span>
             </label>
           ))}
