@@ -10,13 +10,13 @@ import { getTranslations } from "next-intl/server";
 import { Car, LayoutDashboard, Settings, Shield } from "lucide-react";
 import { redirect } from "@/lib/navigation";
 
-import { AppSidebar, type AppNavItem } from "@/components/AppSidebar";
-import { AddVehicleFab } from "@/components/AddVehicleFab";
-import { LanguageSwitcher } from "@/components/LanguageSwitcher";
-import { LogoutForm } from "@/components/LogoutForm";
-import { MobileDrawer } from "@/components/MobileDrawer";
-import { OrganizationSwitcher } from "@/components/OrganizationSwitcher";
-import { TopNavTitle } from "@/components/TopNavTitle";
+import { AppSidebar, type AppNavItem } from "@/components/shell/AppSidebar";
+import { AddVehicleFab } from "@/components/vehicles/AddVehicleFab";
+import { LanguageSwitcher } from "@/components/shell/LanguageSwitcher";
+import { LogoutForm } from "@/components/shell/LogoutForm";
+import { MobileDrawer } from "@/components/shell/MobileDrawer";
+import { OrganizationSwitcher } from "@/components/shell/OrganizationSwitcher";
+import { TopNavTitle } from "@/components/shell/TopNavTitle";
 
 type Props = {
   children: React.ReactNode;

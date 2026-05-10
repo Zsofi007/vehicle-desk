@@ -1,10 +1,11 @@
 import { getTranslations, getLocale } from "next-intl/server";
+import { Info } from "lucide-react";
 
 import { getCurrentUserWithRole, requireActiveOrganization } from "@/lib/auth";
 import { formatDateYmdUtc } from "@/lib/format";
 import type { AppLocale } from "@/lib/i18n";
 import { Link, redirect } from "@/lib/navigation";
-import { VehicleMakeLogo } from "@/components/VehicleMakeLogo";
+import { VehicleMakeLogo } from "@/components/vehicles/VehicleMakeLogo";
 import {
   getAlertsForOrg,
   getMaintenanceDueForOrg,
@@ -47,6 +48,7 @@ export default async function DashboardPage({ params }: Props) {
   }
   const { organization } = await requireActiveOrganization(locale);
   const t = await getTranslations("dashboard");
+  const tMaint = await getTranslations("maintenance");
   const tExp = await getTranslations("expiry");
   const tStatus = await getTranslations("status");
   const tIntervals = await getTranslations("maintenanceIntervals");
@@ -64,10 +66,23 @@ export default async function DashboardPage({ params }: Props) {
   const staleBefore = new Date();
   staleBefore.setUTCDate(staleBefore.getUTCDate() - 90);
   const staleVehicles = vehicles.filter((v) => {
-    const ts = (v as any).last_odometer_update_at as string | undefined;
+    const ts = v.last_odometer_update_at;
     if (!ts) return false;
     return new Date(ts).getTime() < staleBefore.getTime();
   });
+
+  function translateEnum(
+    prefix: string,
+    raw: string,
+    tr: (key: string) => string,
+  ) {
+    const key = `${prefix}_${raw.toLowerCase()}`;
+    try {
+      return tr(key);
+    } catch {
+      return raw;
+    }
+  }
 
   return (
     <div className="space-y-8">
@@ -106,8 +121,9 @@ export default async function DashboardPage({ params }: Props) {
 
       {staleVehicles.length > 0 ? (
         <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-          <p className="text-sm font-medium text-slate-900">
-            {t("odometerUpdateRecommendedTitle")}
+          <p className="flex items-center gap-2 text-sm font-medium text-slate-900">
+            <Info className="h-6 w-6 text-blue-600" aria-hidden />
+            <span>{t("odometerUpdateRecommendedTitle")}</span>
           </p>
           <p className="mt-1 text-sm text-slate-600">
             {t("odometerUpdateRecommendedSummary", { count: staleVehicles.length })}
@@ -132,7 +148,7 @@ export default async function DashboardPage({ params }: Props) {
                     <div className="mt-1 text-xs text-slate-500">
                       {t("odometerLastUpdateLabel")}{" "}
                       {formatDateYmdUtc(
-                        String((v as any).last_odometer_update_at).slice(0, 10),
+                        String(v.last_odometer_update_at ?? "").slice(0, 10),
                         localeTag,
                       )}
                     </div>
@@ -199,7 +215,7 @@ export default async function DashboardPage({ params }: Props) {
                 <tr>
                   <th className="px-4 py-3">{tIntervals("type")}</th>
                   <th className="px-4 py-3">{t("vehicleLabel")}</th>
-                  <th className="px-4 py-3">Reason</th>
+                  <th className="px-4 py-3">{t("maintenanceReason")}</th>
                   <th className="px-4 py-3">{tIntervals("status")}</th>
                   <th className="px-4 py-3 text-right">{t("openVehicle")}</th>
                 </tr>
@@ -219,10 +235,10 @@ export default async function DashboardPage({ params }: Props) {
                         : "border-amber-200 bg-amber-50 text-amber-900";
                     const reason =
                       row.reason === "km"
-                        ? "km"
+                        ? t("maintenanceReasonKm")
                         : row.reason === "time"
-                          ? "time"
-                          : "—";
+                          ? t("maintenanceReasonTime")
+                          : t("maintenanceReasonUnknown");
 
                     const vehicle = vehicles.find((v) => v.id === row.vehicle_id);
                     const vehicleLabel = vehicle
@@ -231,7 +247,9 @@ export default async function DashboardPage({ params }: Props) {
 
                     return (
                       <tr key={`${row.vehicle_id}:${row.type}`} className="hover:bg-slate-50/50">
-                        <td className="px-4 py-4 font-medium text-slate-900">{row.type}</td>
+                        <td className="px-4 py-4 font-medium text-slate-900">
+                          {translateEnum("type", String(row.type), tMaint)}
+                        </td>
                         <td className="px-4 py-4 text-slate-700">
                           <span className="min-w-0 truncate">{vehicleLabel}</span>
                         </td>
@@ -291,7 +309,7 @@ export default async function DashboardPage({ params }: Props) {
                   <th className="px-4 py-3">{tExp("type")}</th>
                   <th className="px-4 py-3">{t("vehicleLabel")}</th>
                   <th className="px-4 py-3">{tExp("expiryDate")}</th>
-                  <th className="px-4 py-3">{tStatus("ok")}</th>
+                  <th className="px-4 py-3">{tStatus("state")}</th>
                   <th className="px-4 py-3 text-right">{t("openVehicle")}</th>
                 </tr>
               </thead>
@@ -309,7 +327,7 @@ export default async function DashboardPage({ params }: Props) {
                   return (
                     <tr key={expiry.id} className="hover:bg-slate-50/50">
                       <td className="px-4 py-4 font-medium text-slate-900">
-                        {expiry.type}
+                        {translateEnum("type", String(expiry.type), tExp)}
                       </td>
                       <td className="px-4 py-4 text-slate-700">
                         <div className="flex items-center gap-3">

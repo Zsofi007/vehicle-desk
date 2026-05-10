@@ -4,8 +4,8 @@ import { redirect } from "@/lib/navigation";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { getTranslations } from "next-intl/server";
 
-import { InviteForm } from "@/components/InviteForm";
-import { InviteList, type InviteListItem } from "@/components/InviteList";
+import { InviteForm } from "@/components/admin/invites/InviteForm";
+import { InviteList, type InviteListItem } from "@/components/admin/invites/InviteList";
 
 type Props = {
   params: Promise<{ locale: string }>;

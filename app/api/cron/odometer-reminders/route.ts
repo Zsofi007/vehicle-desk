@@ -69,17 +69,35 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: true, sent: 0 });
   }
 
-  const userIds = Array.from(new Set(vehicles.map((v: any) => String(v.user_id))));
+  const vehicleRows =
+    (vehicles as Array<{
+      id: string;
+      user_id: string;
+      license_plate: string | null;
+      make: string | null;
+      model: string | null;
+      year: number | null;
+    }>);
+
+  const userIds = Array.from(new Set(vehicleRows.map((v) => String(v.user_id))));
   const { data: profiles } = await admin
     .from("profiles")
     .select("id,email,email_notifications,preferred_language")
     .in("id", userIds);
-  const profileById = new Map((profiles ?? []).map((p: any) => [String(p.id), p]));
+  const profileRows =
+    (profiles as Array<{
+      id: string;
+      email: string | null;
+      email_notifications: boolean | null;
+      preferred_language: string | null;
+    }> | null | undefined) ?? [];
+
+  const profileById = new Map(profileRows.map((p) => [String(p.id), p]));
 
   const origin = getPublicBaseUrl(req);
   let sent = 0;
 
-  for (const v of vehicles as any[]) {
+  for (const v of vehicleRows) {
     const profile = profileById.get(String(v.user_id));
     if (!profile?.email) continue;
     if (profile.email_notifications === false) continue;

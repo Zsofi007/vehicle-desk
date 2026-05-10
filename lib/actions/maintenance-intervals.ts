@@ -56,7 +56,7 @@ export async function getEffectiveMaintenanceIntervalsForVehicle(vehicleId: stri
     .maybeSingle();
   if (vehicleError || !vehicle?.id) return { error: "notFound" as const };
 
-  const orgId = String((vehicle as any).organization_id ?? "");
+  const orgId = String((vehicle as { organization_id?: string | null }).organization_id ?? "");
   if (!orgId) return { error: "forbidden" as const };
 
   const { data: defaults } = await supabase
@@ -70,10 +70,12 @@ export async function getEffectiveMaintenanceIntervalsForVehicle(vehicleId: stri
     .eq("vehicle_id", parsed.data.vehicleId);
 
   const defaultByType = new Map(
-    (defaults ?? []).map((r: any) => [String(r.type), r] as const),
+    (defaults as Array<{ type: string; interval_km: number | null; interval_days: number | null }> | null | undefined ??
+      []).map((r) => [String(r.type), r] as const),
   );
   const overrideByType = new Map(
-    (overrides ?? []).map((r: any) => [String(r.type), r] as const),
+    (overrides as Array<{ type: string; interval_km: number | null; interval_days: number | null }> | null | undefined ??
+      []).map((r) => [String(r.type), r] as const),
   );
 
   const effective: EffectiveVehicleInterval[] = MAINTENANCE_TYPE_KEYS.map((type) => {
@@ -100,7 +102,7 @@ export async function getEffectiveMaintenanceIntervalsForVehicle(vehicleId: stri
 
   return {
     ok: true as const,
-    currentOdometer: Number((vehicle as any).odometer ?? 0),
+    currentOdometer: Number((vehicle as { odometer?: number | null }).odometer ?? 0),
     intervals: effective,
   };
 }

@@ -3,8 +3,8 @@ import { getTranslations } from "next-intl/server";
 import { getCurrentUserWithRole, requireActiveOrganization } from "@/lib/auth";
 import type { AppLocale } from "@/lib/i18n";
 import { getAlertsForOrg, getVehiclesForOrg } from "@/lib/queries";
-import { AddVehicleModal } from "@/components/AddVehicleModal";
-import { VehiclesBrowser, type VehicleTileRow } from "@/components/VehiclesBrowser";
+import { AddVehicleModal } from "@/components/vehicles/AddVehicleModal";
+import { VehiclesBrowser, type VehicleTileRow } from "@/components/vehicles/VehiclesBrowser";
 import { redirect } from "@/lib/navigation";
 
 type Props = {
@@ -14,6 +14,7 @@ type Props = {
 export default async function VehiclesPage({ params }: Props) {
   const { locale: loc } = await params;
   const locale = loc as AppLocale;
+  const staleCutoffMs = new Date().getTime() - 90 * 24 * 60 * 60 * 1000;
   const current = await getCurrentUserWithRole();
   if (current?.role === "admin") {
     redirect({ href: "/admin/invites", locale });
@@ -59,9 +60,8 @@ export default async function VehiclesPage({ params }: Props) {
       statusLabel: badge.text,
       statusClassName: badge.cls,
       odometerOutdated:
-        typeof (v as any).last_odometer_update_at === "string"
-          ? new Date(String((v as any).last_odometer_update_at)).getTime() <
-            Date.now() - 90 * 24 * 60 * 60 * 1000
+        typeof v.last_odometer_update_at === "string"
+          ? new Date(v.last_odometer_update_at).getTime() < staleCutoffMs
           : false,
     };
   });

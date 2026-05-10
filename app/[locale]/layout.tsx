@@ -3,7 +3,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 
-import { HtmlLang } from "@/components/HtmlLang";
+import { HtmlLang } from "@/components/shell/HtmlLang";
 import { routing } from "@/i18n/routing";
 import type { AppLocale } from "@/lib/i18n";
 
