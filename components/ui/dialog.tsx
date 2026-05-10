@@ -33,7 +33,7 @@ export const DialogContent = React.forwardRef<
     <DialogPrimitive.Content
       ref={ref}
       className={cn(
-        "fixed left-1/2 top-1/2 z-50 w-[calc(100vw-2rem)] max-w-xl -translate-x-1/2 -translate-y-1/2 rounded-xl border border-slate-200 bg-white p-6 shadow-xl outline-none",
+        "fixed left-1/2 top-1/2 z-50 max-h-[min(90vh,100dvh-1rem)] w-[calc(100vw-2rem)] max-w-xl -translate-x-1/2 -translate-y-1/2 overflow-y-auto overscroll-contain rounded-xl border border-slate-200 bg-white p-6 pb-[max(1.5rem,env(safe-area-inset-bottom,0px))] shadow-xl outline-none",
         className,
       )}
       {...props}
@@ -42,7 +42,7 @@ export const DialogContent = React.forwardRef<
       <DialogPrimitive.Close asChild>
         <button
           type="button"
-          className="absolute right-4 top-4 inline-flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-700 shadow-sm hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-600"
+          className="absolute right-3 top-3 inline-flex h-11 w-11 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-700 shadow-sm hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-600"
         >
           <X className="h-4 w-4" />
           <span className="sr-only">Close</span>
@@ -58,7 +58,7 @@ export function DialogHeader({
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) {
   return (
-    <div className={cn("space-y-1 pr-10", className)} {...props} />
+    <div className={cn("space-y-1 pr-12", className)} {...props} />
   );
 }
 

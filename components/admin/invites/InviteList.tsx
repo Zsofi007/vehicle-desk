@@ -28,7 +28,7 @@ export function InviteList({
   }
 
   return (
-    <div className="mt-3 overflow-x-auto">
+    <div className="mt-3 -mx-4 overflow-x-auto overscroll-x-contain px-4 sm:mx-0 sm:px-0">
       <table className="min-w-full border-separate border-spacing-y-2 text-sm">
         <thead>
           <tr className="text-left text-stone-600">

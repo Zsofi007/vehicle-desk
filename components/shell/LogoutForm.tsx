@@ -14,7 +14,7 @@ export function LogoutForm({ locale, label }: Props) {
       <input type="hidden" name="locale" value={locale} />
       <button
         type="submit"
-        className="inline-flex cursor-pointer items-center gap-2 rounded-md border border-stone-300 bg-white px-3 py-1.5 text-sm font-medium text-stone-800 shadow-sm hover:bg-stone-50"
+        className="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-md border border-stone-300 bg-white px-4 py-2 text-sm font-medium text-stone-800 shadow-sm hover:bg-stone-50"
       >
         <LogOut className="h-4 w-4" aria-hidden />
         {label}

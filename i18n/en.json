@@ -251,6 +251,8 @@
   },
   "aria": {
     "deleteVehicle": "Delete vehicle",
+    "navigationPanelTitle": "Navigation",
+    "closeNavigation": "Close navigation",
     "mainNavigation": "Main navigation",
     "localeSwitcher": "Choose language",
     "expiryStatus": "Renewal status",

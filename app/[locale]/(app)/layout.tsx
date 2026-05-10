@@ -66,8 +66,8 @@ export default async function AppSectionLayout({ children, params }: Props) {
 
         <div className="md:pl-64">
           <header className="sticky top-0 z-40 border-b border-slate-200 bg-white shadow-sm">
-            <div className="mx-auto flex h-16 max-w-[1280px] items-center justify-between gap-4 px-4 md:px-8">
-              <div className="flex items-center gap-3">
+            <div className="mx-auto flex min-h-16 max-w-[1280px] items-center justify-between gap-3 px-4 md:gap-4 md:px-8">
+              <div className="flex min-w-0 flex-1 items-center gap-2 md:gap-3">
                 <MobileDrawer buttonLabel={tAria("mainNavigation")}>
                   <div className="flex h-full min-h-0 flex-col">
                     <AppSidebar
@@ -88,7 +88,7 @@ export default async function AppSectionLayout({ children, params }: Props) {
                 </div>
               </div>
 
-              <div className="flex items-center gap-3">
+              <div className="flex shrink-0 items-center gap-2 md:gap-3">
                 <LanguageSwitcher ariaLabel={tNav("language")} persistPreference={false} />
                 <div className="hidden md:block">
                   <LogoutForm locale={locale} label={tNav("logout")} />
@@ -141,8 +141,8 @@ export default async function AppSectionLayout({ children, params }: Props) {
 
       <div className="md:pl-64">
         <header className="sticky top-0 z-40 border-b border-slate-200 bg-white shadow-sm">
-          <div className="mx-auto flex h-16 max-w-[1280px] items-center justify-between gap-4 px-4 md:px-8">
-            <div className="flex items-center gap-3">
+          <div className="mx-auto flex min-h-16 max-w-[1280px] items-center justify-between gap-3 px-4 md:gap-4 md:px-8">
+            <div className="flex min-w-0 flex-1 items-center gap-2 md:gap-3">
               <MobileDrawer buttonLabel={tAria("mainNavigation")}>
                 <div className="flex h-full min-h-0 flex-col">
                   <AppSidebar
@@ -163,7 +163,7 @@ export default async function AppSectionLayout({ children, params }: Props) {
               </div>
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex min-w-0 shrink-0 items-center gap-2 md:gap-3">
               <OrganizationSwitcher
                 ariaLabel={tAria("organizationSwitcher")}
                 activeOrganizationId={organization.id}
@@ -177,7 +177,7 @@ export default async function AppSectionLayout({ children, params }: Props) {
           </div>
         </header>
 
-        <main className="mx-auto w-full max-w-[1280px] px-4 py-4 md:px-8 md:py-8">
+        <main className="mx-auto w-full max-w-[1280px] px-4 pt-4 pb-[calc(6rem+env(safe-area-inset-bottom,0px))] md:px-8 md:py-8">
           {children}
         </main>
 

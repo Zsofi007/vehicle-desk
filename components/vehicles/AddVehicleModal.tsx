@@ -52,7 +52,7 @@ export function AddVehicleModal({
         </Button>
       </DialogTrigger>
       <DialogContent
-        className="bottom-0 top-auto left-0 right-0 w-full max-w-none translate-x-0 translate-y-0 rounded-t-xl rounded-b-none p-4 md:bottom-auto md:top-1/2 md:left-1/2 md:right-auto md:w-[calc(100vw-2rem)] md:max-w-xl md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-xl md:p-6"
+        className="bottom-0 top-auto left-0 right-0 max-h-[95dvh] w-full max-w-none translate-x-0 translate-y-0 rounded-t-xl rounded-b-none p-4 pb-[max(1rem,env(safe-area-inset-bottom,0px))] md:bottom-auto md:top-1/2 md:left-1/2 md:right-auto md:max-h-[min(90vh,100dvh-1rem)] md:w-[calc(100vw-2rem)] md:max-w-xl md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-xl md:p-6 md:pb-[max(1.5rem,env(safe-area-inset-bottom,0px))]"
         style={open ? { animation: "vehicle-drawer-in 180ms ease-out" } : undefined}
         {...(!description && { "aria-describedby": undefined })}
       >

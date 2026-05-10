@@ -251,6 +251,8 @@
   },
   "aria": {
     "deleteVehicle": "Șterge vehiculul",
+    "navigationPanelTitle": "Navigare",
+    "closeNavigation": "Închide navigarea",
     "mainNavigation": "Navigare principală",
     "localeSwitcher": "Alege limba",
     "expiryStatus": "Stare termen",

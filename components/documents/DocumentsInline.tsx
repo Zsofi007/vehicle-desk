@@ -139,7 +139,7 @@ export function DocumentsInline({ locale, kind, parentId }: Props) {
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="flex w-full items-center justify-between gap-2 text-left"
+          className="flex min-h-11 w-full items-center justify-between gap-2 py-1 text-left"
         >
           <span className="text-sm font-medium text-stone-900">{t("title")}</span>
           <span className="inline-flex items-center gap-2 text-sm text-stone-700">
@@ -153,9 +153,9 @@ export function DocumentsInline({ locale, kind, parentId }: Props) {
 
   return (
     <div className="rounded-lg border border-stone-200 bg-stone-50 px-4 py-3">
-      <div className="flex flex-wrap items-center justify-between gap-2">
+      <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
         <p className="text-sm font-medium text-stone-900">{t("title")}</p>
-        <Button type="button" size="sm" variant="secondary" onClick={() => setOpen(false)}>
+        <Button type="button" size="sm" variant="secondary" className="w-full sm:w-auto" onClick={() => setOpen(false)}>
           {t("collapse")}
         </Button>
       </div>
@@ -194,9 +194,10 @@ export function DocumentsInline({ locale, kind, parentId }: Props) {
           />
           <Button
             type="button"
-            size="sm"
+            size="default"
             variant="secondary"
             disabled={uploading}
+            className="w-full sm:w-auto"
             onClick={() => {
               fileRef.current?.click();
             }}
@@ -218,22 +219,23 @@ export function DocumentsInline({ locale, kind, parentId }: Props) {
             {docs.map((doc) => (
               <li
                 key={doc.id}
-                className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-stone-200 bg-white px-3 py-2"
+                className="flex flex-col gap-3 rounded-md border border-stone-200 bg-white px-3 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-2 sm:py-2"
               >
                 <div className="min-w-0">
                   <p className="flex items-center gap-2 text-sm font-medium text-stone-900">
-                    <Paperclip className="h-4 w-4 text-stone-600" aria-hidden />
+                    <Paperclip className="h-4 w-4 shrink-0 text-stone-600" aria-hidden />
                     <span className="truncate">{doc.filename}</span>
                   </p>
                   <p className="mt-0.5 text-xs text-stone-600 tabular-nums">
                     {formatBytes(doc.size_bytes)}
                   </p>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
                   <Button
                     type="button"
                     size="sm"
                     variant="secondary"
+                    className="w-full justify-center sm:w-auto"
                     onClick={async () => {
                       const res = await getDocumentSignedUrl(doc.id);
                       if ("error" in res) return;
@@ -246,7 +248,13 @@ export function DocumentsInline({ locale, kind, parentId }: Props) {
                   <ConfirmDeleteDialog
                     description={t("deleteConfirm")}
                     trigger={
-                      <Button type="button" size="sm" variant="destructive" aria-label={t("delete")}>
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="destructive"
+                        className="w-full justify-center sm:w-auto"
+                        aria-label={t("delete")}
+                      >
                         <Trash2 className="h-4 w-4" aria-hidden />
                         {t("delete")}
                       </Button>
