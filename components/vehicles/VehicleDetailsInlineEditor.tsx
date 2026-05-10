@@ -7,11 +7,13 @@ import { useTranslations } from "next-intl";
 import type { AppLocale } from "@/lib/i18n";
 import { useRouter } from "@/lib/navigation";
 import { updateVehicle, type VehicleActionState } from "@/lib/actions/vehicles";
+import { VEHICLE_TYPES, type VehicleType } from "@/lib/vehicle-type";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { CarMakeModelFields } from "./CarMakeModelFields";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { LicensePlateField } from "./LicensePlateField";
+import { VehicleTypeIcon } from "./VehicleTypeIcon";
 
 type Props = {
   locale: AppLocale;
@@ -21,7 +23,7 @@ type Props = {
   year: number;
   licensePlate: string;
   odometer: number;
-  vehicleType: string;
+  vehicleType: VehicleType;
   editing?: boolean;
   onEditingChange?: (editing: boolean) => void;
   hideReadOnly?: boolean;
@@ -73,7 +75,7 @@ export function VehicleDetailsInlineEditor({
   const [currentYear, setCurrentYear] = useState(String(year));
   const [currentPlate, setCurrentPlate] = useState(licensePlate);
   const [odoDigits, setOdoDigits] = useState(String(odometer));
-  const [currentVehicleType, setCurrentVehicleType] = useState(vehicleType);
+  const [currentVehicleType, setCurrentVehicleType] = useState<VehicleType>(vehicleType);
   const odoDisplayId = useId();
 
   const bound = updateVehicle.bind(null, locale, vehicleId);
@@ -118,7 +120,10 @@ export function VehicleDetailsInlineEditor({
           </div>
           <div>
             <dt className="font-medium text-stone-700">{t("vehicleType")}</dt>
-            <dd className="text-stone-900">{t(`vehicleType_${vehicleType}`)}</dd>
+            <dd className="flex items-center gap-2 text-stone-900">
+              <VehicleTypeIcon type={vehicleType} className="size-14" />
+              <span>{t(`vehicleType_${vehicleType}`)}</span>
+            </dd>
           </div>
           <div>
             <dt className="font-medium text-stone-700">{t("plate")}</dt>
@@ -166,26 +171,16 @@ export function VehicleDetailsInlineEditor({
           <RadioGroup
             name="vehicle_type"
             value={currentVehicleType}
-            onValueChange={setCurrentVehicleType}
+            onValueChange={(v) => setCurrentVehicleType(v as VehicleType)}
             className="grid gap-2 sm:grid-cols-2"
           >
-            {(
-              [
-                "car_under_2t",
-                "minivan",
-                "truck",
-                "motorcycle",
-                "trailer",
-                "bus",
-                "electric_car",
-                "other",
-              ] as const
-            ).map((value) => (
+            {VEHICLE_TYPES.map((value) => (
               <label
                 key={value}
-                className="flex cursor-pointer items-start gap-3 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 hover:bg-slate-50"
+                className="flex cursor-pointer items-center gap-3 rounded-lg border border-slate-200 bg-white px-2 py-1 text-sm text-slate-900 hover:bg-slate-50"
               >
-                <RadioGroupItem value={value} className="mt-0.5" />
+                <RadioGroupItem value={value} className="shrink-0" />
+                <VehicleTypeIcon type={value} className="size-14" />
                 <span className="leading-5">{t(`vehicleType_${value}`)}</span>
               </label>
             ))}

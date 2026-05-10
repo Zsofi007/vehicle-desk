@@ -1,10 +1,12 @@
+import type { VehicleType } from "@/lib/vehicle-type";
+
 export type Vehicle = {
   id: string;
   user_id: string;
   organization_id?: string;
   make: string;
   model: string;
-  vehicle_type: string;
+  vehicle_type: VehicleType;
   year: number;
   license_plate: string;
   odometer: number;
