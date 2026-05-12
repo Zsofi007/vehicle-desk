@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useMemo } from "react";
 
 import { Link, usePathname } from "@/lib/navigation";
@@ -53,11 +54,14 @@ export function AppSidebar({
           onClick={onNavigate}
           className="flex items-center gap-3"
         >
-          <div className="grid h-8 w-8 place-items-center rounded bg-slate-800 text-white">
-            <span aria-hidden className="text-sm">
-              VD
-            </span>
-          </div>
+          <Image
+            src="/vehicle-desk-square.png"
+            alt=""
+            width={32}
+            height={32}
+            className="h-10 w-10 shrink-0 rounded-lg object-contain"
+            priority
+          />
           <div className="min-w-0">
             <div className="truncate text-sm font-semibold tracking-tight text-slate-900">
               {title}
