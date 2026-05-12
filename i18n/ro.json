@@ -19,7 +19,9 @@
     "none": "Niciunul",
     "close": "Închide",
     "submit": "Trimite",
-    "actions": "Acțiuni"
+    "actions": "Acțiuni",
+    "edit": "Editează",
+    "update": "Actualizează"
   },
   "nav": {
     "dashboard": "Panou",
@@ -68,7 +70,23 @@
     "copied": "Copiat.",
     "inviteOrgOwner": "Invită proprietar organizație",
     "createInvite": "Creează invitație",
-    "inviteCreatedNoToken": "Invitația a fost creată. Destinatarul va primi pe e-mail linkul de înregistrare."
+    "inviteCreatedNoToken": "Invitația a fost creată. Destinatarul va primi pe e-mail linkul de înregistrare.",
+    "copyToken": "Copiază",
+    "localeName_en": "English",
+    "localeName_hu": "Magyar",
+    "localeName_ro": "Română"
+  },
+  "admin": {
+    "pageTitle": "Invitații",
+    "sectionCreateTitle": "Creează invitație",
+    "sectionListTitle": "Invitații",
+    "emptyInvites": "Nu există încă invitații.",
+    "inviteColumnEmail": "E-mail",
+    "inviteColumnStatus": "Stare",
+    "inviteColumnExpires": "Expiră",
+    "inviteStatusUsed": "Folosită",
+    "inviteStatusExpired": "Expirată",
+    "inviteStatusPending": "În așteptare"
   },
   "auth": {
     "email": "E-mail",
@@ -212,7 +230,8 @@
     "notFound": "Pagina nu a fost găsită.",
     "validation": "Verifică formularul.",
     "rateLimited": "Prea multe încercări. Te rugăm să încerci din nou în curând.",
-    "deleteFailed": "Ștergerea a eșuat. Încearcă din nou."
+    "deleteFailed": "Ștergerea a eșuat. Încearcă din nou.",
+    "forbidden": "Nu ai permisiunea."
   },
   "documents": {
     "title": "Documente",

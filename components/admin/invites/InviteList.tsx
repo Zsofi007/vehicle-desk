@@ -1,5 +1,9 @@
 "use client";
 
+import { useState } from "react";
+import { useTranslations } from "next-intl";
+
+import { utcTodayString } from "@/lib/dates";
 import type { AppLocale } from "@/lib/i18n";
 
 export type InviteListItem = {
@@ -10,12 +14,6 @@ export type InviteListItem = {
   created_at: string;
 };
 
-function status(inv: InviteListItem) {
-  if (inv.used) return "Used";
-  if (new Date(inv.expires_at).getTime() < Date.now()) return "Expired";
-  return "Pending";
-}
-
 export function InviteList({
   locale,
   invites,
@@ -23,8 +21,18 @@ export function InviteList({
   locale: AppLocale;
   invites: InviteListItem[];
 }) {
+  const t = useTranslations("admin");
+  const [todayYmd] = useState(() => utcTodayString());
+
+  function statusLabel(inv: InviteListItem) {
+    if (inv.used) return t("inviteStatusUsed");
+    const expYmd = inv.expires_at.slice(0, 10);
+    if (expYmd.localeCompare(todayYmd) < 0) return t("inviteStatusExpired");
+    return t("inviteStatusPending");
+  }
+
   if (invites.length === 0) {
-    return <p className="mt-3 text-sm text-stone-600">No invites.</p>;
+    return <p className="mt-3 text-sm text-stone-600">{t("emptyInvites")}</p>;
   }
 
   return (
@@ -32,16 +40,16 @@ export function InviteList({
       <table className="min-w-full border-separate border-spacing-y-2 text-sm">
         <thead>
           <tr className="text-left text-stone-600">
-            <th className="px-2 py-1 font-medium">Email</th>
-            <th className="px-2 py-1 font-medium">Status</th>
-            <th className="px-2 py-1 font-medium">Expires</th>
+            <th className="px-2 py-1 font-medium">{t("inviteColumnEmail")}</th>
+            <th className="px-2 py-1 font-medium">{t("inviteColumnStatus")}</th>
+            <th className="px-2 py-1 font-medium">{t("inviteColumnExpires")}</th>
           </tr>
         </thead>
         <tbody>
           {invites.map((inv) => (
             <tr key={inv.id} className="rounded-md bg-stone-50">
               <td className="px-2 py-2 text-stone-900">{inv.email}</td>
-              <td className="px-2 py-2 text-stone-900">{status(inv)}</td>
+              <td className="px-2 py-2 text-stone-900">{statusLabel(inv)}</td>
               <td className="px-2 py-2 text-stone-700">
                 {new Date(inv.expires_at).toLocaleString(locale)}
               </td>
@@ -52,4 +60,3 @@ export function InviteList({
     </div>
   );
 }
-

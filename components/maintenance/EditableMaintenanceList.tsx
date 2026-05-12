@@ -218,6 +218,7 @@ function MaintenanceRow({
 
   if (!editing) {
     const meta = typeMeta(t, row.type);
+    const rowActionLabel = status === "overdue" ? tc("update") : tc("edit");
 
     return (
       <li className="px-4 py-4">
@@ -242,9 +243,10 @@ function MaintenanceRow({
             </time>
             <Button
               type="button"
-              size="icon"
               variant="secondary"
-              aria-label={tVeh("edit")}
+              size="sm"
+              className="gap-1.5"
+              aria-label={rowActionLabel}
               onClick={() => {
                 setEditing(true);
                 setDate(row.date);
@@ -256,7 +258,8 @@ function MaintenanceRow({
                 setIntervalDays(eff?.interval_days ? String(eff.interval_days) : "");
               }}
             >
-              <Pencil className="h-4 w-4" aria-hidden />
+              <Pencil className="h-4 w-4 shrink-0" aria-hidden />
+              <span>{rowActionLabel}</span>
             </Button>
           </div>
         </div>

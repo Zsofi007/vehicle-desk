@@ -6,10 +6,11 @@ import { redirect } from "@/lib/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
+import Link from "next/link";
+
 import { CompanyNameField } from "@/components/settings/CompanyNameField";
 import { LanguageSelector } from "@/components/settings/LanguageSelector";
 import { NotificationToggle } from "@/components/settings/NotificationToggle";
-import { Link } from "@/lib/navigation";
 
 type Props = {
   params: Promise<{ locale: string }>;
@@ -160,6 +161,7 @@ export default async function SettingsPage({ params }: Props) {
         <div className="mt-3">
           <Link
             href="/api/export"
+            prefetch={false}
             className="inline-flex min-h-11 w-full items-center justify-center rounded-md bg-stone-900 px-4 py-2 text-sm font-medium text-white hover:bg-stone-800 sm:w-auto"
           >
             {t("exportButton")}

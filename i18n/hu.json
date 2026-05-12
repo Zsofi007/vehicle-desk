@@ -19,7 +19,9 @@
     "none": "Nincs",
     "close": "Bezárás",
     "submit": "Küldés",
-    "actions": "Műveletek"
+    "actions": "Műveletek",
+    "edit": "Szerkesztés",
+    "update": "Frissítés"
   },
   "nav": {
     "dashboard": "Irányítópult",
@@ -68,7 +70,23 @@
     "copied": "Másolva.",
     "inviteOrgOwner": "Szervezettulajdonos meghívása",
     "createInvite": "Meghívó létrehozása",
-    "inviteCreatedNoToken": "A meghívó elkészült. A címzett e-mailben megkapja a regisztrációs linket."
+    "inviteCreatedNoToken": "A meghívó elkészült. A címzett e-mailben megkapja a regisztrációs linket.",
+    "copyToken": "Másolás",
+    "localeName_en": "English",
+    "localeName_hu": "Magyar",
+    "localeName_ro": "Română"
+  },
+  "admin": {
+    "pageTitle": "Meghívók",
+    "sectionCreateTitle": "Meghívó létrehozása",
+    "sectionListTitle": "Meghívók",
+    "emptyInvites": "Még nincs meghívó.",
+    "inviteColumnEmail": "E-mail",
+    "inviteColumnStatus": "Állapot",
+    "inviteColumnExpires": "Lejárat",
+    "inviteStatusUsed": "Felhasználva",
+    "inviteStatusExpired": "Lejárt",
+    "inviteStatusPending": "Függőben"
   },
   "auth": {
     "email": "E-mail",
@@ -212,7 +230,8 @@
     "notFound": "Az oldal nem található.",
     "validation": "Ellenőrizd az űrlapot.",
     "rateLimited": "Túl sok próbálkozás. Kérjük, próbáld újra egy kicsit később.",
-    "deleteFailed": "Nem sikerült törölni. Próbáld újra."
+    "deleteFailed": "Nem sikerült törölni. Próbáld újra.",
+    "forbidden": "Nincs jogosultság."
   },
   "documents": {
     "title": "Dokumentumok",

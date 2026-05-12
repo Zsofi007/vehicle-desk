@@ -19,7 +19,9 @@
     "none": "None",
     "close": "Close",
     "submit": "Submit",
-    "actions": "Actions"
+    "actions": "Actions",
+    "edit": "Edit",
+    "update": "Update"
   },
   "nav": {
     "dashboard": "Dashboard",
@@ -68,7 +70,23 @@
     "copied": "Copied.",
     "inviteOrgOwner": "Invite org owner",
     "createInvite": "Create invite",
-    "inviteCreatedNoToken": "Invite created. The recipient will receive an email with the signup link."
+    "inviteCreatedNoToken": "Invite created. The recipient will receive an email with the signup link.",
+    "copyToken": "Copy",
+    "localeName_en": "English",
+    "localeName_hu": "Magyar",
+    "localeName_ro": "Română"
+  },
+  "admin": {
+    "pageTitle": "Invites",
+    "sectionCreateTitle": "Create invite",
+    "sectionListTitle": "Invites",
+    "emptyInvites": "No invites yet.",
+    "inviteColumnEmail": "Email",
+    "inviteColumnStatus": "Status",
+    "inviteColumnExpires": "Expires",
+    "inviteStatusUsed": "Used",
+    "inviteStatusExpired": "Expired",
+    "inviteStatusPending": "Pending"
   },
   "auth": {
     "email": "Email",
@@ -212,7 +230,8 @@
     "notFound": "Page not found.",
     "validation": "Please review the form.",
     "rateLimited": "Too many attempts. Please try again in a moment.",
-    "deleteFailed": "Could not delete. Try again."
+    "deleteFailed": "Could not delete. Try again.",
+    "forbidden": "Not allowed."
   },
   "documents": {
     "title": "Documents",

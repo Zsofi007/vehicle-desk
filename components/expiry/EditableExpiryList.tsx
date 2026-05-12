@@ -171,6 +171,8 @@ function ExpiryRow({
 
   const meta = expiryTypeMeta(t, row.type);
 
+  const rowActionLabel = status === "expired" ? tc("update") : tc("edit");
+
   if (!editing) {
     return (
       <li className="px-4 py-4">
@@ -204,9 +206,10 @@ function ExpiryRow({
           <div className="flex items-center gap-2">
             <Button
               type="button"
-              size="icon"
               variant="secondary"
-              aria-label={tVeh("edit")}
+              size="sm"
+              className="gap-1.5"
+              aria-label={rowActionLabel}
               onClick={() => {
                 setEditing(true);
                 const d = deriveExpiryType(row.type);
@@ -216,7 +219,8 @@ function ExpiryRow({
                 setCost(row.cost ? String(row.cost) : "");
               }}
             >
-              <Pencil className="h-4 w-4" aria-hidden />
+              <Pencil className="h-4 w-4 shrink-0" aria-hidden />
+              <span>{rowActionLabel}</span>
             </Button>
           </div>
         </div>

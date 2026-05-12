@@ -3,30 +3,21 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { ChevronDown } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { GB, HU, RO } from "country-flag-icons/react/3x2";
 
 import { cn } from "@/lib/cn";
 
 type Props = {
-  emailLabel: string;
-  languageLabel: string;
+  /** Primary submit label (differs for global admin vs org admin). */
   buttonLabel: string;
-  tokenLabel: string;
-  copiedLabel: string;
   /** When false, a successful invite does not show or require a token (org admins). */
   exposeCreatedToken: boolean;
-  inviteCreatedNoTokenMessage: string;
 };
 
-export function InviteForm({
-  emailLabel,
-  languageLabel,
-  buttonLabel,
-  tokenLabel,
-  copiedLabel,
-  exposeCreatedToken,
-  inviteCreatedNoTokenMessage,
-}: Props) {
+export function InviteForm({ buttonLabel, exposeCreatedToken }: Props) {
+  const t = useTranslations("invites");
+  const tErr = useTranslations("errors");
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [email, setEmail] = useState("");
@@ -43,6 +34,14 @@ export function InviteForm({
     ro: RO,
   };
   const ActiveFlag = localeFlag[lang];
+
+  const localeOptions = [
+    { value: "en" as const, labelKey: "localeName_en" as const, Flag: GB },
+    { value: "hu" as const, labelKey: "localeName_hu" as const, Flag: HU },
+    { value: "ro" as const, labelKey: "localeName_ro" as const, Flag: RO },
+  ] as const;
+
+  const activeLocaleOption = localeOptions.find((o) => o.value === lang) ?? localeOptions[0];
 
   return (
     <form
@@ -64,13 +63,13 @@ export function InviteForm({
           const data = (await res.json().catch(() => null)) as { token?: string } | null;
 
           if (!res.ok) {
-            setError("Forbidden.");
+            setError(tErr("forbidden"));
             return;
           }
 
           if (exposeCreatedToken) {
             if (!data?.token) {
-              setError("Forbidden.");
+              setError(tErr("forbidden"));
               return;
             }
             setToken(data.token);
@@ -84,7 +83,7 @@ export function InviteForm({
     >
       <div className="grid w-full gap-2 sm:max-w-sm">
         <label htmlFor="invite-email" className="text-sm font-medium text-stone-800">
-          {emailLabel}
+          {t("emailLabel")}
         </label>
         <input
           id="invite-email"
@@ -98,7 +97,7 @@ export function InviteForm({
       </div>
 
       <div className="grid w-full gap-2 sm:max-w-[12rem]">
-        <label className="text-sm font-medium text-stone-800">{languageLabel}</label>
+        <label className="text-sm font-medium text-stone-800">{t("languageLabel")}</label>
         <div className="relative">
           <button
             type="button"
@@ -116,9 +115,7 @@ export function InviteForm({
           >
             <span className="flex min-w-0 items-center gap-2">
               <ActiveFlag className="h-3.5 w-5 rounded-sm shadow-[0_0_0_1px_rgba(0,0,0,0.08)]" />
-              <span className="truncate text-sm">
-                {lang === "en" ? "English" : lang === "hu" ? "Magyar" : "Română"}
-              </span>
+              <span className="truncate text-sm">{t(activeLocaleOption.labelKey)}</span>
             </span>
             <ChevronDown className="h-4 w-4 text-stone-500" aria-hidden />
           </button>
@@ -126,16 +123,10 @@ export function InviteForm({
           {langOpen ? (
             <div
               role="menu"
-              aria-label={languageLabel}
+              aria-label={t("languageLabel")}
               className="absolute left-0 z-20 mt-2 w-full overflow-hidden rounded-md border border-stone-200 bg-white shadow-lg"
             >
-              {(
-                [
-                  { value: "en" as const, label: "English", Flag: GB },
-                  { value: "hu" as const, label: "Magyar", Flag: HU },
-                  { value: "ro" as const, label: "Română", Flag: RO },
-                ] as const
-              ).map(({ value, label, Flag }) => {
+              {localeOptions.map(({ value, labelKey, Flag }) => {
                 const isActive = value === lang;
                 return (
                   <button
@@ -153,7 +144,7 @@ export function InviteForm({
                     }}
                   >
                     <Flag className="h-3.5 w-5 rounded-sm shadow-[0_0_0_1px_rgba(0,0,0,0.08)]" />
-                    <span className="flex-1">{label}</span>
+                    <span className="flex-1">{t(labelKey)}</span>
                   </button>
                 );
               })}
@@ -178,13 +169,13 @@ export function InviteForm({
 
       {inviteSentNoToken && !token ? (
         <p className="w-full text-sm text-stone-700 sm:col-span-2 sm:mt-3" role="status">
-          {inviteCreatedNoTokenMessage}
+          {t("inviteCreatedNoToken")}
         </p>
       ) : null}
 
       {token ? (
         <div className="grid w-full gap-2 sm:col-span-2 sm:mt-3">
-          <label className="text-sm font-medium text-stone-800">{tokenLabel}</label>
+          <label className="text-sm font-medium text-stone-800">{t("tokenLabel")}</label>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
             <input
               readOnly
@@ -200,13 +191,12 @@ export function InviteForm({
                 setTimeout(() => setCopied(false), 1200);
               }}
             >
-              Copy
+              {t("copyToken")}
             </button>
-            {copied ? <span className="text-sm text-stone-600">{copiedLabel}</span> : null}
+            {copied ? <span className="text-sm text-stone-600">{t("copied")}</span> : null}
           </div>
         </div>
       ) : null}
     </form>
   );
 }
-

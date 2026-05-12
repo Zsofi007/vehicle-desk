@@ -35,6 +35,7 @@ export default async function AdminInvitesPage({ params }: Props) {
   const invites = (data ?? []) as InviteListItem[];
 
   const tInvites = await getTranslations("invites");
+  const tAdmin = await getTranslations("admin");
 
   let orgOverview: React.ReactNode = null;
   if (isGlobalAdmin) {
@@ -107,27 +108,22 @@ export default async function AdminInvitesPage({ params }: Props) {
     <div className="space-y-6">
       <header>
         <h1 className="text-xl font-semibold tracking-tight text-stone-900">
-          Invites
+          {tAdmin("pageTitle")}
         </h1>
       </header>
 
       {orgOverview}
 
       <section className="rounded-xl border border-stone-200 bg-white p-4 shadow-sm">
-        <h2 className="text-sm font-semibold text-stone-900">Create invite</h2>
+        <h2 className="text-sm font-semibold text-stone-900">{tAdmin("sectionCreateTitle")}</h2>
         <InviteForm
           buttonLabel={isGlobalAdmin ? tInvites("inviteOrgOwner") : tInvites("createInvite")}
-          emailLabel={tInvites("emailLabel")}
-          languageLabel={tInvites("languageLabel")}
-          tokenLabel={tInvites("tokenLabel")}
-          copiedLabel={tInvites("copied")}
           exposeCreatedToken={isGlobalAdmin}
-          inviteCreatedNoTokenMessage={tInvites("inviteCreatedNoToken")}
         />
       </section>
 
       <section className="rounded-xl border border-stone-200 bg-white p-4 shadow-sm">
-        <h2 className="text-sm font-semibold text-stone-900">Invites</h2>
+        <h2 className="text-sm font-semibold text-stone-900">{tAdmin("sectionListTitle")}</h2>
         <InviteList locale={locale} invites={invites} />
       </section>
     </div>
