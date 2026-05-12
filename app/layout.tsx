@@ -12,6 +12,10 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "Vehicle Desk",
   description: "Car maintenance tracking",
+  icons: {
+    icon: [{ url: "/vehicle-desk-square-white.png", type: "image/png" }],
+    apple: [{ url: "/vehicle-desk-square-white.png", type: "image/png" }],
+  },
 };
 
 export default function RootLayout({
