@@ -8,6 +8,7 @@ import { MAINTENANCE_TYPE_KEYS, type MaintenanceTypeKey } from "@/lib/type-keys"
 import type { MaintenanceDueRow } from "@/lib/queries";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { TableScrollArea } from "@/components/ui/table-scroll";
 import {
   deleteVehicleMaintenanceIntervalOverride,
   upsertVehicleMaintenanceIntervalOverride,
@@ -136,8 +137,8 @@ export function MaintenanceIntervalOverridesPanel({
         </p>
       ) : null}
 
-      <div className="overflow-x-auto">
-        <table className="w-full text-left text-sm">
+      <TableScrollArea>
+        <table className="min-w-max w-full text-left text-sm">
           <thead className="bg-stone-50 text-xs font-semibold uppercase tracking-wider text-stone-600">
             <tr>
               <th className="px-3 py-2">{t("type")}</th>
@@ -282,7 +283,7 @@ export function MaintenanceIntervalOverridesPanel({
             })}
           </tbody>
         </table>
-      </div>
+      </TableScrollArea>
     </div>
   );
 }

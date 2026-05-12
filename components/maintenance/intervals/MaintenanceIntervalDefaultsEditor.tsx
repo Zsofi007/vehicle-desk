@@ -7,6 +7,7 @@ import type { AppLocale } from "@/lib/i18n";
 import { MAINTENANCE_TYPE_KEYS, type MaintenanceTypeKey } from "@/lib/type-keys";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { TableScrollArea } from "@/components/ui/table-scroll";
 import { upsertOrgMaintenanceIntervalDefault } from "@/lib/actions/maintenance-intervals";
 
 type DefaultRow = {
@@ -100,8 +101,8 @@ export function MaintenanceIntervalDefaultsEditor({
         </p>
       ) : null}
 
-      <div className="overflow-x-auto">
-        <table className="w-full text-left text-sm">
+      <TableScrollArea>
+        <table className="min-w-max w-full text-left text-sm">
           <thead className="bg-stone-50 text-xs font-semibold uppercase tracking-wider text-stone-600">
             <tr>
               <th className="px-3 py-2">{t("type")}</th>
@@ -241,7 +242,7 @@ export function MaintenanceIntervalDefaultsEditor({
             ))}
           </tbody>
         </table>
-      </div>
+      </TableScrollArea>
 
       {!canEdit ? <p className="text-sm text-stone-600">{t("readOnlyHint")}</p> : null}
     </div>
