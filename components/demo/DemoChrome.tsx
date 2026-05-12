@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useTranslations } from "next-intl";
 
 import { Link } from "@/lib/navigation";
@@ -25,12 +26,19 @@ export function DemoChrome({ children }: Props) {
 
       <header className="sticky top-0 z-40 border-b border-slate-200 bg-white shadow-sm">
         <div className="mx-auto flex max-w-[1280px] flex-wrap items-center justify-between gap-3 px-4 py-3 md:px-8">
-          <div className="flex min-w-0 flex-wrap items-center gap-4">
+          <div className="flex min-w-0 flex-wrap items-center gap-4 md:gap-6">
             <Link
               href="/demo"
-              className="truncate text-base font-semibold text-slate-900 hover:text-slate-700"
+              className="block shrink-0 outline-offset-4 hover:opacity-90 focus-visible:rounded-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-400"
             >
-              {tCommon("appName")}
+              <Image
+                src="/vehicle-desk-wide.png"
+                alt={tCommon("appName")}
+                width={1520}
+                height={545}
+                className="h-8 w-auto max-w-[min(100%,200px)] object-contain object-left sm:max-w-[240px] md:h-10 md:max-w-[280px]"
+                priority
+              />
             </Link>
             <nav className="flex flex-wrap items-center gap-3 text-sm font-medium text-slate-700">
               <Link href="/demo" className="hover:text-slate-900 hover:underline">
