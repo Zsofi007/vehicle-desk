@@ -22,6 +22,8 @@ type Props = {
   statusClassName: string;
   vehicleType: VehicleType;
   odometerOutdated?: boolean;
+  /** Path prefix without locale, e.g. `/vehicles` or `/demo/vehicles`. */
+  detailHrefBase?: string;
 };
 
 export function VehicleTile({
@@ -35,13 +37,14 @@ export function VehicleTile({
   statusClassName,
   vehicleType,
   odometerOutdated,
+  detailHrefBase = "/vehicles",
 }: Props) {
   const router = useRouter();
   const t = useTranslations("vehicles");
   const [hideLogo, setHideLogo] = useState(false);
   const logoSrc = getCarLogoSrc(make);
 
-  const href = `/vehicles/${vehicleId}`;
+  const href = `${detailHrefBase.replace(/\/$/, "")}/${vehicleId}`;
 
   return (
     <div

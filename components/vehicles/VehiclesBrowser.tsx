@@ -38,6 +38,9 @@ type Props = {
   sortStatus: string;
   addVehicleLabel: string;
   addVehicleDescription: string;
+  /** When true, hides the add-vehicle entry points (e.g. marketing demo). */
+  hideAddVehicle?: boolean;
+  detailHrefBase?: string;
 };
 
 type SortKey = "plate" | "make" | "year" | "status";
@@ -65,6 +68,8 @@ export function VehiclesBrowser({
   sortStatus,
   addVehicleLabel,
   addVehicleDescription,
+  hideAddVehicle = false,
+  detailHrefBase = "/vehicles",
 }: Props) {
   const [query, setQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<"all" | VehicleStatus>("all");
@@ -210,15 +215,17 @@ export function VehiclesBrowser({
         <div className="text-sm text-slate-600">
           {sorted.length} / {rows.length}
         </div>
-        <div className="hidden md:block">
-          <AddVehicleModal
-            locale={locale}
-            triggerLabel={addVehicleLabel}
-            title={addVehicleLabel}
-            description={addVehicleDescription}
-            triggerVariant="accent"
-          />
-        </div>
+        {hideAddVehicle ? null : (
+          <div className="hidden md:block">
+            <AddVehicleModal
+              locale={locale}
+              triggerLabel={addVehicleLabel}
+              title={addVehicleLabel}
+              description={addVehicleDescription}
+              triggerVariant="accent"
+            />
+          </div>
+        )}
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 [@media(min-width:1100px)]:grid-cols-3 xl:grid-cols-4">
@@ -235,6 +242,7 @@ export function VehiclesBrowser({
             statusClassName={statusClassName}
             vehicleType={vehicle.vehicle_type}
             odometerOutdated={Boolean(odometerOutdated)}
+            detailHrefBase={detailHrefBase}
           />
         ))}
       </div>
