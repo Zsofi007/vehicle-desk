@@ -64,7 +64,7 @@ export default async function AppSectionLayout({ children, params }: Props) {
           />
         </aside>
 
-        <div className="md:pl-64">
+        <div className="min-w-0 md:pl-64">
           <header className="sticky top-0 z-40 border-b border-slate-200 bg-white shadow-sm">
             <div className="mx-auto flex min-h-16 max-w-[1280px] items-center justify-between gap-3 px-4 md:gap-4 md:px-8">
               <div className="flex min-w-0 flex-1 items-center gap-2 md:gap-3">
@@ -97,7 +97,7 @@ export default async function AppSectionLayout({ children, params }: Props) {
             </div>
           </header>
 
-          <main className="mx-auto w-full max-w-[1280px] px-4 py-4 md:px-8 md:py-8">
+          <main className="mx-auto min-w-0 w-full max-w-[1280px] px-4 py-4 md:px-8 md:py-8">
             {children}
           </main>
         </div>
@@ -139,7 +139,7 @@ export default async function AppSectionLayout({ children, params }: Props) {
         />
       </aside>
 
-      <div className="md:pl-64">
+      <div className="min-w-0 md:pl-64">
         <header className="sticky top-0 z-40 border-b border-slate-200 bg-white shadow-sm">
           <div className="mx-auto flex min-h-16 max-w-[1280px] items-center justify-between gap-3 px-4 md:gap-4 md:px-8">
             <div className="flex min-w-0 flex-1 items-center gap-2 md:gap-3">
@@ -177,7 +177,7 @@ export default async function AppSectionLayout({ children, params }: Props) {
           </div>
         </header>
 
-        <main className="mx-auto w-full max-w-[1280px] px-4 pt-4 pb-[calc(6rem+env(safe-area-inset-bottom,0px))] md:px-8 md:py-8">
+        <main className="mx-auto min-w-0 w-full max-w-[1280px] px-4 pt-4 pb-[calc(6rem+env(safe-area-inset-bottom,0px))] md:px-8 md:py-8">
           {children}
         </main>
 

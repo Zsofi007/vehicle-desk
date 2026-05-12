@@ -5,6 +5,7 @@ import { getCurrentUserWithRole, requireActiveOrganization } from "@/lib/auth";
 import { formatDateYmdUtc } from "@/lib/format";
 import type { AppLocale } from "@/lib/i18n";
 import { Link, redirect } from "@/lib/navigation";
+import { TableScrollArea } from "@/components/ui/table-scroll";
 import { VehicleMakeLogo } from "@/components/vehicles/VehicleMakeLogo";
 import {
   getAlertsForOrg,
@@ -261,7 +262,8 @@ export default async function DashboardPage({ params }: Props) {
 
         {maintOverdue.length + maintSoon.length === 0 ? null : (
           <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-            <table className="w-full text-left text-sm">
+            <TableScrollArea>
+              <table className="min-w-max w-full text-left text-sm">
               <thead className="border-b border-slate-200 bg-slate-50 text-xs font-semibold uppercase tracking-wider text-slate-600">
                 <tr>
                   <th className="px-4 py-3">
@@ -350,6 +352,7 @@ export default async function DashboardPage({ params }: Props) {
                   })}
               </tbody>
             </table>
+            </TableScrollArea>
           </div>
         )}
       </section>
@@ -387,7 +390,8 @@ export default async function DashboardPage({ params }: Props) {
           </div>
         ) : (
           <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-            <table className="w-full text-left text-sm">
+            <TableScrollArea>
+              <table className="min-w-max w-full text-left text-sm">
               <thead className="border-b border-slate-200 bg-slate-50 text-xs font-semibold uppercase tracking-wider text-slate-600">
                 <tr>
                   <th className="px-4 py-3">
@@ -464,6 +468,7 @@ export default async function DashboardPage({ params }: Props) {
                 })}
               </tbody>
             </table>
+            </TableScrollArea>
           </div>
         )}
       </section>

@@ -6,6 +6,8 @@ import { useTranslations } from "next-intl";
 import { utcTodayString } from "@/lib/dates";
 import type { AppLocale } from "@/lib/i18n";
 
+import { TableScrollArea } from "@/components/ui/table-scroll";
+
 export type InviteListItem = {
   id: string;
   email: string;
@@ -36,8 +38,8 @@ export function InviteList({
   }
 
   return (
-    <div className="mt-3 -mx-4 overflow-x-auto overscroll-x-contain px-4 sm:mx-0 sm:px-0">
-      <table className="min-w-full border-separate border-spacing-y-2 text-sm">
+    <TableScrollArea className="mt-3 -mx-4 px-4 sm:mx-0 sm:px-0">
+      <table className="min-w-max w-full border-separate border-spacing-y-2 text-sm">
         <thead>
           <tr className="text-left text-stone-600">
             <th className="px-2 py-1 font-medium">{t("inviteColumnEmail")}</th>
@@ -57,6 +59,6 @@ export function InviteList({
           ))}
         </tbody>
       </table>
-    </div>
+    </TableScrollArea>
   );
 }

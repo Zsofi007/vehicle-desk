@@ -61,7 +61,7 @@ export function DemoChrome({ children }: Props) {
         </div>
       </header>
 
-      <main className="mx-auto max-w-[1280px] px-4 py-6 md:px-8 md:py-8">{children}</main>
+      <main className="mx-auto min-w-0 w-full max-w-[1280px] px-4 py-6 md:px-8 md:py-8">{children}</main>
 
       <footer className="border-t border-slate-200 bg-white py-8">
         <div className="mx-auto flex max-w-[1280px] flex-col items-center gap-4 px-4 text-center md:px-8">

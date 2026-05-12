@@ -6,6 +6,7 @@ import { getTranslations } from "next-intl/server";
 
 import { InviteForm } from "@/components/admin/invites/InviteForm";
 import { InviteList, type InviteListItem } from "@/components/admin/invites/InviteList";
+import { TableScrollArea } from "@/components/ui/table-scroll";
 
 type Props = {
   params: Promise<{ locale: string }>;
@@ -75,7 +76,8 @@ export default async function AdminInvitesPage({ params }: Props) {
           {tSettings("orgOverviewTitle")}
         </h2>
         <div className="mt-3 overflow-hidden rounded-lg border border-stone-200">
-          <table className="w-full text-left text-sm">
+          <TableScrollArea>
+            <table className="min-w-max w-full text-left text-sm">
             <thead className="bg-stone-50 text-xs font-semibold uppercase tracking-wider text-stone-600">
               <tr>
                 <th className="px-3 py-2">{tSettings("orgOverviewOrg")}</th>
@@ -99,6 +101,7 @@ export default async function AdminInvitesPage({ params }: Props) {
               })}
             </tbody>
           </table>
+          </TableScrollArea>
         </div>
       </section>
     );

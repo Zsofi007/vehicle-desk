@@ -11,6 +11,7 @@ import Link from "next/link";
 import { CompanyNameField } from "@/components/settings/CompanyNameField";
 import { LanguageSelector } from "@/components/settings/LanguageSelector";
 import { NotificationToggle } from "@/components/settings/NotificationToggle";
+import { TableScrollArea } from "@/components/ui/table-scroll";
 
 type Props = {
   params: Promise<{ locale: string }>;
@@ -94,7 +95,8 @@ export default async function SettingsPage({ params }: Props) {
         <section className="rounded-xl border border-stone-200 bg-white p-4 shadow-sm">
           <h2 className="text-sm font-semibold text-stone-900">{t("membersTitle")}</h2>
           <div className="mt-3 overflow-hidden rounded-lg border border-stone-200">
-            <table className="w-full text-left text-sm">
+            <TableScrollArea>
+              <table className="min-w-max w-full text-left text-sm">
               <thead className="bg-stone-50 text-xs font-semibold uppercase tracking-wider text-stone-600">
                 <tr>
                   <th className="px-3 py-2">{t("membersEmail")}</th>
@@ -126,6 +128,7 @@ export default async function SettingsPage({ params }: Props) {
                 })}
               </tbody>
             </table>
+            </TableScrollArea>
           </div>
         </section>
       ) : null}
