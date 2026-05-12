@@ -1,21 +1,16 @@
 import { getTranslations, getLocale } from "next-intl/server";
 import { Clock, Info, Wrench } from "lucide-react";
 
-import { getCurrentUserWithRole, requireActiveOrganization } from "@/lib/auth";
 import { formatDateYmdUtc } from "@/lib/format";
-import type { AppLocale } from "@/lib/i18n";
-import { Link, redirect } from "@/lib/navigation";
+import { Link } from "@/lib/navigation";
 import { VehicleMakeLogo } from "@/components/vehicles/VehicleMakeLogo";
+import { buildDemoAlerts } from "@/lib/demo/aggregates";
 import {
-  getAlertsForOrg,
-  getMaintenanceDueForOrg,
-  getUpcomingExpiriesForOrg,
-  getVehiclesForOrg,
-} from "@/lib/queries";
-
-type Props = {
-  params: Promise<{ locale: string }>;
-};
+  DEMO_MAINTENANCE_DUE,
+  DEMO_VEHICLES,
+  getDemoStaleVehicleIds,
+  getDemoUpcomingExpiriesCount,
+} from "@/lib/demo/fixtures";
 
 function statCard({
   label,
@@ -31,33 +26,26 @@ function statCard({
       <div className="text-xs font-semibold uppercase tracking-wider text-slate-500">
         {label}
       </div>
-      <div className="mt-1 text-2xl font-semibold tabular-nums text-slate-900">
-        {value}
-      </div>
+      <div className="mt-1 text-2xl font-semibold tabular-nums text-slate-900">{value}</div>
       {hint ? <div className="mt-2 text-sm text-slate-600">{hint}</div> : null}
     </div>
   );
 }
 
-export default async function DashboardPage({ params }: Props) {
-  const { locale: loc } = await params;
-  const locale = loc as AppLocale;
-  const current = await getCurrentUserWithRole();
-  if (current?.role === "admin") {
-    redirect({ href: "/admin/invites", locale });
-  }
-  const { organization } = await requireActiveOrganization(locale);
+export default async function DemoDashboardPage() {
+  const tdemo = await getTranslations("demo");
   const t = await getTranslations("dashboard");
   const tMaint = await getTranslations("maintenance");
   const tExp = await getTranslations("expiry");
   const tStatus = await getTranslations("status");
   const tIntervals = await getTranslations("maintenanceIntervals");
+  const tNav = await getTranslations("nav");
   const localeTag = await getLocale();
 
-  const vehicles = await getVehiclesForOrg(organization.id);
-  const upcoming = await getUpcomingExpiriesForOrg(organization.id);
-  const alerts = await getAlertsForOrg(organization.id);
-  const dueMaint = await getMaintenanceDueForOrg(organization.id);
+  const vehicles = DEMO_VEHICLES;
+  const upcoming = getDemoUpcomingExpiriesCount();
+  const alerts = buildDemoAlerts();
+  const dueMaint = DEMO_MAINTENANCE_DUE;
   const maintOverdue = dueMaint.filter((r) => r.status === "overdue");
   const maintSoon = dueMaint.filter((r) => r.status === "due_soon");
   const expired = alerts.filter((a) => a.kind === "expired");
@@ -65,20 +53,10 @@ export default async function DashboardPage({ params }: Props) {
   const expiryAlertCount = expired.length + soon.length;
   const maintAlertCount = maintOverdue.length + maintSoon.length;
   const totalDashboardAlerts = expiryAlertCount + maintAlertCount;
+  const staleIds = getDemoStaleVehicleIds();
+  const staleVehicles = vehicles.filter((v) => staleIds.has(v.id));
 
-  const staleBefore = new Date();
-  staleBefore.setUTCDate(staleBefore.getUTCDate() - 90);
-  const staleVehicles = vehicles.filter((v) => {
-    const ts = v.last_odometer_update_at;
-    if (!ts) return false;
-    return new Date(ts).getTime() < staleBefore.getTime();
-  });
-
-  function translateEnum(
-    prefix: string,
-    raw: string,
-    tr: (key: string) => string,
-  ) {
+  function translateEnum(prefix: string, raw: string, tr: (key: string) => string) {
     const key = `${prefix}_${raw.toLowerCase()}`;
     try {
       return tr(key);
@@ -89,10 +67,11 @@ export default async function DashboardPage({ params }: Props) {
 
   return (
     <div className="space-y-8">
-      <div className="hidden flex-wrap items-end justify-between gap-4 md:flex">
-        <div>
-          <p className="mt-2 text-base text-slate-600">{t("subtitle")}</p>
-        </div>
+      <div>
+        <h1 className="text-xl font-semibold text-slate-900 md:text-2xl">
+          {tdemo("dashboardTitle")}
+        </h1>
+        <p className="mt-2 text-base text-slate-600">{tdemo("dashboardSubtitle")}</p>
       </div>
 
       <section aria-label="Overview">
@@ -158,8 +137,8 @@ export default async function DashboardPage({ params }: Props) {
           })}
           {statCard({
             label: t("upcomingExpiries"),
-            value: upcoming.length,
-            hint: upcoming.length > 0 ? t("upcomingExpiries") : t("emptyUpcoming"),
+            value: upcoming,
+            hint: upcoming > 0 ? t("upcomingExpiries") : t("emptyUpcoming"),
           })}
         </div>
       </section>
@@ -178,7 +157,7 @@ export default async function DashboardPage({ params }: Props) {
               {t("odometerUpdateRecommendedToggle")}
             </summary>
             <div className="mt-3 grid gap-2">
-              {staleVehicles.slice(0, 10).map((v) => (
+              {staleVehicles.map((v) => (
                 <div
                   key={v.id}
                   className="flex items-center gap-3 rounded-lg border border-slate-200 bg-white p-3"
@@ -198,9 +177,8 @@ export default async function DashboardPage({ params }: Props) {
                       )}
                     </div>
                   </div>
-
                   <Link
-                    href={`/vehicles/${v.id}`}
+                    href={`/demo/vehicles/${v.id}`}
                     className="inline-flex items-center justify-center gap-2 rounded border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-900 shadow-sm hover:bg-slate-50"
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -216,14 +194,6 @@ export default async function DashboardPage({ params }: Props) {
                   </Link>
                 </div>
               ))}
-              {staleVehicles.length > 10 ? (
-                <p className="text-xs text-slate-500">
-                  {t("odometerUpdateRecommendedShowing", {
-                    shown: 10,
-                    total: staleVehicles.length,
-                  })}
-                </p>
-              ) : null}
             </div>
           </details>
         </section>
@@ -231,10 +201,7 @@ export default async function DashboardPage({ params }: Props) {
 
       <section aria-labelledby="maintenance-due-heading" className="space-y-3">
         <div className="flex items-center justify-between gap-3">
-          <h2
-            id="maintenance-due-heading"
-            className="text-base font-semibold text-slate-900"
-          >
+          <h2 id="maintenance-due-heading" className="text-base font-semibold text-slate-900">
             {tIntervals("vehicleTitle")}
           </h2>
           <div className="text-sm font-medium text-slate-700">
@@ -279,7 +246,6 @@ export default async function DashboardPage({ params }: Props) {
               <tbody className="divide-y divide-slate-100">
                 {dueMaint
                   .filter((r) => r.status === "overdue" || r.status === "due_soon")
-                  .slice(0, 6)
                   .map((row) => {
                     const statusLabel =
                       row.status === "overdue"
@@ -295,12 +261,10 @@ export default async function DashboardPage({ params }: Props) {
                         : row.reason === "time"
                           ? t("maintenanceReasonTime")
                           : t("maintenanceReasonUnknown");
-
                     const vehicle = vehicles.find((v) => v.id === row.vehicle_id);
                     const vehicleLabel = vehicle
                       ? `${vehicle.make} ${vehicle.model} · ${vehicle.license_plate}`
                       : row.vehicle_id;
-
                     return (
                       <tr key={`${row.vehicle_id}:${row.type}`} className="hover:bg-slate-50/50">
                         <td className="px-4 py-4 font-medium text-slate-900">
@@ -330,7 +294,7 @@ export default async function DashboardPage({ params }: Props) {
                         </td>
                         <td className="px-4 py-4 text-right">
                           <Link
-                            href={`/vehicles/${row.vehicle_id}`}
+                            href={`/demo/vehicles/${row.vehicle_id}`}
                             className="inline-flex items-center justify-center gap-2 rounded border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-900 shadow-sm hover:bg-slate-50"
                           >
                             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -403,16 +367,13 @@ export default async function DashboardPage({ params }: Props) {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
-                {alerts.slice(0, 6).map(({ expiry, vehicle, kind }) => {
+                {alerts.slice(0, 8).map(({ expiry, vehicle, kind }) => {
                   const statusLabel =
-                    kind === "expired"
-                      ? tStatus("badgeExpired")
-                      : tStatus("badgeSoon");
+                    kind === "expired" ? tStatus("badgeExpired") : tStatus("badgeSoon");
                   const statusStyle =
                     kind === "expired"
                       ? "border-red-200 bg-red-50 text-red-900"
                       : "border-amber-200 bg-amber-50 text-amber-900";
-
                   return (
                     <tr key={expiry.id} className="hover:bg-slate-50/50">
                       <td className="px-4 py-4 font-medium text-slate-900">
@@ -444,7 +405,7 @@ export default async function DashboardPage({ params }: Props) {
                       </td>
                       <td className="px-4 py-4 text-right">
                         <Link
-                          href={`/vehicles/${vehicle.id}`}
+                          href={`/demo/vehicles/${vehicle.id}`}
                           className="inline-flex items-center justify-center gap-2 rounded border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-900 shadow-sm hover:bg-slate-50"
                         >
                           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -467,6 +428,12 @@ export default async function DashboardPage({ params }: Props) {
           </div>
         )}
       </section>
+
+      <p className="text-sm text-slate-600">
+        <Link href="/demo/vehicles" className="font-medium text-slate-900 underline">
+          {tNav("vehicles")}
+        </Link>
+      </p>
     </div>
   );
 }

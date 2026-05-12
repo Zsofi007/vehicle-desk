@@ -58,23 +58,29 @@ export async function createVehicle(
     return { error: "validation" };
   }
 
-  const { error } = await supabase.from("vehicles").insert({
-    user_id: user.id,
-    organization_id: orgId,
-    make: parsed.data.make,
-    model: parsed.data.model,
-    vehicle_type: parsed.data.vehicle_type,
-    year: parsed.data.year,
-    license_plate: parsed.data.license_plate,
-    odometer: parsed.data.odometer,
-  });
+  const { data: inserted, error } = await supabase
+    .from("vehicles")
+    .insert({
+      user_id: user.id,
+      organization_id: orgId,
+      make: parsed.data.make,
+      model: parsed.data.model,
+      vehicle_type: parsed.data.vehicle_type,
+      year: parsed.data.year,
+      license_plate: parsed.data.license_plate,
+      odometer: parsed.data.odometer,
+    })
+    .select("id")
+    .single();
 
-  if (error) {
-    return { error: error.message };
+  if (error || !inserted?.id) {
+    return { error: error?.message ?? "insert_failed" };
   }
 
   revalidatePath(`/${locale}/vehicles`, "page");
   revalidatePath(`/${locale}/dashboard`, "page");
+  revalidatePath(`/${locale}/vehicles/${inserted.id}`, "page");
+  redirect({ href: `/vehicles/${inserted.id}`, locale });
   return {};
 }
 
